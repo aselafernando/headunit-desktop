@@ -1,0 +1,17 @@
+{
+  "name": "J2534",
+  "label": "J2534 Gauges",
+  "source": "qrc:/J2534/qml/Gauges.qml",
+  "icon": "qrc:/J2534/icons/icons8-rs-232-male-100.png",
+  "config": {
+    "type": "loader",
+    "source": "qrc:/J2534/qml/Settings.qml",
+    "settings": [
+    {
+        "name": "reverse_page_index",
+        "type": "uint",
+        "defaultValue": 3
+    }
+    ]
+  }
+}
