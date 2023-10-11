@@ -28,7 +28,7 @@ ThemeRoot {
 
     TempDial  {
         id: iat_dial
-        x: 33
+        x: 10
         y: 200
         value: pluginContext.iat
         z: 7
@@ -88,7 +88,7 @@ ThemeRoot {
 
     TempDial  {
         id: ect_dial
-        x: 272
+        x: 250
         y: 33
         value: pluginContext.ect
         z: 7
@@ -149,7 +149,7 @@ ThemeRoot {
 
     FuelTrimDial  {
         id: stftb1_dial
-        x: 512
+        x: 490
         y: 200
         visible: true
         z: 7
@@ -211,7 +211,7 @@ ThemeRoot {
 
     FuelTrimDial  {
         id: stftb2_dial
-        x: 752
+        x: 730
         y: 33
         visible: true
         z: 7
