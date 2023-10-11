@@ -17,15 +17,15 @@ class J2534Plugin : public QObject, PluginInterface {
     Q_PLUGIN_METADATA(IID "org.aselafernando.headunit.j2534" FILE "config.json")
     Q_INTERFACES(PluginInterface)
 
-    Q_PROPERTY(double iat READ iat NOTIFY iatChanged)
-    Q_PROPERTY(double maf READ maf NOTIFY mafChanged)
-    Q_PROPERTY(double stftb1 READ stftb1 NOTIFY stftb1Changed)
-    Q_PROPERTY(double stftb2 READ stftb2 NOTIFY stftb2Changed)
-    Q_PROPERTY(double ect READ ect NOTIFY ectChanged)
-    Q_PROPERTY(double vss READ vss NOTIFY vssChanged)
-    Q_PROPERTY(double rpm READ rpm NOTIFY rpmChanged)
-    Q_PROPERTY(double accPedal READ accPedal NOTIFY accPedalChanged)
-    Q_PROPERTY(int gear READ gear NOTIFY gearChanged)
+    Q_PROPERTY(double iat      MEMBER m_iat      NOTIFY iatUpdated)
+    Q_PROPERTY(double maf      MEMBER m_maf      NOTIFY mafUpdated)
+    Q_PROPERTY(double stftb1   MEMBER m_stftb1   NOTIFY stftb1Updated)
+    Q_PROPERTY(double stftb2   MEMBER m_stftb2   NOTIFY stftb2Updated)
+    Q_PROPERTY(double ect      MEMBER m_ect      NOTIFY ectUpdated)
+    Q_PROPERTY(double vss      MEMBER m_vss      NOTIFY vssUpdated)
+    Q_PROPERTY(double rpm      MEMBER m_rpm      NOTIFY rpmUpdated)
+    Q_PROPERTY(double accPedal MEMBER m_accPedal NOTIFY accPedalUpdated)
+    Q_PROPERTY(int gear        MEMBER m_gear     NOTIFY gearUpdated)
 
     //Q_PROPERTY(QVariantMap ports READ getPorts NOTIFY portsUpdated)
     //Q_PROPERTY(bool connected MEMBER m_connected NOTIFY connectedUpdated)
@@ -39,19 +39,11 @@ public:
     void init() override;
     void deinit();
     QObject *getContextProperty() override;
-    void PrintString(char * message, int length);
-    double iat();
-    double maf();
-    double stftb1();
-    double stftb2();
-    double ect();
-    double vss();
-    double rpm();
-    double accPedal();
-    int gear();
+    void PrintString(char * message);
 
 public slots:
     void eventMessage(QString id, QVariant message) override;
+
     void handleIAT(const double&);
     void handleMAF(const double&);
     void handleSTFTB1(const double&);
@@ -65,31 +57,36 @@ public slots:
 signals:
     void message(QString id, QVariant message);
     void action(QString id, QVariant message);
+
     void operate();
-    void iatChanged();
-    void mafChanged();
-    void stftb1Changed();
-    void stftb2Changed();
-    void ectChanged();
-    void vssChanged();
-    void rpmChanged();
-    void accPedalChanged();
-    void gearChanged();
+
+    void iatUpdated();
+    void mafUpdated();
+    void stftb1Updated();
+    void stftb2Updated();
+    void ectUpdated();
+    void vssUpdated();
+    void rpmUpdated();
+    void accPedalUpdated();
+    void gearUpdated();
 
 private slots:
     void settingsChanged(const QString &key, const QVariant &value);
 
 private:
-    double iatValue = 0;
-    double mafValue = 0;
-    double stftb1Value = 0;
-    double stftb2Value = 0;
-    double ectValue = 0;
-    double vssValue = 0;
-    double rpmValue = 0;
-    double accPedalValue = 0;
-    int gearValue = 0;
-    int reversePageIndex = 3;
+    double m_iat = 0;
+    double m_maf = 0;
+    double m_stftb1 = 0;
+    double m_stftb2 = 0;
+    double m_ect = 0;
+    double m_vss = 0;
+    double m_rpm = 0;
+    double m_accPedal = 0;
+    int m_gear = 0;
+    int m_reversePageIndex = 3;
+
+    void startWorker();
+    void stopWorker();
 
 };
 
@@ -110,7 +107,6 @@ private:
 
 public slots:
     void j2534Connect();
-    void j2534Disconnect();
 
 signals:
     void iat(const double& result);

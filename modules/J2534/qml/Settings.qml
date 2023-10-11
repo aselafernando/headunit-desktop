@@ -27,7 +27,14 @@ ThemeRoot {
                 }
                 value : pluginSettings.reverse_page_index
             }
-         
+
+            SettingsPageItemTextfield {
+                id: current_gear
+                width: parent.width
+                label: "Current Gear"
+                value : pluginContext.gear
+            }
+
             SettingsPageItemHeader{
                 width: parent.width
             }

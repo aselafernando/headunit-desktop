@@ -23,7 +23,6 @@ _PassThruClose PassThruClose = NULL;
 _PassThruReset PassThruReset = NULL;
 _PassThruGetLastSocketError PassThruGetLastSocketError = NULL;
 void* handle = NULL;
-bool stopClient = false;
 
 J2534Plugin::J2534Plugin(QObject* parent) : QObject(parent) {
     //m_pluginSettings.eventListeners = QStringList() << "MediaInput::position";
@@ -34,7 +33,7 @@ void J2534Plugin::init() {
     handle = dlopen("/opt/hud/libJ2534.so", RTLD_LAZY);
     char* error = NULL;
 
-    reversePageIndex = m_settings.value("reverse_page_index").toUInt();
+    this->m_reversePageIndex = m_settings.value("reverse_page_index").toUInt();
 
     if (!handle) {
         qDebug() << "J2534: Cannot load libJ2534.so " << dlerror();
@@ -108,6 +107,12 @@ void J2534Plugin::init() {
         }
         qDebug() << "J2534: Loaded functions";
 
+        startWorker();
+    }
+}
+
+void J2534Plugin::startWorker() {
+    if(handle) {
         //Run the data colleciton in another thread
         J2534Worker* worker = new J2534Worker;
         worker->moveToThread(&workerThread);
@@ -116,23 +121,27 @@ void J2534Plugin::init() {
         connect(worker, &J2534Worker::iat, this, &J2534Plugin::handleIAT);
         connect(worker, &J2534Worker::maf, this, &J2534Plugin::handleMAF);
         connect(worker, &J2534Worker::ect, this, &J2534Plugin::handleECT);
-        //connect(worker, &J2534Worker::vss, this, &J2534Plugin::handleVSS);
-        //connect(worker, &J2534Worker::rpm, this, &J2534Plugin::handleRPM);
-        //connect(worker, &J2534Worker::accPedal, this, &J2534Plugin::handleACCPEDAL);
+        connect(worker, &J2534Worker::vss, this, &J2534Plugin::handleVSS);
+        connect(worker, &J2534Worker::rpm, this, &J2534Plugin::handleRPM);
+        connect(worker, &J2534Worker::accPedal, this, &J2534Plugin::handleACCPEDAL);
         connect(worker, &J2534Worker::gear, this, &J2534Plugin::handleGEAR);
-        //connect(worker, &J2534Worker::stftb1, this, &J2534Plugin::handleSTFTB1);
-        //connect(worker, &J2534Worker::stftb2, this, &J2534Plugin::handleSTFTB2);
+        connect(worker, &J2534Worker::stftb1, this, &J2534Plugin::handleSTFTB1);
+        connect(worker, &J2534Worker::stftb2, this, &J2534Plugin::handleSTFTB2);
         workerThread.start();
         operate();
         qDebug() << "J2534: Started worker thread: " << workerThread.isRunning();
-
     }
+}
+
+void J2534Plugin::stopWorker() {
+    workerThread.quit();
+    workerThread.requestInterruption();
+    workerThread.wait();
 }
 
 J2534Plugin::~J2534Plugin() {
     if (handle) {
-        workerThread.quit();
-        workerThread.wait();
+        stopWorker();
         dlclose(handle);
         handle = NULL;
     }
@@ -143,100 +152,74 @@ QObject *J2534Plugin::getContextProperty(){
 }
 
 
-double J2534Plugin::iat() {
-    return this->iatValue;
-}
-
-//void J2534Plugin::setIAT(double iat) {
-//}
-
 void J2534Plugin::handleIAT(const double& result) {
-    this->iatValue = result;
-    emit iatChanged();
+    if(this->m_iat != result) {
+        this->m_iat = result;
+        emit iatUpdated();
+    }
 }
-
-double J2534Plugin::maf() {
-    return this->mafValue;
-}
-
-//void J2534Plugin::setMAF(double maf) {
-//}
 
 void J2534Plugin::handleMAF(const double& result) {
-    this->mafValue = result;
-    emit mafChanged();
-}
-
-double J2534Plugin::stftb1() {
-    return this->stftb1Value;
+    if(this->m_maf != result) {
+        this->m_maf = result;
+        emit mafUpdated();
+    }
 }
 
 void J2534Plugin::handleSTFTB1(const double& result) {
-    this->stftb1Value = result;
-    emit stftb1Changed();
-}
-
-double J2534Plugin::stftb2() {
-    return this->stftb2Value;
+    if(this->m_stftb1 != result) {
+        this->m_stftb1 = result;
+        emit stftb1Updated();
+    }
 }
 
 void J2534Plugin::handleSTFTB2(const double& result) {
-    this->stftb2Value = result;
-    emit stftb2Changed();
-}
-
-double J2534Plugin::ect() {
-    return this->ectValue;
+    if(this->m_stftb2 != result) {
+        this->m_stftb2 = result;
+        emit stftb2Updated();
+    }
 }
 
 void J2534Plugin::handleECT(const double& result) {
-    this->ectValue = result;
-    emit ectChanged();
-}
-
-double J2534Plugin::vss() {
-    return this->vssValue;
+    if(this->m_ect != result) {
+        this->m_ect = result;
+        emit ectUpdated();
+    }
 }
 
 void J2534Plugin::handleVSS(const double& result) {
-    this->vssValue = result;
-    emit vssChanged();
-}
-
-double J2534Plugin::rpm() {
-    return this->rpmValue;
+    if(this->m_vss != result) {
+        this->m_vss = result;
+        emit vssUpdated();
+    }
 }
 
 void J2534Plugin::handleRPM(const double& result) {
-    this->rpmValue = result;
-    emit rpmChanged();
-}
-
-double J2534Plugin::accPedal() {
-    return this->accPedalValue;
+    if(this->m_rpm != result) {
+        this->m_rpm = result;
+        emit rpmUpdated();
+    }
 }
 
 void J2534Plugin::handleACCPEDAL(const double& result) {
-    this->accPedalValue = result;
-    emit accPedalChanged();
-}
-
-int J2534Plugin::gear() {
-    return this->gearValue;
+    if(this->m_accPedal != result) {
+        this->m_accPedal = result;
+        emit accPedalUpdated();
+    }
 }
 
 void J2534Plugin::handleGEAR(const int& result) {
-    if(this->gearValue != result) {
+    if(this->m_gear != result) {
         //Change to the reverse camera page, -2 disables this
         if(result == 240) {
-            if(reversePageIndex > -2)
-                emit action("GUI::ChangePageIndex", reversePageIndex);
-        } else if(this->gearValue == 240) {
-            if(reversePageIndex > -2)
-                emit action("GUI::ChangePagePrevIndex", reversePageIndex);
+            if(this->m_reversePageIndex > -2)
+                emit action("GUI::ChangePageIndex", this->m_reversePageIndex);
+        } else if(this->m_gear == 240) {
+            if(this->m_reversePageIndex > -2)
+                emit action("GUI::ChangePagePrevIndex", this->m_reversePageIndex);
         }
-        this->gearValue = result;
-        emit gearChanged();
+        this->m_gear = result;
+        emit gearUpdated();
     }
 }
 
@@ -245,11 +228,11 @@ void J2534Plugin::eventMessage(QString id, QVariant message) {
 
 void J2534Plugin::settingsChanged(const QString &key, const QVariant &){
     if(key == "reverse_page_index") {
-        reversePageIndex = m_settings.value("reverse_page_index").toUInt();
+        this->m_reversePageIndex = m_settings.value("reverse_page_index").toUInt();
     }
 }
 
-void J2534Plugin::PrintString(char *message, int length) {
+void J2534Plugin::PrintString(char *message) {
     qDebug() << "J2534 DEBUG : " << message;
 }
 
@@ -463,7 +446,7 @@ void J2534Worker::keepReading()
     memset(&input, 0, sizeof(PASSTHRU_MSG));
 
     QThread::sleep(1);
-    while (PassThruReadMsgs(channelID, &input, &numMsgs, 1000) == RETURN_STATUS::STATUS_NOERROR)
+    while (PassThruReadMsgs(channelID, &input, &numMsgs, 1000) == RETURN_STATUS::STATUS_NOERROR && QThread::currentThread()->isInterruptionRequested() == false)
     {
         if (numMsgs == 0) break;
         QThread::sleep(1);
@@ -474,7 +457,7 @@ void J2534Worker::j2534Connect() {
     qDebug() << "J2534: Connecting to J2534 Server";
     QThread::sleep(3);
 
-    while (true) {
+    while (QThread::currentThread()->isInterruptionRequested() == false) {
         deviceID = 0;
 
         if (PassThruOpen(NULL, &deviceID) == RETURN_STATUS::STATUS_NOERROR) {
@@ -512,10 +495,14 @@ void J2534Worker::j2534Connect() {
             }
         }
 
-        qDebug() << "J2534: Looping awaiting to reconnect";
-        QThread::sleep(15);
+        if(QThread::currentThread()->isInterruptionRequested() == false) {
+            qDebug() << "J2534: Looping awaiting to reconnect";
+            QThread::sleep(15);
+        } else {
+            break;
+        }
     }
-    qDebug() << "J2534: Not connecting to J2534 server";
+    qDebug() << "J2534: Stopped connecting to J2534 server";
 }
 
 void J2534Worker::getData()
@@ -526,9 +513,12 @@ void J2534Worker::getData()
     //fastInit(0x13); //ECU
     //fastInit(0x29); //VSC
 
-    while (stopClient == false)
+    while (QThread::currentThread()->isInterruptionRequested() == false)
     {
-        emit maf(requestPID(0x19, 0x01, 0x10));
+        emit stftb1(requestPID(0x19, 0x01, 0x06));
+        emit stftb2(requestPID(0x19, 0x01, 0x07));
+        //emit maf(requestPID(0x19, 0x01, 0x10));
+
         if ((i % 2) == 0) {
             emit iat(requestPID(0x19, 0x01, 0x0F));
             emit gear((int)requestPID(0x19, 0x01, 0xBA));
@@ -701,8 +691,4 @@ double J2534Worker::requestPID(uint8_t address, uint8_t mode, uint8_t pid)
     PassThruIoctl(channelID, IOCTL_ID::CLEAR_PERIODIC_MSGS, NULL, NULL);
 
     return roundf(retVal * 100) / 100;
-}
-
-void J2534Worker::j2534Disconnect() {
-    stopClient = true;
 }
