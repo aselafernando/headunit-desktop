@@ -154,7 +154,7 @@ ThemeRoot {
         visible: true
         z: 7
         opacity: 1
-        value: pluginContext.rpm
+        value: pluginContext.stftb1
         //anchors.verticalCenterOffset: 8
         //anchors.horizontalCenterOffset: -207
         //anchors.centerIn: parent
@@ -216,7 +216,7 @@ ThemeRoot {
         visible: true
         z: 7
         opacity: 1
-        value: pluginContext.rpm
+        value: pluginContext.stftb2
         //anchors.verticalCenterOffset: 8
         //anchors.horizontalCenterOffset: -207
         //anchors.centerIn: parent
