@@ -524,16 +524,15 @@ void J2534Worker::getData()
 
     while (QThread::currentThread()->isInterruptionRequested() == false)
     {
-        emit stftb1(requestPID(0x19, 0x01, 0x06));
-        emit stftb2(requestPID(0x19, 0x01, 0x07));
+        //emit stftb1(requestPID(0x19, 0x01, 0x06));
+        //emit stftb2(requestPID(0x19, 0x01, 0x07));
         //emit maf(requestPID(0x19, 0x01, 0x10));
-
+        emit vss((int)requestPID(0x19, 0x01, 0x0D));
+        
         if ((i % 2) == 0) {
-            emit iat(requestPID(0x19, 0x01, 0x0F));
             emit gear((int)requestPID(0x19, 0x01, 0xBA));
-        }
-
-        if((i % 11) == 0) {
+        } else {
+            emit iat(requestPID(0x19, 0x01, 0x0F));
             emit ect(requestPID(0x19, 0x01, 0x05));
         }
 
