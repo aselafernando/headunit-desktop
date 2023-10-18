@@ -3,7 +3,7 @@
 
 AndroidAutoPlugin::AndroidAutoPlugin(QObject *parent) : QObject (parent)
 {
-    m_pluginSettings.eventListeners = QStringList() << "UsbConnectionListenerPlugin::UsbDeviceAdded" << "SYSTEM::SetNightMode";
+    m_pluginSettings.eventListeners = QStringList() << "UsbConnectionListenerPlugin::UsbDeviceAdded" << "SYSTEM::SetNightMode" << "J2534::VSS" << "J2534::Gear" << "GPSD::Location";
     m_pluginSettings.events = QStringList() << "connected";
     gst_init(NULL, NULL);
     headunit = new Headunit();
@@ -26,6 +26,14 @@ void AndroidAutoPlugin::eventMessage(QString id, QVariant message){
     } else if(id == "UsbConnectionListenerPlugin::UsbDeviceRemoved"){
     } else if(id == "SYSTEM::SetNightMode"){
         headunit->setNigthmode(message.toBool());
+    } else if(id == "J2534::VSS") {
+        double speedms = message.toInt() / 3.6;
+        headunit->setVSS(speedms);
+    } else if(id == "J2534::Gear") {
+        headunit->setGear(message.toInt());
+    } else if(id == "GPSD::Location") {
+        QVariantMap map = message.toMap();
+        headunit->setLocation(map["latitude"].toDouble(),map["longitude"].toDouble());
     }
 }
 void AndroidAutoPlugin::init(){
