@@ -11,18 +11,18 @@ ThemeRoot {
     ParallelAnimation{
         id: dialEffectStart
         running: true
-        NumberAnimation{target: iat_active; property:  "opacity"; to: 1.0; duration: 8000}
-        NumberAnimation{target: iat_text; property:  "opacity"; to: 1.0; duration: 8000}
-        NumberAnimation{target: iat_header; property:  "opacity"; to: 1.0; duration: 8000}
-        NumberAnimation{target: ect_active; property:  "opacity"; to: 1.0; duration: 8000}
-        NumberAnimation{target: ect_text; property:  "opacity"; to: 1.0; duration: 8000}
-        NumberAnimation{target: ect_header; property:  "opacity"; to: 1.0; duration: 8000}
-        NumberAnimation{target: stftb1_active; property:  "opacity"; to: 1.0; duration: 8000}
-        NumberAnimation{target: stftb1_text; property:  "opacity"; to: 1.0; duration: 8000}
-        NumberAnimation{target: stftb1_header; property:  "opacity"; to: 1.0; duration: 8000}
-        NumberAnimation{target: stftb2_active; property:  "opacity"; to: 1.0; duration: 8000}
-        NumberAnimation{target: stftb2_text; property:  "opacity"; to: 1.0; duration: 8000}
-        NumberAnimation{target: stftb2_header; property:  "opacity"; to: 1.0; duration: 8000}
+        NumberAnimation{target: iat_active; property:  "opacity"; to: 1.0; duration: 5000}
+        NumberAnimation{target: iat_text; property:  "opacity"; to: 1.0; duration: 5000}
+        NumberAnimation{target: iat_header; property:  "opacity"; to: 1.0; duration: 5000}
+        NumberAnimation{target: ect_active; property:  "opacity"; to: 1.0; duration: 5000}
+        NumberAnimation{target: ect_text; property:  "opacity"; to: 1.0; duration: 5000}
+        NumberAnimation{target: ect_header; property:  "opacity"; to: 1.0; duration: 5000}
+        NumberAnimation{target: stftb1_active; property:  "opacity"; to: 1.0; duration: 5000}
+        NumberAnimation{target: stftb1_text; property:  "opacity"; to: 1.0; duration: 5000}
+        NumberAnimation{target: stftb1_header; property:  "opacity"; to: 1.0; duration: 5000}
+        NumberAnimation{target: stftb2_active; property:  "opacity"; to: 1.0; duration: 5000}
+        NumberAnimation{target: stftb2_text; property:  "opacity"; to: 1.0; duration: 5000}
+        NumberAnimation{target: stftb2_header; property:  "opacity"; to: 1.0; duration: 5000}
 
     }
 
