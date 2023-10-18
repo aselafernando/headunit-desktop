@@ -156,6 +156,7 @@ void J2534Plugin::handleIAT(const double& result) {
     if(this->m_iat != result) {
         this->m_iat = result;
         emit iatUpdated();
+        emit message("IAT", result);
     }
 }
 
@@ -163,6 +164,7 @@ void J2534Plugin::handleMAF(const double& result) {
     if(this->m_maf != result) {
         this->m_maf = result;
         emit mafUpdated();
+        emit message("MAF", result);
     }
 }
 
@@ -170,6 +172,7 @@ void J2534Plugin::handleSTFTB1(const double& result) {
     if(this->m_stftb1 != result) {
         this->m_stftb1 = result;
         emit stftb1Updated();
+        emit message("STFTB1", result);
     }
 }
 
@@ -177,6 +180,7 @@ void J2534Plugin::handleSTFTB2(const double& result) {
     if(this->m_stftb2 != result) {
         this->m_stftb2 = result;
         emit stftb2Updated();
+        emit message("STFTB2", result);
     }
 }
 
@@ -184,6 +188,7 @@ void J2534Plugin::handleECT(const double& result) {
     if(this->m_ect != result) {
         this->m_ect = result;
         emit ectUpdated();
+        emit message("ECT", result);
     }
 }
 
@@ -191,6 +196,7 @@ void J2534Plugin::handleVSS(const double& result) {
     if(this->m_vss != result) {
         this->m_vss = result;
         emit vssUpdated();
+        emit message("VSS", result);
     }
 }
 
@@ -198,6 +204,7 @@ void J2534Plugin::handleRPM(const double& result) {
     if(this->m_rpm != result) {
         this->m_rpm = result;
         emit rpmUpdated();
+        emit message("RPM", result);
     }
 }
 
@@ -205,6 +212,7 @@ void J2534Plugin::handleACCPEDAL(const double& result) {
     if(this->m_accPedal != result) {
         this->m_accPedal = result;
         emit accPedalUpdated();
+        emit message("TPS", result);
     }
 }
 
@@ -220,6 +228,7 @@ void J2534Plugin::handleGEAR(const int& result) {
         }
         this->m_gear = result;
         emit gearUpdated();
+        emit message("Gear", result);
     }
 }
 
