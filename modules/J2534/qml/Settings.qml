@@ -29,6 +29,13 @@ ThemeRoot {
             }
 
             SettingsPageItemTextfield {
+                id: current_vss
+                width: parent.width
+                label: "Current Speed"
+                value : pluginContext.vss
+            }
+
+            SettingsPageItemTextfield {
                 id: current_gear
                 width: parent.width
                 label: "Current Gear"
