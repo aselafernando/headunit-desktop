@@ -92,6 +92,9 @@ public:
     void setMediaVolume(uint8_t volume);
     void setVoiceVolume(uint8_t volume);
     void setNigthmode(bool night);
+    void setVSS(double speedms);
+    void setGear(int gear);
+    void setLocation(double latitude, double longitude);
 
     QAbstractVideoSurface *videoSurface() const { return m_surface; }
     void setVideoSurface(QAbstractVideoSurface *surface);
@@ -148,5 +151,7 @@ private:
     QAbstractVideoSurface *m_surface = nullptr;
     QVideoSurfaceFormat m_format;
     bool m_videoStarted = false;
+
+    HU::SensorEvent_GearData_GEAR m_gear = HU::SensorEvent_GearData_GEAR::SensorEvent_GearData_GEAR_GEAR_NEUTRAL;
 };
 #endif  // HEADUNITPLAYER_H

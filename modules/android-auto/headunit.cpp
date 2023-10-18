@@ -524,6 +524,79 @@ void Headunit::setNigthmode(bool night) {
     }
 }
 
+void Headunit::setVSS(double speedms) {
+    //Speed must be in m/s
+    if(huStarted) {
+        int32_t speed = (int32_t)qRound(speedms);
+        if(this->m_gear == HU::SensorEvent_GearData_GEAR::SensorEvent_GearData_GEAR_GEAR_REVERSE && speed > 0) {
+            speed = speed * -1; //AA expects speeds in reverse to be negative
+        }
+        HU::SensorEvent sensorEvent;
+        sensorEvent.add_speed_data()->set_speed_e6(speed);
+        g_hu->queueCommand([sensorEvent](AndroidAuto::IHUConnectionThreadInterface& s)
+        {
+            s.sendEncodedMessage(0, AndroidAuto::SensorChannel, AndroidAuto::HU_SENSOR_CHANNEL_MESSAGE::SensorEvent, sensorEvent);
+        });
+    }
+}
+
+void Headunit::setGear(int gear) {
+
+    if(huStarted) {
+        switch(gear) {
+            case 0: //N
+                this->m_gear = HU::SensorEvent_GearData_GEAR::SensorEvent_GearData_GEAR_GEAR_NEUTRAL;
+                break;
+            case 1: //1st
+                this->m_gear = HU::SensorEvent_GearData_GEAR::SensorEvent_GearData_GEAR_GEAR_FIRST;
+                break;
+            case 2: //2nd
+                this->m_gear = HU::SensorEvent_GearData_GEAR::SensorEvent_GearData_GEAR_GEAR_SECOND;
+                break;
+            case 3: //3rd
+                this->m_gear = HU::SensorEvent_GearData_GEAR::SensorEvent_GearData_GEAR_GEAR_THIRD;
+                break;
+            case 4: //4th
+                this->m_gear = HU::SensorEvent_GearData_GEAR::SensorEvent_GearData_GEAR_GEAR_FOURTH;
+                break;
+            case 5: //5th
+                this->m_gear = HU::SensorEvent_GearData_GEAR::SensorEvent_GearData_GEAR_GEAR_FIFTH;
+                break;
+            case 6: //6th
+                this->m_gear = HU::SensorEvent_GearData_GEAR::SensorEvent_GearData_GEAR_GEAR_SIXTH;
+                break;
+            case 254:
+                //Reverse
+                this->m_gear = HU::SensorEvent_GearData_GEAR::SensorEvent_GearData_GEAR_GEAR_REVERSE;
+                break;
+            case 255:
+                //Shifting
+                return;
+            default:
+                return;
+        }
+        HU::SensorEvent sensorEvent;
+        sensorEvent.add_gear_data()->set_gear(this->m_gear);
+        g_hu->queueCommand([sensorEvent](AndroidAuto::IHUConnectionThreadInterface& s)
+        {
+            s.sendEncodedMessage(0, AndroidAuto::SensorChannel, AndroidAuto::HU_SENSOR_CHANNEL_MESSAGE::SensorEvent, sensorEvent);
+        });
+    }
+}
+
+void Headunit::setLocation(double latitude, double longitude) {
+    if(huStarted) {
+        HU::SensorEvent sensorEvent;
+        //HU::SensorEvent_LocationData* locationData = sensorEvent.mutable_location_data(); -> TODO: No Mutable Version Exists?
+        sensorEvent.add_location_data()->set_latitude(latitude);
+        sensorEvent.add_location_data()->set_longitude(longitude);
+        g_hu->queueCommand([sensorEvent](AndroidAuto::IHUConnectionThreadInterface& s)
+        {
+            s.sendEncodedMessage(0, AndroidAuto::SensorChannel, AndroidAuto::HU_SENSOR_CHANNEL_MESSAGE::SensorEvent, sensorEvent);
+        });
+    }
+}
+
 int DesktopEventCallbacks::MediaPacket(AndroidAuto::ServiceChannels chan, uint64_t timestamp, const byte * buf, int len) {
     GstAppSrc* gst_src = nullptr;
 
