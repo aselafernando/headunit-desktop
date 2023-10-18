@@ -22,10 +22,10 @@ class J2534Plugin : public QObject, PluginInterface {
     Q_PROPERTY(double stftb1   MEMBER m_stftb1   NOTIFY stftb1Updated)
     Q_PROPERTY(double stftb2   MEMBER m_stftb2   NOTIFY stftb2Updated)
     Q_PROPERTY(double ect      MEMBER m_ect      NOTIFY ectUpdated)
-    Q_PROPERTY(double vss      MEMBER m_vss      NOTIFY vssUpdated)
+    Q_PROPERTY(int    vss      MEMBER m_vss      NOTIFY vssUpdated)
     Q_PROPERTY(double rpm      MEMBER m_rpm      NOTIFY rpmUpdated)
     Q_PROPERTY(double accPedal MEMBER m_accPedal NOTIFY accPedalUpdated)
-    Q_PROPERTY(int gear        MEMBER m_gear     NOTIFY gearUpdated)
+    Q_PROPERTY(int    gear     MEMBER m_gear     NOTIFY gearUpdated)
 
     //Q_PROPERTY(QVariantMap ports READ getPorts NOTIFY portsUpdated)
     //Q_PROPERTY(bool connected MEMBER m_connected NOTIFY connectedUpdated)
@@ -49,7 +49,7 @@ public slots:
     void handleSTFTB1(const double&);
     void handleSTFTB2(const double&);
     void handleECT(const double&);
-    void handleVSS(const double&);
+    void handleVSS(const int&);
     void handleRPM(const double&);
     void handleACCPEDAL(const double&);
     void handleGEAR(const int&);
@@ -79,7 +79,7 @@ private:
     double m_stftb1 = 0;
     double m_stftb2 = 0;
     double m_ect = 0;
-    double m_vss = 0;
+    int m_vss = 0;
     double m_rpm = 0;
     double m_accPedal = 0;
     int m_gear = 0;
@@ -116,7 +116,7 @@ signals:
     void ect(const double& result);
     void accPedal(const double& result);
     void rpm(const double& result);
-    void vss(const double& result);
+    void vss(const int& result);
     void gear(const int& result);
 };
 

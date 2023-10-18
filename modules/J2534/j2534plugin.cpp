@@ -192,7 +192,7 @@ void J2534Plugin::handleECT(const double& result) {
     }
 }
 
-void J2534Plugin::handleVSS(const double& result) {
+void J2534Plugin::handleVSS(const int& result) {
     if(this->m_vss != result) {
         this->m_vss = result;
         emit vssUpdated();
@@ -528,7 +528,7 @@ void J2534Worker::getData()
         //emit stftb2(requestPID(0x19, 0x01, 0x07));
         //emit maf(requestPID(0x19, 0x01, 0x10));
         emit vss((int)requestPID(0x19, 0x01, 0x0D));
-        
+
         if ((i % 2) == 0) {
             emit gear((int)requestPID(0x19, 0x01, 0xBA));
         } else {
