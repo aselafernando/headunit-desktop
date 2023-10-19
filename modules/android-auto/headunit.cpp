@@ -585,8 +585,8 @@ void Headunit::setGear(int gear) {
 }
 
 void Headunit::setLocation(double latitude, double longitude, double track, double speed, double altitude, double herr) {
-        qDebug() << "AA: " << latitude <<","<<longitude<<" T:" <<track<<" S:" <<speed<<" A:"<<altitude<<" H:"<<herr;
     if(huStarted) {
+        qDebug() << "AA: " << latitude <<","<<longitude<<" T:" <<track<<" S:" <<speed<<" A:"<<altitude<<" H:"<<herr;
 
         HU::SensorEvent sensorEvent;
         HU::SensorEvent::LocationData* location = sensorEvent.add_location_data();
