@@ -152,7 +152,7 @@ QObject *J2534Plugin::getContextProperty(){
 }
 
 
-void J2534Plugin::handleIAT(const double& result) {
+void J2534Plugin::handleIAT(const int32_t& result) {
     if(this->m_iat != result) {
         this->m_iat = result;
         emit iatUpdated();
@@ -184,7 +184,7 @@ void J2534Plugin::handleSTFTB2(const double& result) {
     }
 }
 
-void J2534Plugin::handleECT(const double& result) {
+void J2534Plugin::handleECT(const int32_t& result) {
     if(this->m_ect != result) {
         this->m_ect = result;
         emit ectUpdated();
@@ -192,7 +192,7 @@ void J2534Plugin::handleECT(const double& result) {
     }
 }
 
-void J2534Plugin::handleVSS(const int& result) {
+void J2534Plugin::handleVSS(const int32_t& result) {
     if(this->m_vss != result) {
         this->m_vss = result;
         emit vssUpdated();
@@ -216,7 +216,7 @@ void J2534Plugin::handleACCPEDAL(const double& result) {
     }
 }
 
-void J2534Plugin::handleGEAR(const int& result) {
+void J2534Plugin::handleGEAR(const int32_t& result) {
     if(this->m_gear != result) {
         //Change to the reverse camera page, -2 disables this
         if(result == 240) {
@@ -233,6 +233,14 @@ void J2534Plugin::handleGEAR(const int& result) {
 }
 
 void J2534Plugin::eventMessage(QString id, QVariant message) {
+    if(id == "AndroidAuto::connected") {
+        if(message.toBool()) {
+            //resend latest data;
+            qDebug() << "J2534: Resending data";
+            emit message("Gear", this->m_gear);
+            emit message("VSS", this->m_vss);
+        }
+    }
 }
 
 void J2534Plugin::settingsChanged(const QString &key, const QVariant &){
@@ -527,13 +535,13 @@ void J2534Worker::getData()
         //emit stftb1(requestPID(0x19, 0x01, 0x06));
         //emit stftb2(requestPID(0x19, 0x01, 0x07));
         //emit maf(requestPID(0x19, 0x01, 0x10));
-        emit vss((int)requestPID(0x19, 0x01, 0x0D));
+        emit vss((int32_t)requestPID(0x19, 0x01, 0x0D));
 
         if ((i % 2) == 0) {
-            emit gear((int)requestPID(0x19, 0x01, 0xBA));
+            emit gear((int32_t)requestPID(0x19, 0x01, 0xBA));
         } else {
-            emit iat(requestPID(0x19, 0x01, 0x0F));
-            emit ect(requestPID(0x19, 0x01, 0x05));
+            emit iat((int32_t)requestPID(0x19, 0x01, 0x0F));
+            emit ect((int32_t)requestPID(0x19, 0x01, 0x05));
         }
 
         i++;
