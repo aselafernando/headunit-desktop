@@ -33,7 +33,7 @@ void J2534Plugin::init() {
     handle = dlopen("/opt/hud/libJ2534.so", RTLD_LAZY);
     char* error = NULL;
 
-    this->m_reversePageIndex = m_settings.value("reverse_page_index").toUInt();
+    this->m_reversePageIndex = m_settings.value("reverse_page_index").toInt();
 
     if (!handle) {
         qDebug() << "J2534: Cannot load libJ2534.so " << dlerror();
@@ -237,8 +237,8 @@ void J2534Plugin::eventMessage(QString id, QVariant message) {
         if(message.toBool()) {
             //resend latest data;
             qDebug() << "J2534: Resending data";
-            emit message("Gear", this->m_gear);
-            emit message("VSS", this->m_vss);
+            emit this->message("Gear", this->m_gear);
+            emit this->message("VSS", this->m_vss);
         }
     }
 }

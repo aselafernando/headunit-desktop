@@ -83,7 +83,7 @@ private:
     double m_rpm = 0;
     double m_accPedal = 0;
     int32_t m_gear = 0;
-    uint32_t m_reversePageIndex = 3;
+    int32_t m_reversePageIndex = 3;
 
     void startWorker();
     void stopWorker();
