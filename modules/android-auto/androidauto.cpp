@@ -33,7 +33,8 @@ void AndroidAutoPlugin::eventMessage(QString id, QVariant message){
         headunit->setGear(message.toInt());
     } else if(id == "GPSD::Location") {
         QVariantMap map = message.toMap();
-        headunit->setLocation(map["latitude"].toDouble(),map["longitude"].toDouble());
+        headunit->setLocation(map["latitude"].toDouble(),map["longitude"].toDouble(),
+            map["track"].toDouble(),map["speed"].toDouble(),map["altitude"].toDouble(),map["herr"].toDouble());
     }
 }
 void AndroidAutoPlugin::init(){
