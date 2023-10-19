@@ -594,9 +594,9 @@ void Headunit::setLocation(double latitude, double longitude, double track, doub
         location->set_latitude(static_cast<int32_t>(latitude * 1E7));
         location->set_longitude(static_cast<int32_t>(longitude * 1E7));
         location->set_bearing(static_cast<int32_t>(track * 1E6));
-        location->set_speed(static_cast<int32_t>(speed / 3.6 * 1E3));
+        location->set_speed(static_cast<int32_t>(speed * 1E3));
         location->set_altitude(static_cast<int32_t>(altitude * 1E2));
-        location->set_accuracy(static_cast<int32_t>(herr * 1E3));
+        location->set_accuracy(static_cast<uint32_t>(herr * 1E3));
         g_hu->queueCommand([sensorEvent](AndroidAuto::IHUConnectionThreadInterface& s)
         {
             s.sendEncodedMessage(0, AndroidAuto::SensorChannel, AndroidAuto::HU_SENSOR_CHANNEL_MESSAGE::SensorEvent, sensorEvent);
