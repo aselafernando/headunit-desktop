@@ -588,10 +588,8 @@ void Headunit::setGear(int gear) {
     }
 }
 
-void Headunit::setLocation(double latitude, double longitude, double track, double speed, double altitude, double herr) {
+void Headunit::setLocation(double latitude, double longitude, double track, double speed, double altitude, double eph) {
     if(huStarted) {
-        qDebug() << "AA: " << latitude <<","<<longitude<<" T:" <<track<<" S:" <<speed<<" A:"<<altitude<<" H:"<<herr;
-
         HU::SensorEvent sensorEvent;
         HU::SensorEvent::LocationData* location = sensorEvent.add_location_data();
         location->set_timestamp(get_cur_timestamp());
@@ -600,7 +598,7 @@ void Headunit::setLocation(double latitude, double longitude, double track, doub
         location->set_bearing(static_cast<int32_t>(track * 1E6));
         location->set_speed(static_cast<int32_t>(speed * 1E3));
         location->set_altitude(static_cast<int32_t>(altitude * 1E2));
-        location->set_accuracy(static_cast<uint32_t>(herr * 1E3));
+        location->set_accuracy(static_cast<uint32_t>(eph * 1E3));
         g_hu->queueCommand([sensorEvent](AndroidAuto::IHUConnectionThreadInterface& s)
         {
             s.sendEncodedMessage(0, AndroidAuto::SensorChannel, AndroidAuto::HU_SENSOR_CHANNEL_MESSAGE::SensorEvent, sensorEvent);

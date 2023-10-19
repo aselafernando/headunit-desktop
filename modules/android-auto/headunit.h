@@ -94,7 +94,7 @@ public:
     void setNigthmode(bool night);
     void setVSS(double speedms);
     void setGear(int gear);
-    void setLocation(double latitude, double longitude, double track, double speed, double altitude, double herr);
+    void setLocation(double latitude, double longitude, double track, double speed, double altitude, double eph);
 
     QAbstractVideoSurface *videoSurface() const { return m_surface; }
     void setVideoSurface(QAbstractVideoSurface *surface);
