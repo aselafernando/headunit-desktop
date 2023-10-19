@@ -587,9 +587,10 @@ void Headunit::setGear(int gear) {
 void Headunit::setLocation(double latitude, double longitude) {
     if(huStarted) {
         HU::SensorEvent sensorEvent;
-        //HU::SensorEvent_LocationData* locationData = sensorEvent.mutable_location_data(); -> TODO: No Mutable Version Exists?
-        sensorEvent.add_location_data()->set_latitude(latitude);
-        sensorEvent.add_location_data()->set_longitude(longitude);
+        HU::SensorEvent::LocationData* location = sensorEvent.add_location_data();
+        location->set_timestamp(get_cur_timestamp());
+        location->set_latitude(static_cast<int32_t>(latitude * 1E7));
+        location->set_longitude(static_cast<int32_t>(longitude * 1E7));
         g_hu->queueCommand([sensorEvent](AndroidAuto::IHUConnectionThreadInterface& s)
         {
             s.sendEncodedMessage(0, AndroidAuto::SensorChannel, AndroidAuto::HU_SENSOR_CHANNEL_MESSAGE::SensorEvent, sensorEvent);
