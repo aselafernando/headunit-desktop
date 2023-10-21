@@ -44,15 +44,15 @@ public:
 public slots:
     void eventMessage(QString id, QVariant message) override;
 
-    void handleIAT(const int32_t&);
+    void handleIAT(const int&);
     void handleMAF(const double&);
     void handleSTFTB1(const double&);
     void handleSTFTB2(const double&);
-    void handleECT(const int32_t&);
-    void handleVSS(const int32_t&);
+    void handleECT(const int&);
+    void handleVSS(const int&);
     void handleRPM(const double&);
     void handleACCPEDAL(const double&);
-    void handleGEAR(const int32_t&);
+    void handleGEAR(const int&);
 
 signals:
     void message(QString id, QVariant message);
@@ -74,16 +74,16 @@ private slots:
     void settingsChanged(const QString &key, const QVariant &value);
 
 private:
-    int32_t m_iat = 0;
+    int m_iat = 0;
     double m_maf = 0;
     double m_stftb1 = 0;
     double m_stftb2 = 0;
-    int32_t m_ect = 0;
-    int32_t m_vss = 0;
+    int m_ect = 0;
+    int m_vss = 0;
     double m_rpm = 0;
     double m_accPedal = 0;
-    int32_t m_gear = 0;
-    int32_t m_reversePageIndex = 3;
+    int m_gear = 0;
+    int m_reversePageIndex = 3;
 
     void startWorker();
     void stopWorker();
@@ -109,15 +109,15 @@ public slots:
     void j2534Connect();
 
 signals:
-    void iat(const int32_t& result);
+    void iat(const int& result);
     void maf(const double& result);
     void stftb1(const double& result);
     void stftb2(const double& result);
-    void ect(const int32_t& result);
+    void ect(const int& result);
     void accPedal(const double& result);
     void rpm(const double& result);
-    void vss(const int32_t& result);
-    void gear(const int32_t& result);
+    void vss(const int& result);
+    void gear(const int& result);
 };
 
 
