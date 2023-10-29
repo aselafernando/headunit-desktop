@@ -29,7 +29,6 @@ public:
     QObject *getContextProperty() override;
 
     void ButtonInputCommandCallback(Button btn) override;
-    void PrintString(char * message, int length) override;
     void SendPacketCallback(size_t s, Packet* p);
 
 public slots:

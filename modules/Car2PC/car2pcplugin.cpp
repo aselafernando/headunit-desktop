@@ -6,19 +6,18 @@
 Car2PCPlugin::Car2PCPlugin(QObject *parent) : QObject (parent), m_serial(this), m_serialProtocol(), m_serialRetryTimer(this)
 {
     m_serialProtocol.setCallbacks(this);
-    //m_pluginSettings.events = QStringList() << "MediaInput::position";
-    m_pluginSettings.eventListeners = QStringList() << "MediaInput::position";
+    m_pluginSettings.eventListeners = QStringList() << "MediaInput::position" << "PhoneBluetooth::position" << "PhoneBluetooth::trackNumber";
     m_text = m_settings.value("text").toString() == "true";
 }
 
 void Car2PCPlugin::init() {
     updatePorts();
 
-    serialConnect();
     connect(&m_serial, &QSerialPort::readyRead, this, &Car2PCPlugin::handleSerialReadyRead);
     connect(&m_serial, &QSerialPort::errorOccurred, this, &Car2PCPlugin::handleSerialError);
     connect(&m_settings, &QQmlPropertyMap::valueChanged, this, &Car2PCPlugin::settingsChanged);
     connect(&m_serialRetryTimer, &QTimer::timeout, this, &Car2PCPlugin::serialConnect);
+    serialConnect();
 }
 
 QObject *Car2PCPlugin::getContextProperty(){
@@ -26,30 +25,21 @@ QObject *Car2PCPlugin::getContextProperty(){
 }
 
 void Car2PCPlugin::eventMessage(QString id, QVariant message) {
-
-    if (id == "PhoneBluetooth::position") {
+    //Track Name: NMTest Name
+    //Track Time: TMHHMMSS
+    //Track Num : TR000
+    if (id == "PhoneBluetooth::position" || id == "MediaInput::position") {
         uint32_t seconds = (uint32_t)floor(message.toUInt() / 1000.0);
         uint32_t minutes = seconds / 60;
         uint32_t hours = minutes / 60;
         char timestamp[9];
-        sprintf(timestamp, "TM%02d%02d%02d", hours, minutes % 60, seconds % 60);
-        timestamp[8] = '\0';
-	//qDebug() << "Car2PC Sending timestamp: " << timestamp;
+        snprintf(timestamp, 9, "TM%02d%02d%02d", hours, minutes % 60, seconds % 60);
         m_serialProtocol.sendMessage(8, timestamp);
-    }
-    else if (id == "PhoneBluetooth::trackNumber") {
+    } else if (id == "PhoneBluetooth::trackNumber") {
         char track[6];
-        sprintf(track, "TR%03d", message.toUInt());
-        track[5] = '\0';
-	//qDebug() << "Car2PC Sending track: " << track;
+        snprintf(track, 6, "TR%03d", message.toUInt());
         m_serialProtocol.sendMessage(5, track);
-    } else {
-        //qDebug() << "Car2PC: " << id;
     }
-    //Need track name, time & number
-    //m_serialProtocol.sendMessage(8, "TM000000");
-    //m_serialProtocol.sendMessage(11, "NMTest Name");
-    //m_serialProtocol.sendMessage(5, "TR000");
 }
 
 void Car2PCPlugin::SendPacketCallback(size_t s, Packet* p) {
@@ -79,14 +69,13 @@ void Car2PCPlugin::updatePorts() {
 }
 
 void Car2PCPlugin::serialConnect(){
-//    m_serialRetryTimer.stop();
+    m_serialRetryTimer.stop();
     m_serial.setPortName(m_settings.value("serial_port").toString());
     m_serial.setBaudRate(CAR2PC_BAUD);
 
     if (!m_serial.open(QIODevice::ReadWrite)) {
         qDebug() << QObject::tr("Car2PC: Failed to open port %1, error: %2")
-                        .arg(m_settings.value("port").toString(), m_serial.errorString())
-                 << "\n";
+                        .arg(m_settings.value("port").toString(), m_serial.errorString());
     } else {
         qDebug() << "Car2PC: Connected to Serial : " << m_serial.portName() << m_serial.baudRate();
         m_connected = true;
@@ -111,24 +100,23 @@ void Car2PCPlugin::serialRestart(){
 
 void Car2PCPlugin::handleSerialError(QSerialPort::SerialPortError error){
     switch (error) {
-    case QSerialPort::WriteError:
-    case QSerialPort::ReadError:
-    case QSerialPort::NotOpenError:
-    case QSerialPort::DeviceNotFoundError:
-    case QSerialPort::PermissionError:
-    case QSerialPort::TimeoutError:
-        if(m_serial.isOpen()){
-            m_serial.close();
-        }
-        m_serial.clearError();
-        m_connected = false;
-        emit connectedUpdated();
-        qDebug() << "Car2PC: Error : " << error;
-//        m_serialRetryTimer.start(1000);
-
-        break;
-    default:
-        break;
+        case QSerialPort::WriteError:
+        case QSerialPort::ReadError:
+        case QSerialPort::NotOpenError:
+        case QSerialPort::DeviceNotFoundError:
+        case QSerialPort::PermissionError:
+        case QSerialPort::TimeoutError:
+            if(m_serial.isOpen()){
+                m_serial.close();
+            }
+            m_serial.clearError();
+            m_connected = false;
+            emit connectedUpdated();
+            qDebug() << "Car2PC: Error : " << error;
+            m_serialRetryTimer.start(2000);
+            break;
+        default:
+            break;
     }
 }
 
@@ -190,28 +178,24 @@ void Car2PCPlugin::ButtonInputCommandCallback(Button btn) {
             PrintString("SCAN_OFF", 8);
             break;
         case Button::REPEAT_ON:
-            //cmd = m_settings.value("REPEAT_ON").toString();
             PrintString("REPEAT_ON", 9);
             cmd = m_settings.value("REPEAT_ON").toString();
             if(cmd == "")
                 emit message("MediaInput", "RepeatOn");
             break;
         case Button::REPEAT_OFF:
-            //cmd = m_settings.value("REPEAT_OFF").toString();
             PrintString("REPEAT_OFF", 10);
             cmd = m_settings.value("REPEAT_OFF").toString();
             if(cmd == "")
                 emit message("MediaInput", "RepeatOff");
             break;
         case Button::SHUFFLE_ON:
-            //cmd = m_settings.value("SHUFFLE_ON").toString();
             PrintString("SHUFFLE_ON", 10);
             cmd = m_settings.value("SHUFFLE_ON").toString();
             if(cmd == "")
                 emit message("MediaInput", "ShuffleOn");
             break;
         case Button::SHUFFLE_OFF:
-            //cmd = m_settings.value("SHUFFLE_OFF").toString();
             PrintString("SHUFFLE_OFF", 11);
             cmd = m_settings.value("SHUFFLE_OFF").toString();
             if(cmd == "")
@@ -239,8 +223,4 @@ void Car2PCPlugin::ButtonInputCommandCallback(Button btn) {
         emit action(cmd, 0);
         qDebug() << "Car2PC Calling Action: " << cmd;
     }
-}
-
-void Car2PCPlugin::PrintString(char *message, int length) {
-    qDebug() << "Car2PC DEBUG : " << message;
 }
