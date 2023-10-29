@@ -30,6 +30,7 @@ public:
 
     void ButtonInputCommandCallback(Button btn) override;
     void SendPacketCallback(size_t s, Packet* p);
+    void PrintString(const char* message, int length);
 
 public slots:
     void eventMessage(QString id, QVariant message) override;

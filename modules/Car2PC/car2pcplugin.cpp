@@ -32,8 +32,8 @@ void Car2PCPlugin::eventMessage(QString id, QVariant message) {
         uint32_t seconds = (uint32_t)floor(message.toUInt() / 1000.0);
         uint32_t minutes = seconds / 60;
         uint32_t hours = minutes / 60;
-        char timestamp[9];
-        snprintf(timestamp, 9, "TM%02d%02d%02d", hours, minutes % 60, seconds % 60);
+        char timestamp[14]; //even though this only needs to be 9 g++ complains if less than 14
+        snprintf(timestamp, 14, "TM%02d%02d%02d", hours, minutes % 60, seconds % 60);
         m_serialProtocol.sendMessage(8, timestamp);
     } else if (id == "PhoneBluetooth::trackNumber") {
         char track[6];
@@ -223,4 +223,8 @@ void Car2PCPlugin::ButtonInputCommandCallback(Button btn) {
         emit action(cmd, 0);
         qDebug() << "Car2PC Calling Action: " << cmd;
     }
+}
+
+void Car2PCPlugin::PrintString(const char* message, int length) {
+    qDebug() << "Car2PC: " << QString::fromUtf8(message, length);
 }

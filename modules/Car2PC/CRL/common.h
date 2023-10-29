@@ -31,5 +31,5 @@ class PlatformCallbacks {
 public:
     virtual void ButtonInputCommandCallback(Button) = 0;
     virtual void SendPacketCallback(size_t, Packet*) = 0;
-    virtual void PrintString(char *, int) = 0;
+    virtual void PrintString(const char* message, int length) = 0;
 };

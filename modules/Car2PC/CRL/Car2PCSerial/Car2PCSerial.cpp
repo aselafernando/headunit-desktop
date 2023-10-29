@@ -1,20 +1,22 @@
 #include "Car2PCSerial.h"
 #include <stdlib.h>
+#include <cstring>
 
 namespace Car2PCSerial {
 
-    Car2PCSerial::Car2PCSerial() : 
+    Car2PCSerial::Car2PCSerial() :
         m_receiverState(StartByte),
         m_frameSize(0),
         m_dataBufferIndex(0),
-        m_receivedBuffer(),
         m_scStatus(0),
         m_ffStatus(0),
         m_frStatus(0),
         m_mxStatus(0),
         m_rpStatus(0),
         m_plStatus(0)
-        {}
+        {
+        memset(m_receivedBuffer, 0, MESSAGE_MAX_LENGTH+1);
+    }
 
     void Car2PCSerial::sendMessage(uint8_t length, char* message) {
         if (length <= MESSAGE_MAX_LENGTH) {
@@ -144,7 +146,7 @@ namespace Car2PCSerial {
                     }
                     else {
                         //unknown
-                        m_callbacks->PrintString("Unknown Command", 0);
+                        m_callbacks->PrintString("Unknown Command", 15);
                         m_callbacks->PrintString(m_receivedBuffer, m_frameSize);
                     }
 
