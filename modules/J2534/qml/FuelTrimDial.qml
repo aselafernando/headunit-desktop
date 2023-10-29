@@ -20,7 +20,7 @@ Item  {
         transform: Rotation  {
             id: needleRotation
             origin.x: 5; origin.y: 65
-            angle: Math.min(Math.max(-130, root.value*2.6), 133)
+            angle: Math.min(Math.max(-130, root.value*130/6), 133)
 
             Behavior on angle  {
                 SpringAnimation  {
