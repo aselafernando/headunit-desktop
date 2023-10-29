@@ -6,7 +6,7 @@
 Car2PCPlugin::Car2PCPlugin(QObject *parent) : QObject (parent), m_serial(this), m_serialProtocol(), m_serialRetryTimer(this)
 {
     m_serialProtocol.setCallbacks(this);
-    m_pluginSettings.eventListeners = QStringList() << "MediaInput::position" << "PhoneBluetooth::position" << "PhoneBluetooth::trackNumber";
+    m_pluginSettings.eventListeners = QStringList() << "MediaInput::position" << "PhoneBluetooth::mediaPosition" << "PhoneBluetooth::mediaTrack";
     m_text = m_settings.value("text").toString() == "true";
 }
 
@@ -28,17 +28,22 @@ void Car2PCPlugin::eventMessage(QString id, QVariant message) {
     //Track Name: NMTest Name
     //Track Time: TMHHMMSS
     //Track Num : TR000
-    if (id == "PhoneBluetooth::position" || id == "MediaInput::position") {
+    if (id == "PhoneBluetooth::mediaPosition" || id == "MediaInput::position") {
         uint32_t seconds = (uint32_t)floor(message.toUInt() / 1000.0);
         uint32_t minutes = seconds / 60;
         uint32_t hours = minutes / 60;
         char timestamp[14]; //even though this only needs to be 9 g++ complains if less than 14
         snprintf(timestamp, 14, "TM%02d%02d%02d", hours, minutes % 60, seconds % 60);
         m_serialProtocol.sendMessage(8, timestamp);
-    } else if (id == "PhoneBluetooth::trackNumber") {
-        char track[6];
-        snprintf(track, 6, "TR%03d", message.toUInt());
-        m_serialProtocol.sendMessage(5, track);
+    } else if (id == "PhoneBluetooth::mediaTrack") {
+        char buffer[255];
+        QVariantMap track = message.toMap();
+        snprintf(buffer, 6, "TR%03d", track["number"].toUInt());
+        m_serialProtocol.sendMessage(5, buffer);
+        if(m_text) {
+            int len = snprintf(buffer, 255, "NM%s - %s", track["artist"].toString(), track["title"].toString());
+            if(len > 0) m_serialProtocol.sendMessage(len, buffer);
+        }
     }
 }
 
