@@ -33,16 +33,16 @@ void Car2PCPlugin::eventMessage(QString id, QVariant message) {
         uint32_t minutes = seconds / 60;
         uint32_t hours = minutes / 60;
         char timestamp[14]; //even though this only needs to be 9 g++ complains if less than 14
-        snprintf(timestamp, 14, "TM%02d%02d%02d", hours, minutes % 60, seconds % 60);
+        snprintf(timestamp, 14, "TM%02d%02d%02d", hours, minutes, seconds);
         m_serialProtocol.sendMessage(8, timestamp);
     } else if (id == "PhoneBluetooth::mediaTrack") {
-        char buffer[255];
+        char buffer[6];
         QVariantMap track = message.toMap();
         snprintf(buffer, 6, "TR%03d", track["number"].toUInt());
         m_serialProtocol.sendMessage(5, buffer);
         if(m_text) {
-            int len = snprintf(buffer, 255, "NM%s - %s", track["artist"].toString(), track["title"].toString());
-            if(len > 0) m_serialProtocol.sendMessage(len, buffer);
+            QString trackName = QString("NM%1 - %2").arg(track["artist"].toString()).arg(track["title"].toString());
+            m_serialProtocol.sendMessage(trackName.length() > 254 ? 254 : trackName.length(), trackName.toLocal8Bit().data());
         }
     }
 }
