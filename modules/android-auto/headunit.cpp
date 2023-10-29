@@ -525,14 +525,22 @@ void Headunit::setNigthmode(bool night) {
 }
 
 void Headunit::setVSS(double speedms) {
+    int32_t restriction = HU::SensorEvent_DrivingStatus::DRIVE_STATUS_UNRESTRICTED;
     //Speed must be in m/s
     if(huStarted) {
-        int32_t speed = (int32_t)qRound(speedms);
+        int32_t speed = (int32_t)qRound(speedms * 1E3);
         if(this->m_gear == HU::SensorEvent_GearData_GEAR::SensorEvent_GearData_GEAR_GEAR_REVERSE && speed > 0) {
             speed = speed * -1; //AA expects speeds in reverse to be negative
         }
+        //At speed greater than 0.5m/s we restrict to avoid driver distraction
+        if(speed >= 500 || speed <= -500) {
+            restriction = HU::SensorEvent_DrivingStatus::DRIVE_STATUS_NO_CONFIG |
+                          HU::SensorEvent_DrivingStatus::DRIVE_STATUS_NO_KEYBOARD_INPUT |
+                          HU::SensorEvent_DrivingStatus::DRIVE_STATUS_NO_VIDEO;
+        }
         HU::SensorEvent sensorEvent;
         sensorEvent.add_speed_data()->set_speed_e6(speed);
+        sensorEvent.add_driving_status()->set_status(restriction);
         g_hu->queueCommand([sensorEvent](AndroidAuto::IHUConnectionThreadInterface& s)
         {
             s.sendEncodedMessage(0, AndroidAuto::SensorChannel, AndroidAuto::HU_SENSOR_CHANNEL_MESSAGE::SensorEvent, sensorEvent);
@@ -541,11 +549,7 @@ void Headunit::setVSS(double speedms) {
 }
 
 void Headunit::setGear(int gear) {
-    int32_t restriction = HU::SensorEvent_DrivingStatus::DRIVE_STATUS_UNRESTRICTED;
-    
     if(huStarted) {
-        if(gear > 0 && gear < 255)
-            restriction = HU::SensorEvent_DrivingStatus::DRIVE_STATUS_NO_CONFIG | HU::SensorEvent_DrivingStatus::DRIVE_STATUS_NO_KEYBOARD_INPUT | HU::SensorEvent_DrivingStatus::DRIVE_STATUS_NO_VIDEO;
         switch(gear) {
             case 0: //N
                 this->m_gear = HU::SensorEvent_GearData_GEAR::SensorEvent_GearData_GEAR_GEAR_NEUTRAL;
@@ -580,7 +584,6 @@ void Headunit::setGear(int gear) {
         }
         HU::SensorEvent sensorEvent;
         sensorEvent.add_gear_data()->set_gear(this->m_gear);
-        sensorEvent.add_driving_status()->set_status(restriction);
         g_hu->queueCommand([sensorEvent](AndroidAuto::IHUConnectionThreadInterface& s)
         {
             s.sendEncodedMessage(0, AndroidAuto::SensorChannel, AndroidAuto::HU_SENSOR_CHANNEL_MESSAGE::SensorEvent, sensorEvent);
