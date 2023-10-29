@@ -73,10 +73,7 @@ void Car2PCPlugin::serialConnect(){
     m_serial.setPortName(m_settings.value("serial_port").toString());
     m_serial.setBaudRate(CAR2PC_BAUD);
 
-    if (!m_serial.open(QIODevice::ReadWrite)) {
-        qDebug() << QObject::tr("Car2PC: Failed to open port %1, error: %2")
-                        .arg(m_settings.value("port").toString(), m_serial.errorString());
-    } else {
+    if (m_serial.open(QIODevice::ReadWrite)) {
         qDebug() << "Car2PC: Connected to Serial : " << m_serial.portName() << m_serial.baudRate();
         m_connected = true;
         emit connectedUpdated();
@@ -106,13 +103,13 @@ void Car2PCPlugin::handleSerialError(QSerialPort::SerialPortError error){
         case QSerialPort::DeviceNotFoundError:
         case QSerialPort::PermissionError:
         case QSerialPort::TimeoutError:
+            qDebug() << "Car2PC: Error : " << m_settings.value("port").toString() << " - " << m_serial.errorString();
             if(m_serial.isOpen()){
                 m_serial.close();
             }
             m_serial.clearError();
             m_connected = false;
             emit connectedUpdated();
-            qDebug() << "Car2PC: Error : " << error;
             m_serialRetryTimer.start(2000);
             break;
         default:
