@@ -32,13 +32,13 @@ void Car2PCPlugin::eventMessage(QString id, QVariant message) {
         uint32_t seconds = (uint32_t)floor(message.toUInt() / 1000.0);
         uint32_t minutes = seconds / 60;
         uint32_t hours = minutes / 60;
-        char timestamp[14]; //even though this only needs to be 9 g++ complains if less than 14
-        snprintf(timestamp, 14, "TM%02d%02d%02d", hours, minutes, seconds);
+        char timestamp[9];
+        snprintf(timestamp, 9, "TM%02d%02d%02d", hours % 99, minutes % 60, seconds % 60);
         m_serialProtocol.sendMessage(8, timestamp);
     } else if (id == "MediaInput::track") {
         char buffer[6];
         QVariantMap track = message.toMap();
-        snprintf(buffer, 6, "TR%03d", track["number"].toUInt());
+        snprintf(buffer, 6, "TR%03d", track["number"].toUInt() % 999);
         m_serialProtocol.sendMessage(5, buffer);
         if(m_text) {
             QString trackName = QString("NM%1 - %2").arg(track["artist"].toString()).arg(track["title"].toString());
