@@ -380,15 +380,23 @@ void TelephonyManager::actionMessage(QString id, QVariant message) {
 }
 
 void TelephonyManager::showOverlay(){
-    QVariantMap map;
-    map["source"] = "qrc:/PhoneBluetooth/CallNotification.qml";
-
-    emit action("GUI::OpenOverlay", map);
+    if(m_androidAutoConnected) {
+        emit action("GUI::changePageIndex", 0);
+    } else {
+        QVariantMap map;
+        map["source"] = "qrc:/PhoneBluetooth/CallNotification.qml";
+        emit action("GUI::OpenOverlay", map);
+    }
 }
 
 void TelephonyManager::hideOverlay() {
-    emit action("GUI::CloseOverlay", QVariant());
+    if(m_androidAutoConnected) {
+        emit action("GUI::changePagePrevIndex", 0);
+    } else {
+        emit action("GUI::CloseOverlay", QVariant());
+    }
 }
+
 void TelephonyManager::pullCallHistory() {
     getPhonebooks(m_activeDevice->address(), true);
 }
