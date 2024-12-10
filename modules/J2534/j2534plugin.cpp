@@ -544,7 +544,7 @@ void J2534Worker::getData()
         } else {
             emit iat((int)requestPID(0x19, 0x01, 0x0F));
         }
-
+        QThread::msleep(250);
         i++;
         if(i > 3000) break; //force disconnection due to DLL memory leaks in some closed source windows DLLs
     }
