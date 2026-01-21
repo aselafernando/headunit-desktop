@@ -9,8 +9,8 @@ Window {
     id: window
     visible: true
     title: qsTr("viktorgino's HeadUnit")
-    width: 800
-    height: 480
+    width: 1024
+    height: 600
 
     required property HUDLoader appLoader
 
@@ -21,7 +21,7 @@ Window {
 
     Image {
         anchors.fill: parent
-        source:"qrc:/boot-logo-800x480.png"
+        source:"qrc:/boot-logo-1024x600.png"
         fillMode: Image.PreserveAspectFit
     }
 
