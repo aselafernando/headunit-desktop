@@ -65,7 +65,7 @@ ThemeRoot {
             z: 20
             width: 100
             opacity: 0
-            font.pointSize: 15
+            font.pointSize: 25
             font.hintingPreference: Font.PreferVerticalHinting
             horizontalAlignment: Text.AlignHCenter
         }
@@ -78,7 +78,7 @@ ThemeRoot {
             y: 220
             z: 20
             font.bold: false
-            font.pointSize: 20
+            font.pointSize: 25
             width: 100
             opacity: 0
             font.hintingPreference: Font.PreferVerticalHinting
@@ -125,7 +125,7 @@ ThemeRoot {
             z: 20
             width: 100
             opacity: 0
-            font.pointSize: 15
+            font.pointSize: 25
             font.hintingPreference: Font.PreferVerticalHinting
             horizontalAlignment: Text.AlignHCenter
         }
@@ -138,7 +138,7 @@ ThemeRoot {
             y: 220
             z: 20
             font.bold: false
-            font.pointSize: 20
+            font.pointSize: 25
             width: 100
             opacity: 0
             font.hintingPreference: Font.PreferVerticalHinting
@@ -188,7 +188,7 @@ ThemeRoot {
             z: 20
             width: 100
             opacity: 0
-            font.pointSize: 15
+            font.pointSize: 25
             font.hintingPreference: Font.PreferVerticalHinting
             horizontalAlignment: Text.AlignHCenter
         }
@@ -201,7 +201,7 @@ ThemeRoot {
             y: 220
             z: 20
             font.bold: false
-            font.pointSize: 20
+            font.pointSize: 25
             width: 100
             opacity: 0
             font.hintingPreference: Font.PreferVerticalHinting
@@ -250,7 +250,7 @@ ThemeRoot {
             z: 20
             width: 100
             opacity: 0
-            font.pointSize: 15
+            font.pointSize: 25
             font.hintingPreference: Font.PreferVerticalHinting
             horizontalAlignment: Text.AlignHCenter
         }
@@ -263,7 +263,7 @@ ThemeRoot {
             y: 220
             z: 20
             font.bold: false
-            font.pointSize: 20
+            font.pointSize: 25
             width: 100
             opacity: 0
             font.hintingPreference: Font.PreferVerticalHinting
@@ -273,3 +273,4 @@ ThemeRoot {
 
     
 }
+
