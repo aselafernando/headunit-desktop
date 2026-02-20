@@ -19,7 +19,7 @@ SOURCES += \
     headunit/hu/hu_tcp.cpp \
     headunit/hu/hu_usb.cpp \
     headunit/hu/hu_uti.cpp \
-    headunit/common/glib_utils.cpp \
+    glib_utils.cpp \
     headunit/hu/generated.x64/hu.pb.cc \
     qgstvideobuffer.cpp
 
@@ -28,7 +28,6 @@ RESOURCES += qml.qrc
 
 INCLUDEPATH +=$$PWD/headunit/hu
 INCLUDEPATH +=$$PWD/headunit/hu/generated.x64
-INCLUDEPATH +=$$PWD/headunit/common
 
 include("../../config.pri")
 
@@ -46,7 +45,7 @@ HEADERS += \
     headunit/hu/hu_usb.h \
     headunit/hu/hu_uti.h \
     headunit/hu/generated.x64/hu.pb.h \
-    headunit/common/glib_utils.h \
+    glib_utils.h \
     qgstvideobuffer.h
 
 DISTFILES += \
