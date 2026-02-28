@@ -1,12 +1,14 @@
-#ifndef ANDROIDAUTO_H
-#define ANDROIDAUTO_H
+#ifndef ANDROIDAUTOPLUGIN_H
+#define ANDROIDAUTOPLUGIN_H
+
+#include <headunit/includes/bluetooth/BluetoothServer.h>
+#include "headunitvideosource.h"
+#include <QDebug>
 
 #include <QObject>
 #include <QThreadPool>
-#include <QDebug>
-#include <plugininterface.h>
 #include <mediainterface.h>
-#include "headunit.h"
+#include <plugininterface.h>
 
 class AndroidAutoPlugin : public QObject, PluginInterface, public MediaInterface
 {
@@ -14,7 +16,8 @@ class AndroidAutoPlugin : public QObject, PluginInterface, public MediaInterface
     Q_PLUGIN_METADATA(IID "org.viktorgino.headunit.androidauto" FILE "config.json")
     Q_INTERFACES(PluginInterface)
 public:
-    explicit AndroidAutoPlugin(QObject *parent = nullptr);
+    explicit AndroidAutoPlugin(QObject* parent = nullptr);
+    ~AndroidAutoPlugin();
     QObject *getContextProperty() override;
     void init() override;
 
@@ -32,9 +35,11 @@ public slots:
     void eventMessage(QString id, QVariant message) override;
 private slots:
     void huStatusChanged();
+    void btDeviceConnected();
 
 private:
-    Headunit *headunit = nullptr;
+    HeadunitVideoSource m_headunit = nullptr;
+    BluetoothServer m_bluetoothServer;
 };
 
 #endif // ANDROIDAUTO_H

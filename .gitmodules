@@ -1,6 +1,7 @@
 [submodule "headunit"]
 	path = modules/android-auto/headunit
-	url = https://github.com/viktorgino/libheadunit.git
+	url = https://github.com/aselafernando/libheadunit.git
+        branch = add_wireless_playback
 [submodule "themes/default-theme"]
 	path = themes/default-theme
 	url = https://github.com/viktorgino/headunit-gui.git
