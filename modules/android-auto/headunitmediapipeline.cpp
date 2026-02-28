@@ -69,12 +69,8 @@ int HeadunitMediaPipeline::init() {
 
     aud_pipeline = gst_parse_launch("appsrc name=audsrc is-live=true block=false min-latency=0 max-latency=-1 do-timestamp=false format=3 ! "
                                     "audio/x-raw, signed=true, endianness=1234, depth=16, width=16, rate=48000, channels=2, format=S16LE ! "
-#ifdef RPI
-                                    "alsasink buffer-time=400000 sync=false"
-#else
                                     "pulsesink name=mediasink sync=true client-name=\"Android Auto Music\" "
                                     "stream-properties=\"props,media.name=AndroidAutoMusic,media.role=music\""
-#endif
                                     ,
                                     &error);
     if (error != NULL) {
@@ -89,13 +85,9 @@ int HeadunitMediaPipeline::init() {
 
     au1_pipeline = gst_parse_launch("appsrc name=au1src is-live=true block=false min-latency=0 max-latency=-1 do-timestamp=false format=3 ! "
                                     "audio/x-raw, signed=true, endianness=1234, depth=16, width=16, rate=16000, channels=1, format=S16LE  !"
-#ifdef RPI
-                                    "alsasink buffer-time=400000 sync=false"
-#else
                                     "volume volume=0.5 !"
                                     "pulsesink name=voicesink sync=true client-name=\"Android Auto Voice\""
                                     "stream-properties=\"props,media.name=AndroidAutoVoice,media.role=music\""
-#endif
                                     ,
                                     &error);
 
@@ -110,11 +102,7 @@ int HeadunitMediaPipeline::init() {
      */
 
     mic_pipeline = gst_parse_launch(
-#ifdef RPI
-        "alsasrc name=micsrc ! audioconvert ! "
-#else
         "pulsesrc name=micsrc client-name=\"Android Auto Voice\" ! audioconvert ! "
-#endif
         "queue ! "
         "appsink name=micsink emit-signals=true async=false caps=\"audio/x-raw, signed=true, endianness=1234, depth=16, width=16, channels=1, "
         "rate=16000\" blocksize=8192",
