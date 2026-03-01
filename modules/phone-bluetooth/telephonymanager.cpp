@@ -282,7 +282,8 @@ void TelephonyManager::onMediaStatus(BluezQt::MediaPlayer::Status status) {
     qCDebug(BLUEZ) << "Media player status: " << status;
     switch(status) {
         case BluezQt::MediaPlayer::Playing:
-            emit playbackStarted();
+            if(!m_androidAutoConnected)
+                emit playbackStarted();
             break;
         default:
             m_mediaTrackTimer.stop();
