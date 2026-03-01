@@ -55,6 +55,7 @@ private slots:
 private:
     AndroidAuto::IHUAnyThreadInterface* m_huThreadInterface = nullptr;
     HeadunitMediaDataHandlerInterface* m_mediaDataHandler = nullptr;
+    HU::SensorEvent_GearData_GEAR m_gear = HU::SensorEvent_GearData_GEAR::SensorEvent_GearData_GEAR_GEAR_NEUTRAL;
 
     static uint64_t get_cur_timestamp();
 };

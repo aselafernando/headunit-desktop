@@ -244,97 +244,27 @@ void HeadunitVideoSource::setVoiceVolume(uint8_t volume) {
     m_voicePipelineVolume = volume;
     // TODO: LINK to pipeline
 }
-void HeadunitVideoSource::setNigthmode(bool night) {
+
+void HeadunitVideoSource::setNightmode(bool night) {
     if (huStarted) {
-        HU::SensorEvent sensorEvent;
-        sensorEvent.add_night_mode()->set_is_night(night);
-        g_hu->queueCommand([sensorEvent](AndroidAuto::IHUConnectionThreadInterface& s) {
-            s.sendEncodedMessage(0, AndroidAuto::SensorChannel, AndroidAuto::SENSOR_CHANNEL_MESSAGE::SensorEvent, sensorEvent);
-        });
+        m_eventHandler.setNightMode(night);
     }
 }
 
 void HeadunitVideoSource::setVSS(double speedms) {
-    int32_t restriction = HU::SensorEvent_DrivingStatus::DRIVE_STATUS_UNRESTRICTED;
-    //Speed must be in m/s
-    if(huStarted) {
-        int32_t speed = (int32_t)qRound(speedms * 1E3);
-        if(this->m_gear == HU::SensorEvent_GearData_GEAR::SensorEvent_GearData_GEAR_GEAR_REVERSE && speed > 0) {
-            speed = speed * -1; //AA expects speeds in reverse to be negative
-        }
-        //At speed greater than 0.5m/s we restrict to avoid driver distraction
-        if(speed >= 500 || speed <= -500) {
-            restriction = HU::SensorEvent_DrivingStatus::DRIVE_STATUS_NO_CONFIG |
-                          HU::SensorEvent_DrivingStatus::DRIVE_STATUS_NO_KEYBOARD_INPUT |
-                          HU::SensorEvent_DrivingStatus::DRIVE_STATUS_NO_VIDEO;
-        }
-        HU::SensorEvent sensorEvent;
-        sensorEvent.add_speed_data()->set_speed_e6(speed);
-        sensorEvent.add_driving_status()->set_status(restriction);
-        g_hu->queueCommand([sensorEvent](AndroidAuto::IHUConnectionThreadInterface& s)
-        {
-            s.sendEncodedMessage(0, AndroidAuto::SensorChannel, AndroidAuto::SENSOR_CHANNEL_MESSAGE::SensorEvent, sensorEvent);
-        });
+    if (huStarted) {
+        m_eventHandler.setVSS(speedms);
     }
 }
 
 void HeadunitVideoSource::setGear(int gear) {
     if(huStarted) {
-        switch(gear) {
-            case 0: //N
-                this->m_gear = HU::SensorEvent_GearData_GEAR::SensorEvent_GearData_GEAR_GEAR_NEUTRAL;
-                break;
-            case 1: //1st
-                this->m_gear = HU::SensorEvent_GearData_GEAR::SensorEvent_GearData_GEAR_GEAR_FIRST;
-                break;
-            case 2: //2nd
-                this->m_gear = HU::SensorEvent_GearData_GEAR::SensorEvent_GearData_GEAR_GEAR_SECOND;
-                break;
-            case 3: //3rd
-                this->m_gear = HU::SensorEvent_GearData_GEAR::SensorEvent_GearData_GEAR_GEAR_THIRD;
-                break;
-            case 4: //4th
-                this->m_gear = HU::SensorEvent_GearData_GEAR::SensorEvent_GearData_GEAR_GEAR_FOURTH;
-                break;
-            case 5: //5th
-                this->m_gear = HU::SensorEvent_GearData_GEAR::SensorEvent_GearData_GEAR_GEAR_FIFTH;
-                break;
-            case 6: //6th
-                this->m_gear = HU::SensorEvent_GearData_GEAR::SensorEvent_GearData_GEAR_GEAR_SIXTH;
-                break;
-            case 254:
-                //Reverse
-                this->m_gear = HU::SensorEvent_GearData_GEAR::SensorEvent_GearData_GEAR_GEAR_REVERSE;
-                break;
-            case 255:
-                //Shifting
-                return;
-            default:
-                return;
-        }
-        HU::SensorEvent sensorEvent;
-        sensorEvent.add_gear_data()->set_gear(this->m_gear);
-        g_hu->queueCommand([sensorEvent](AndroidAuto::IHUConnectionThreadInterface& s)
-        {
-            s.sendEncodedMessage(0, AndroidAuto::SensorChannel, AndroidAuto::SENSOR_CHANNEL_MESSAGE::SensorEvent, sensorEvent);
-        });
+        m_eventHandler.setGear(gear);
     }
 }
 
 void HeadunitVideoSource::setLocation(double latitude, double longitude, double track, double speed, double altitude, double eph) {
     if(huStarted) {
-        HU::SensorEvent sensorEvent;
-        HU::SensorEvent::LocationData* location = sensorEvent.add_location_data();
-        location->set_timestamp(get_cur_timestamp());
-        location->set_latitude(static_cast<int32_t>(latitude * 1E7));
-        location->set_longitude(static_cast<int32_t>(longitude * 1E7));
-        location->set_bearing(static_cast<int32_t>(track * 1E6));
-        location->set_speed(static_cast<int32_t>(speed * 1E3));
-        location->set_altitude(static_cast<int32_t>(altitude * 1E2));
-        location->set_accuracy(static_cast<uint32_t>(eph * 1E3));
-        g_hu->queueCommand([sensorEvent](AndroidAuto::IHUConnectionThreadInterface& s)
-        {
-            s.sendEncodedMessage(0, AndroidAuto::SensorChannel, AndroidAuto::SENSOR_CHANNEL_MESSAGE::SensorEvent, sensorEvent);
-        });
+        m_eventHandler.setLocation(latitude, longitude, track, speed, altitude, eph);
     }
 }

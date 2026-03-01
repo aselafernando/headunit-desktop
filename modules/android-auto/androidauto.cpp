@@ -33,7 +33,7 @@ void AndroidAutoPlugin::eventMessage(QString id, QVariant message){
         }
     } else if(id == "UsbConnectionListenerPlugin::UsbDeviceRemoved"){
     } else if(id == "SYSTEM::SetNightMode"){
-        m_headunit.setNigthmode(message.toBool());
+        m_headunit.setNightmode(message.toBool());
     } else if(id == "J2534::VSS") {
         double speedms = message.toInt() / 3.6;
         m_headunit.setVSS(speedms);

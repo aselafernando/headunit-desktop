@@ -52,7 +52,7 @@ public:
     void nextTrack();
     void setMediaVolume(uint8_t volume);
     void setVoiceVolume(uint8_t volume);
-    void setNigthmode(bool night);
+    void setNightmode(bool night);
     void setVSS(double speedms);
     void setGear(int gear);
     void setLocation(double latitude, double longitude, double track, double speed, double altitude, double eph);
@@ -96,14 +96,12 @@ private:
     hu_status m_status = NO_CONNECTION;
 
     void touchEvent(HU::TouchInfo::TOUCH_ACTION action, QPoint *point);
-    uint64_t get_cur_timestamp();
 
     QAbstractVideoSurface *m_surface = nullptr;
     QVideoSurfaceFormat m_format;
     bool m_videoStarted = false;
     HeadunitMediaPipeline m_mediaPipeline;
 
-    HU::SensorEvent_GearData_GEAR m_gear = HU::SensorEvent_GearData_GEAR::SensorEvent_GearData_GEAR_GEAR_NEUTRAL;
 };
 
 #endif  // HEADUNITPLAYER_H

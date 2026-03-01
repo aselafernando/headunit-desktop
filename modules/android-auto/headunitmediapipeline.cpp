@@ -167,6 +167,14 @@ void HeadunitMediaPipeline::handleMicrophoneData(const uint64_t timestamp, const
     m_microphoneDataHandler->handleMicrophoneData(timestamp, bufferData, bufferSize);
 }
 
+uint64_t HeadunitMediaPipeline::get_cur_timestamp() {
+    struct timespec tp;
+    /* Fetch the time stamp */
+    clock_gettime(CLOCK_REALTIME, &tp);
+
+    return tp.tv_sec * 1000000 + tp.tv_nsec / 1000;
+}
+
 GstFlowReturn HeadunitMediaPipeline::newMicrophoneSample(GstElement* appsink, HeadunitMediaPipeline* _this) {
     GstSample* gstsample;
     GstBuffer* gstbuf;
