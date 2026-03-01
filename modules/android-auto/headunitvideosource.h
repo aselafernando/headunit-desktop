@@ -52,7 +52,7 @@ public:
     void nextTrack();
     void setMediaVolume(uint8_t volume);
     void setVoiceVolume(uint8_t volume);
-    void setNightmode(bool night);
+    void setNightMode(bool night);
     void setVSS(double speedms);
     void setGear(int gear);
     void setLocation(double latitude, double longitude, double track, double speed, double altitude, double eph);

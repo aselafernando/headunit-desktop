@@ -267,7 +267,7 @@ void HeadunitEventHandler::touchEvent(HU::TouchInfo::TOUCH_ACTION action, const 
     });
 }
 
-void HeadunitEventHandler::setNightmode(bool night) {
+void HeadunitEventHandler::setNightMode(bool night) {
     if (m_huThreadInterface == nullptr) {
         qWarning() << "Headunit thread interface not set!";
         return;

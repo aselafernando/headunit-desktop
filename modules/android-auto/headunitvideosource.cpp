@@ -245,7 +245,7 @@ void HeadunitVideoSource::setVoiceVolume(uint8_t volume) {
     // TODO: LINK to pipeline
 }
 
-void HeadunitVideoSource::setNightmode(bool night) {
+void HeadunitVideoSource::setNightMode(bool night) {
     if (huStarted) {
         m_eventHandler.setNightMode(night);
     }

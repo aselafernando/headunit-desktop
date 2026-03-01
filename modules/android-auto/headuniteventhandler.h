@@ -36,7 +36,7 @@ public:
     void nextTrack();
     void touchEvent(HU::TouchInfo::TOUCH_ACTION action, const QPoint& point);
     void setLocation(double latitude, double longitude, double track, double speed, double altitude, double eph);
-    void setNightmode(bool night);
+    void setNightMode(bool night);
     void setVSS(double speedms);
     void setGear(int gear);
 
