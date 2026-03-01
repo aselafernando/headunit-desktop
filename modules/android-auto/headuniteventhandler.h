@@ -35,6 +35,10 @@ public:
     void prevTrack();
     void nextTrack();
     void touchEvent(HU::TouchInfo::TOUCH_ACTION action, const QPoint& point);
+    void setLocation(double latitude, double longitude, double track, double speed, double altitude, double eph);
+    void setNightmode(bool night);
+    void setVSS(double speedms);
+    void setGear(int gear);
 
     void handleMicrophoneData(uint64_t timestamp, const unsigned char* bufferData, int bufferSize) override;
 
