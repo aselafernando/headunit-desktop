@@ -14,6 +14,9 @@ TelephonyManager::TelephonyManager(QObject *parent) : QObject(parent),
 
     m_pluginSettings.eventListeners = QStringList() << "AndroidAuto::connected";
 
+    reconnectTimer.setSingleShot(true);
+    connect(&reconnectTimer, &QTimer::timeout, this, &TelephonyManager::connectToNextDevice);
+
     BluezQt::InitManagerJob *job = m_bluez_manager.init();
     job->start();
     connect(job, &BluezQt::InitManagerJob::result, this, &TelephonyManager::initBluez);
@@ -347,6 +350,10 @@ void TelephonyManager::deviceConnectionChanged(bool connected){
         qCDebug(BLUEZ) << "Device disconnected : " << device->name();
         if(m_activeDevice == device){
             setBluezDevice(nullptr);
+            qCDebug(BLUEZ) << "Trying again : " << device->name();
+            BluezQt::PendingCall * connectCall = device->connectToDevice();
+            connectCall->setUserData(device->ubi());
+            connect(connectCall, &BluezQt::PendingCall::finished, this, &TelephonyManager::connectToDeviceCallback);
         }
     }
 }
@@ -378,12 +385,18 @@ void TelephonyManager::connectToNextDevice(){
             }
         }
     }
+
     m_previouslyTriedDevice = device;
+
     if(device){
         qCDebug(BLUEZ)  << "Connecting to : " << device->name();
         BluezQt::PendingCall * connectCall = device->connectToDevice();
         connectCall->setUserData(device->ubi());
         connect(connectCall, &BluezQt::PendingCall::finished, this, &TelephonyManager::connectToDeviceCallback);
+    } else {
+        if(activeDeviceFound) {
+            reconnectTimer.start(10000);
+        }
     }
 }
 
@@ -458,15 +471,23 @@ void TelephonyManager::actionMessage(QString id, QVariant message) {
 }
 
 void TelephonyManager::showOverlay(){
-    QVariantMap map;
-    map["source"] = "qrc:/PhoneBluetooth/CallNotification.qml";
-
-    emit action("GUI::OpenOverlay", map);
+    if(m_androidAutoConnected) {
+        emit action("GUI::changePageIndex", 0);
+    } else {
+        QVariantMap map;
+        map["source"] = "qrc:/PhoneBluetooth/CallNotification.qml";
+        emit action("GUI::OpenOverlay", map);
+    }
 }
 
 void TelephonyManager::hideOverlay() {
-    emit action("GUI::CloseOverlay", QVariant());
+    if(m_androidAutoConnected) {
+        emit action("GUI::changePagePrevIndex", 0);
+    } else {
+        emit action("GUI::CloseOverlay", QVariant());
+    }
 }
+
 void TelephonyManager::pullCallHistory() {
     getPhonebooks(m_activeDevice->address(), true);
 }

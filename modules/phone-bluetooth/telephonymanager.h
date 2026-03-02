@@ -28,6 +28,7 @@
 #include <QLoggingCategory>
 #include <QFileSystemWatcher>
 
+#include <QTimer>
 
 #include "ofonomanager.h"
 #include "bluezagent.h"
@@ -159,6 +160,7 @@ private:
     void updateAdapters();
     void connectToNextDevice();
 
+    QTimer reconnectTimer;
     OfonoManager m_ofonoManagerClass;
     PhonebookModel m_phonebookModel;
     PhonebookModel m_callHistoryModel;
