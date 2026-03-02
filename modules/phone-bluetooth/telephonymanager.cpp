@@ -351,6 +351,7 @@ void TelephonyManager::deviceConnectionChanged(bool connected){
         if(m_activeDevice == device){
             setBluezDevice(nullptr);
             qCDebug(BLUEZ) << "Trying again : " << device->name();
+            m_previouslyTriedDevice = device;
             BluezQt::PendingCall * connectCall = device->connectToDevice();
             connectCall->setUserData(device->ubi());
             connect(connectCall, &BluezQt::PendingCall::finished, this, &TelephonyManager::connectToDeviceCallback);
@@ -407,9 +408,9 @@ void TelephonyManager::connectToDeviceCallback(BluezQt::PendingCall *call){
         qCDebug(BLUEZ)  << "Finished connecting to : " << device->name();
     } else {
         qCDebug(BLUEZ)  << "Error connecting to : " << device->name() << " : " << call->errorText();
-        //if(device == m_previouslyTriedDevice){
+        if(device == m_previouslyTriedDevice){
             connectToNextDevice();
-        //}
+        }
     }
 }
 
