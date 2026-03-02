@@ -407,9 +407,9 @@ void TelephonyManager::connectToDeviceCallback(BluezQt::PendingCall *call){
         qCDebug(BLUEZ)  << "Finished connecting to : " << device->name();
     } else {
         qCDebug(BLUEZ)  << "Error connecting to : " << device->name() << " : " << call->errorText();
-        if(device == m_previouslyTriedDevice){
+        //if(device == m_previouslyTriedDevice){
             connectToNextDevice();
-        }
+        //}
     }
 }
 
