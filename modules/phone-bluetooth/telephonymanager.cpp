@@ -312,18 +312,24 @@ void TelephonyManager::onMediaPlayer(BluezQt::MediaPlayerPtr mediaPlayer) {
         connect(mediaPlayer.get(), &BluezQt::MediaPlayer::positionChanged, this, &TelephonyManager::onMediaPosition);
         connect(mediaPlayer.get(), &BluezQt::MediaPlayer::trackChanged, this, &TelephonyManager::onMediaTrack);
         connect(mediaPlayer.get(), &BluezQt::MediaPlayer::statusChanged, this, &TelephonyManager::onMediaStatus);
+    } else {
+        disconnect(mediaPlayer.get(), &BluezQt::MediaPlayer::positionChanged, this, &TelephonyManager::onMediaPosition);
+        disconnect(mediaPlayer.get(), &BluezQt::MediaPlayer::trackChanged, this, &TelephonyManager::onMediaTrack);
+        disconnect(mediaPlayer.get(), &BluezQt::MediaPlayer::statusChanged, this, &TelephonyManager::onMediaStatus);
     }
 }
 
 void TelephonyManager::initMediaPlayer() {
     if(m_activeDevice) {
-        connect(m_activeDevice, &BluezQt::Device::mediaPlayerChanged, this, &TelephonyManager::onMediaPlayer);
         BluezQt::MediaPlayerPtr mediaPlayer = m_activeDevice->mediaPlayer();
         if(!mediaPlayer.isNull()) {
+            connect(m_activeDevice, &BluezQt::Device::mediaPlayerChanged, this, &TelephonyManager::onMediaPlayer);
             onMediaPlayer(mediaPlayer);
             onMediaTrack(mediaPlayer->track());
             onMediaPosition(mediaPlayer->position());
             onMediaStatus(mediaPlayer->status());
+        } else {
+            disconnect(m_activeDevice, &BluezQt::Device::mediaPlayerChanged, this, &TelephonyManager::onMediaPlayer);
         }
     }
 }
