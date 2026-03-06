@@ -63,6 +63,7 @@ void AndroidAutoPlugin::init(){
             ipAddr = addr.toString();
         }
     }
+
     BluetoothServer::Config serverConfig {
         address,
         this->m_settings["wlan_bssid"].toString(),
@@ -70,11 +71,17 @@ void AndroidAutoPlugin::init(){
         this->m_settings["wlan_password"].toString(),
         this->m_settings["network_address"].toString()
     };
-    m_bluetoothServer.start(serverConfig);
+
+    qDebug() << "AA Transport Type " << this->m_settings["transport_type"].toString();
+    
+    if (this->m_settings["transport_type"].toString().compare("network") == 0) {
+        qDebug() << "Startng BT RFCOMM server";
+        m_bluetoothServer.start(serverConfig);
+    }
 }
 
 void AndroidAutoPlugin::btDeviceConnected() {
-    m_headunit.startHU();
+    //m_headunit.startHU();
 }
 
 void AndroidAutoPlugin::start() {

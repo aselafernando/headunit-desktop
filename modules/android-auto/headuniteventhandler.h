@@ -16,6 +16,7 @@ public:
 
     int MediaPacket(AndroidAuto::ServiceChannels chan, uint64_t timestamp, const byte* buf, int len) override;
     void MediaSetupComplete(AndroidAuto::ServiceChannels chan) override;
+    void Connected() override;
     void DisconnectionOrError() override;
     void CustomizeOutputChannel(AndroidAuto::ServiceChannels chan, HU::ChannelDescriptor::OutputStreamChannel& streamChannel) override;
 
@@ -51,6 +52,7 @@ signals:
     void AudioFocusRequest(const AndroidAuto::ServiceChannels chan, const HU::AudioFocusRequest& request) override;
 
     void phoneDisconnected();
+    void phoneConnected();
 
 private slots:
     void onVideoFocusHappened(bool hasFocus, bool unrequested);

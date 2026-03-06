@@ -72,6 +72,11 @@ int HeadunitEventHandler::MediaStop(AndroidAuto::ServiceChannels chan) {
     return 0;
 }
 
+void HeadunitEventHandler::Connected() {
+    qDebug("Android Device connected, starting gstreamer");
+    emit phoneConnected();
+}
+
 void HeadunitEventHandler::DisconnectionOrError() {
     qDebug("Android Device disconnected, pausing gstreamer");
     emit phoneDisconnected();

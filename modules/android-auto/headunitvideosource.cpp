@@ -26,12 +26,16 @@ HeadunitVideoSource::HeadunitVideoSource(QObject* parent) : QObject(parent), m_e
 
     connect(&m_mediaPipeline, &HeadunitMediaPipeline::pipelineStatusChanged, this, &HeadunitVideoSource::onPipelineStatusChanged);
     connect(&m_mediaPipeline, &HeadunitMediaPipeline::receivedVideoFrame, this, &HeadunitVideoSource::videoFrameHandler);
-
+        
+    connect(&m_eventHandler, &HeadunitEventHandler::phoneConnected, this, &HeadunitVideoSource::onPhoneConnected);
     connect(&m_eventHandler, &HeadunitEventHandler::phoneDisconnected, this, &HeadunitVideoSource::onPhoneDisconnected);
 }
 
 HeadunitVideoSource::~HeadunitVideoSource() {
+    qDebug("HeadunitVideoSource::~HeadunitVideoSource()");
     if (headunit) {
+        qDebug("HeadunitVideoSurfaceItem::~Headunit() called HUServer::shutdown()");
+        headunit->shutdown();
         delete (headunit);
         qDebug("HeadunitVideoSurfaceItem::~Headunit() called hu_aap_shutdown()");
     }
@@ -78,14 +82,10 @@ void HeadunitVideoSource::startHU() {
     aa_settings["ts_width"] = std::to_string(m_videoWidth);
 
     headunit = new AndroidAuto::HUServer(m_eventHandler, aa_settings);
-    int ret = headunit->start();
-    if (ret >= 0) {
-        g_hu = &headunit->GetAnyThreadInterface();
-        m_eventHandler.setHUThreadInterface(g_hu);
+    g_hu = &headunit->GetAnyThreadInterface();
+    m_eventHandler.setHUThreadInterface(g_hu);
 
-        huStarted = true;
-        setStatus(HeadunitVideoSource::VIDEO_WAITING);
-    }
+    headunit->start();
 }
 
 void HeadunitVideoSource::setVideoSurface(QAbstractVideoSurface* surface) {
@@ -126,6 +126,11 @@ void HeadunitVideoSource::onPipelineStatusChanged(const Headunit::Pipeline& pipe
         default:
             break;
     }
+}
+
+void HeadunitVideoSource::onPhoneConnected() {
+    huStarted = true;
+    setStatus(HeadunitVideoSource::VIDEO_WAITING);
 }
 
 void HeadunitVideoSource::onPhoneDisconnected() {

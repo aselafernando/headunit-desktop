@@ -82,6 +82,7 @@ public slots:
 
     void videoFrameHandler(const QVideoFrame &frame);
     void onPhoneDisconnected();
+    void onPhoneConnected();
     void onPipelineStatusChanged(const Headunit::Pipeline &pipeline, const Headunit::PipelineStatus &status);
 
 private:
