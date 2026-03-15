@@ -50,6 +50,7 @@ private:
     PluginList * m_pluginList;
 
     PluginObject *m_themeSettings;
+    PluginObject *m_settingsMenu;
 
     QQmlPropertyMap m_colorsMap;
     QQmlPropertyMap m_sizesMap;
