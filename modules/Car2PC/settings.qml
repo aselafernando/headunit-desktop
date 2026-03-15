@@ -1,4 +1,4 @@
-import QtQuick 2.9
+import QtQuick
 import QtQuick.Controls 2.2
 import HUDTheme 1.0
 import HUDSettingsPage 1.0

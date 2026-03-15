@@ -1,4 +1,4 @@
-import QtQuick 2.11
+import QtQuick
 
 import HUDTheme 1.0
 Item {

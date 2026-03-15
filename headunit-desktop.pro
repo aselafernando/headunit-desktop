@@ -9,9 +9,9 @@ SUBDIRS = \
 #          modules/phone-bluetooth \
 #          modules/android-auto \
 #          modules/media-player \
-#          modules/Car2PC \
+          modules/Car2PC \
 #          modules/J2534 \
-#          modules/gpsd \
+          modules/gpsd \
 #          modules/i2c-light-sensor \
 #          modules/reversing-camera \
 #          modules/usbconnectionlistener \

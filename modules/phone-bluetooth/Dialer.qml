@@ -1,4 +1,4 @@
-import QtQuick 2.6
+import QtQuick
 import QtQuick.Controls 2.0
 import QtQuick.Layouts 1.3
 
@@ -19,7 +19,7 @@ Item {
         anchors.top: parent.top
         color: "#ffffff"
 //        placeholderTextColor : "#cecece"
-        validator: RegExpValidator { regExp :/[+]?[0-9#*]*/}
+        validator: RegularExpressionValidator { regularExpression :/[+]?[0-9#*]*/}
 
         background: Rectangle {
             height: 2

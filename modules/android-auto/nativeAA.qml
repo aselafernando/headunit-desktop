@@ -1,4 +1,4 @@
-import QtQuick 2.0
+import QtQuick
 import Qt.labs.settings 1.0
 import QtMultimedia 5.11
 import QtQml 2.11
