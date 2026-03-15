@@ -4,7 +4,7 @@
         branch = add_wireless_playback
 [submodule "themes/default-theme"]
 	path = themes/default-theme
-	url = https://github.com/viktorgino/headunit-gui.git
+	url = https://github.com/aselafernando/headunit-gui.git
 [submodule "welle.io"]
 	path = modules/welle-io/welle.io
 	url = https://github.com/viktorgino/welle.io

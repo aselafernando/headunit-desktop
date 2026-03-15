@@ -60,7 +60,7 @@ int main(int argc, char *argv[])
     bool whitelist = parser.isSet(pluginsOption);
     QStringList pluginWhitelist;
     if (whitelist) {
-        pluginWhitelist = p.split(" ",QString::SkipEmptyParts);
+        pluginWhitelist = p.split(" ",Qt::SkipEmptyParts);
     }
 
     bool lazyLoading = parser.isSet(lazyLoadingOption);
