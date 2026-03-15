@@ -12,7 +12,7 @@ SUBDIRS = \
           modules/Car2PC \
 #          modules/J2534 \
           modules/gpsd \
-#          modules/i2c-light-sensor \
+          modules/i2c-light-sensor \
 #          modules/reversing-camera \
 #          modules/usbconnectionlistener \
 #          modules/welle-io \

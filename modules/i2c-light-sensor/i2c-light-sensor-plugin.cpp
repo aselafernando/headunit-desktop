@@ -96,7 +96,7 @@ void I2CLightSensorPlugin::loadSensorSettings(QString fileName) {
     m_sensorSettings.clear();
 
     for (auto it = json.constBegin(); it != json.constEnd(); it++) {
-        m_sensorSettings.insert(it.key(), it.value());
+        m_sensorSettings.insert(it.key(), it.value().toVariant());
     }
 
     emit sensorSettingsUpdated();
