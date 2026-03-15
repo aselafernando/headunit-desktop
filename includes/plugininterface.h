@@ -33,8 +33,8 @@ public:
         return &m_pluginSettings;
     }
 public slots:
-    virtual void eventMessage(QString id, QVariant message) {};
-    virtual void actionMessage(QString id, QVariant message) {};
+    virtual void eventMessage(__attribute__((unused)) QString id, __attribute__((unused)) QVariant message) {};
+    virtual void actionMessage(__attribute__((unused)) QString id, __attribute__((unused)) QVariant message) {};
 protected:
     PluginSettings m_pluginSettings;
     QQmlPropertyMap m_settings;

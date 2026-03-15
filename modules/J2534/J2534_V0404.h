@@ -1,7 +1,7 @@
 #ifndef J2534_V0404_H
 #define J2534_V0404_H
 
-#pragma pack(1)
+//#pragma pack(1)
 
 #include <stdint.h>
 

@@ -14,10 +14,10 @@ public:
     virtual void stop() = 0;
     virtual void prevTrack() = 0;
     virtual void nextTrack() = 0;
-    virtual void setMediaVolume(uint8_t volume) {};
-    virtual void setVoiceVolume(uint8_t volume) {};
-    virtual void mediaPositionChanged(quint32 position) {};
-    virtual void trackChanged(QVariantMap track) {};
+    virtual void setMediaVolume(__attribute__((unused)) uint8_t volume) {};
+    virtual void setVoiceVolume(__attribute__((unused)) uint8_t volume) {};
+    virtual void mediaPositionChanged(__attribute__((unused)) quint32 position) {};
+    virtual void trackChanged(__attribute__((unused)) QVariantMap track) {};
     virtual void playbackStarted() = 0;
 
     MediaInterfaceSettings getSettings() {

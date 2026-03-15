@@ -10,11 +10,11 @@ SUBDIRS = \
 #          modules/android-auto \
 #          modules/media-player \
           modules/Car2PC \
-#          modules/J2534 \
+          modules/J2534 \
           modules/gpsd \
           modules/i2c-light-sensor \
 #          modules/reversing-camera \
-#          modules/usbconnectionlistener \
+          modules/usbconnectionlistener \
 #          modules/welle-io \
 #          modules/navit \
 #          modules/fm-radio \

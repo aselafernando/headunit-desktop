@@ -9,19 +9,26 @@ bool PluginListProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex &so
     QModelIndex index0 = sourceModel()->index(sourceRow, 0, sourceParent);
 
     switch (m_type) {
-    case PluginsList:
-        return true;
-    case MenuItemsList:
-        return !sourceModel()->data(index0,PluginListModel::QmlSourceRole).toString().isEmpty();
-    case SettingMenuList:
-        return sourceModel()->data(index0,PluginListModel::SettingsMenuRole).toMap().size() > 0;
-    case BottomBarItemsList:
-        return sourceModel()->data(index0,PluginListModel::BottomBarItemsRole).toList().size() > 0;
+        case PluginsList:
+            return true;
+        case MenuItemsList:
+            return !sourceModel()->data(index0,PluginListModel::QmlSourceRole).toString().isEmpty();
+        case SettingMenuList:
+            return sourceModel()->data(index0,PluginListModel::SettingsMenuRole).toMap().size() > 0;
+        case BottomBarItemsList:
+            return sourceModel()->data(index0,PluginListModel::BottomBarItemsRole).toList().size() > 0;
     }
+    return false;
 }
+
 void PluginListProxyModel::setPlugins(PluginList *plugins) {
     m_listModel.setPlugins(plugins);
 }
+
+PluginList* PluginListProxyModel::getPlugins() {
+    return m_listModel.getPlugins();
+}
+
 void PluginListProxyModel::setType(QString type) {
     if(type == "") {
         m_type = PluginsList;
@@ -37,6 +44,20 @@ void PluginListProxyModel::setType(QString type) {
         m_type = BottomBarItemsList;
     }
     invalidateFilter();
+}
+
+QString PluginListProxyModel::getType() {
+    if(m_type == PluginsList) {
+        return "plugin";
+    } else if(m_type == MenuItemsList) {
+        return "mainmenu";
+    } else if(m_type == SettingMenuList) {
+        return "settingsmenu";
+    } else if(m_type == BottomBarItemsList) {
+        return "bottombar";
+    } else {
+        return "";
+    }
 }
 
 PluginListModel::PluginListModel(QObject *parent) : QAbstractListModel(parent)
@@ -104,6 +125,7 @@ QVariant PluginListModel::data(const QModelIndex &index, int role) const {
         }
         return bottomBarItems;
     }
+    return plugin->getName();
 }
 
 void PluginListModel::onDataChanged() {
@@ -131,4 +153,8 @@ void PluginListModel::setPlugins(PluginList *plugins) {
             endInsertRows();
         });
     }
+}
+
+PluginList* PluginListModel::getPlugins() {
+    return m_plugins;
 }
