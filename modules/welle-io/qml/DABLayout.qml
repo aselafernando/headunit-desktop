@@ -3,7 +3,7 @@ import QtQuick.Controls 2.4
 import QtQuick.Layouts 1.0
 import QtMultimedia 5.7
 import Qt.labs.settings 1.0
-import QtGraphicalEffects 1.0
+import Qt5Compat.GraphicalEffects
 import QtQml 2.3
 
 import HUDTheme 1.0

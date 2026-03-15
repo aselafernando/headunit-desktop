@@ -1,10 +1,11 @@
 [submodule "headunit"]
 	path = modules/android-auto/headunit
 	url = https://github.com/aselafernando/libheadunit.git
-        branch = add_wireless_playback
+	branch = add_wireless_playback
 [submodule "themes/default-theme"]
 	path = themes/default-theme
 	url = https://github.com/aselafernando/headunit-gui.git
+	branch = qt6
 [submodule "welle.io"]
 	path = modules/welle-io/welle.io
 	url = https://github.com/aselafernando/welle.io
