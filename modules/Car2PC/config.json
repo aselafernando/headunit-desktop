@@ -1,0 +1,63 @@
+{
+  "name":"Car2PC",
+  "label": "Car2PC",
+  "icon": "qrc:/Car2PC/icons/icons8-radio-100.png",
+  "config": {
+    "type": "loader",
+    "source": "qrc:/Car2PC/settings.qml",
+    "settings": [
+      {
+        "name": "serial_port",
+        "type": "string",
+        "defaultValue": "/dev/car2pc"
+      },
+      {
+        "name": "text",
+        "type": "switch",
+        "textOff": "Off",
+        "textOn": "On",
+        "defaultValue": false
+      },
+      {
+        "name": "FF_ON",
+        "type": "string",
+        "defaultValue": ""
+      },
+      {
+        "name": "FF_OFF",
+        "type": "string",
+        "defaultValue": "GUI:ChangePageNext"
+      },
+      {
+        "name": "RW_ON",
+        "type": "string",
+        "defaultValue": ""
+      },
+      {
+        "name": "RW_OFF",
+        "type": "string",
+        "defaultValue": "GUI::ChangePagePrev"
+      },
+      {
+        "name": "SCAN_ON",
+        "type": "string",
+        "defaultValue": "PhoneBluetooth::VoiceRecognition"
+      },
+      {
+        "name": "SCAN_OFF",
+        "type": "string",
+        "defaultValue": "PhoneBluetooth::VoiceRecognition"
+      },
+      {
+        "name": "PREV_DISC",
+        "type": "string",
+        "defaultValue": "PhoneBluetooth::Hangup"
+      },
+      {
+        "name": "NEXT_DISC",
+        "type": "string",
+        "defaultValue": "PhoneBluetooth::Answer"
+      }
+    ]
+  }
+}

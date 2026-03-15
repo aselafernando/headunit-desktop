@@ -1,0 +1,22 @@
+<RCC>
+    <qresource prefix="/J2534">
+      <file>icons/icons8-rs-232-male-100.png</file>
+	  <file>qml/Settings.qml</file>
+	  <file>qml/Gauges.qml</file>
+	  <file>qml/SpeedDial.qml</file>
+	  <file>qml/RPMDial.qml</file>
+	  <file>qml/FuelTrimDial.qml</file>
+      <file>qml/TempDial.qml</file>
+	  <file>pics/speed_inactive.png</file>
+	  <file>pics/speed_active1.png</file>
+      <file>pics/iat_active.png</file>
+      <file>pics/ect_active.png</file>
+      <file>pics/stft_active.png</file>
+      <file>pics/gauge_inactive.png</file>
+      <file>pics/throttle_active.png</file>
+      <file>pics/rpm_inactive.png</file>
+      <file>pics/rpm_active.png</file>
+	  <file>pics/needle.png</file>
+	  <file>pics/overlay_active.png</file>
+    </qresource>
+</RCC>

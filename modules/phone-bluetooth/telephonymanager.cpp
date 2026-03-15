@@ -6,7 +6,7 @@ Q_LOGGING_CATEGORY(HEADUNIT, "telephony")
 Q_LOGGING_CATEGORY(OFONO, "telephony [qoFono]")
 Q_LOGGING_CATEGORY(BLUEZ, "telephony [BluezQt]")
 TelephonyManager::TelephonyManager(QObject *parent) : QObject(parent),
-      m_bluez_manager(this), m_obexManager(this), m_ofonoManagerClass(this), m_phonebookModel(this), m_callHistoryModel(this)
+      m_bluez_manager(this), m_obexManager(this), m_ofonoManagerClass(this), m_phonebookModel(this), m_callHistoryModel(this), m_mediaTrackTimer(this)
 {
     m_contactsFolder = QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation) + "/contacts";
 
@@ -14,15 +14,22 @@ TelephonyManager::TelephonyManager(QObject *parent) : QObject(parent),
 
     m_pluginSettings.eventListeners = QStringList() << "AndroidAuto::connected";
 
+    reconnectTimer.setSingleShot(true);
+    connect(&reconnectTimer, &QTimer::timeout, this, &TelephonyManager::connectToNextDevice);
+
     BluezQt::InitManagerJob *job = m_bluez_manager.init();
     job->start();
     connect(job, &BluezQt::InitManagerJob::result, this, &TelephonyManager::initBluez);
 
     qDBusRegisterMetaType<ObjectPathProperties>();
     qDBusRegisterMetaType<ObjectPathPropertiesList>();
+
+    connect(&m_mediaTrackTimer, &QTimer::timeout, this, &TelephonyManager::mediaTrackTimerElapsed);
+
 }
 TelephonyManager::~TelephonyManager(){
     //    delete m_activeDevice;
+    m_mediaTrackTimer.stop();
 }
 
 QObject *TelephonyManager::getContextProperty(){
@@ -224,6 +231,7 @@ void TelephonyManager::setBluezDevice(BluezQt::Device *device) {
         qCDebug(BLUEZ)  << "Device set : NULL";
     }
     m_activeDevice = device;
+    initMediaPlayer();
     emit activeDeviceChanged();
     emit pairedDevicesChanged();
 }
@@ -250,6 +258,82 @@ void TelephonyManager::deviceRemoved(BluezQt::DevicePtr device){
     emit pairedDevicesChanged();
 }
 
+void TelephonyManager::onMediaPosition(quint32 position) {
+    //TODO: Investigate why this only gets triggered sporadically or when the track changes or status changes
+    // Have implemented a 2Hz timer instead to get around this
+    m_mediaTrackPosition = position;
+    emit mediaPositionChanged(position);
+    m_mediaTrackGotPosition = true;
+    m_mediaTrackTimer.start(500);
+}
+
+void TelephonyManager::mediaTrackTimerElapsed() {
+    if(m_activeDevice) {
+        if(m_mediaTrackGotPosition) {
+            m_mediaTrackPosition += 500;
+            emit mediaPositionChanged(m_mediaTrackPosition);
+        }
+    } else {
+        m_mediaTrackPosition = 0;
+        m_mediaTrackGotPosition = false;
+        m_mediaTrackTimer.stop();
+        emit mediaPositionChanged(m_mediaTrackPosition);
+    }
+}
+
+void TelephonyManager::onMediaStatus(BluezQt::MediaPlayer::Status status) {
+    qCDebug(BLUEZ) << "Media player status: " << status;
+    switch(status) {
+        case BluezQt::MediaPlayer::Playing:
+            if(!m_androidAutoConnected)
+                emit playbackStarted();
+            break;
+        default:
+            m_mediaTrackTimer.stop();
+            m_mediaTrackGotPosition = false;
+            break;
+    }
+}
+
+void TelephonyManager::onMediaTrack(BluezQt::MediaPlayerTrack track) {
+    qCDebug(BLUEZ) << "Media player track: #" << track.trackNumber() << " | " << track.artist() << track.title();
+    m_mediaTrackGotPosition = false;
+
+    QVariantMap vTrack;
+    vTrack.insert("number",track.trackNumber());
+    vTrack.insert("artist",track.artist());
+    vTrack.insert("title",track.title());
+    vTrack.insert("duration",track.duration());
+    emit trackChanged(vTrack);
+}
+
+void TelephonyManager::onMediaPlayer(BluezQt::MediaPlayerPtr mediaPlayer) {
+    if(!mediaPlayer.isNull()) {
+        connect(mediaPlayer.get(), &BluezQt::MediaPlayer::positionChanged, this, &TelephonyManager::onMediaPosition);
+        connect(mediaPlayer.get(), &BluezQt::MediaPlayer::trackChanged, this, &TelephonyManager::onMediaTrack);
+        connect(mediaPlayer.get(), &BluezQt::MediaPlayer::statusChanged, this, &TelephonyManager::onMediaStatus);
+    } else {
+        disconnect(mediaPlayer.get(), &BluezQt::MediaPlayer::positionChanged, this, &TelephonyManager::onMediaPosition);
+        disconnect(mediaPlayer.get(), &BluezQt::MediaPlayer::trackChanged, this, &TelephonyManager::onMediaTrack);
+        disconnect(mediaPlayer.get(), &BluezQt::MediaPlayer::statusChanged, this, &TelephonyManager::onMediaStatus);
+    }
+}
+
+void TelephonyManager::initMediaPlayer() {
+    if(m_activeDevice) {
+        BluezQt::MediaPlayerPtr mediaPlayer = m_activeDevice->mediaPlayer();
+        if(!mediaPlayer.isNull()) {
+            connect(m_activeDevice, &BluezQt::Device::mediaPlayerChanged, this, &TelephonyManager::onMediaPlayer);
+            onMediaPlayer(mediaPlayer);
+            onMediaTrack(mediaPlayer->track());
+            onMediaPosition(mediaPlayer->position());
+            onMediaStatus(mediaPlayer->status());
+        } else {
+            disconnect(m_activeDevice, &BluezQt::Device::mediaPlayerChanged, this, &TelephonyManager::onMediaPlayer);
+        }
+    }
+}
+
 void TelephonyManager::deviceConnectionChanged(bool connected){
     BluezQt::Device* device = dynamic_cast<BluezQt::Device*>(QObject::sender());
     if(connected){
@@ -265,11 +349,18 @@ void TelephonyManager::deviceConnectionChanged(bool connected){
         }
         setBluezDevice(device);
 
+        initMediaPlayer();
         getPhonebooks(m_activeDevice->address());
+
     } else {
         qCDebug(BLUEZ) << "Device disconnected : " << device->name();
         if(m_activeDevice == device){
             setBluezDevice(nullptr);
+            qCDebug(BLUEZ) << "Trying again : " << device->name();
+            m_previouslyTriedDevice = device;
+            BluezQt::PendingCall * connectCall = device->connectToDevice();
+            connectCall->setUserData(device->ubi());
+            connect(connectCall, &BluezQt::PendingCall::finished, this, &TelephonyManager::connectToDeviceCallback);
         }
     }
 }
@@ -301,12 +392,18 @@ void TelephonyManager::connectToNextDevice(){
             }
         }
     }
+
     m_previouslyTriedDevice = device;
+
     if(device){
         qCDebug(BLUEZ)  << "Connecting to : " << device->name();
         BluezQt::PendingCall * connectCall = device->connectToDevice();
         connectCall->setUserData(device->ubi());
         connect(connectCall, &BluezQt::PendingCall::finished, this, &TelephonyManager::connectToDeviceCallback);
+    } else {
+        if(activeDeviceFound) {
+            reconnectTimer.start(10000);
+        }
     }
 }
 
@@ -358,6 +455,7 @@ void TelephonyManager::mediaPlaybackStarted() {
         emit playbackStarted();
     }
 }
+
 void TelephonyManager::eventMessage(QString id, QVariant message) {
     if(id == "AndroidAuto::connected"){
         m_androidAutoConnected = message.toBool();
@@ -380,15 +478,23 @@ void TelephonyManager::actionMessage(QString id, QVariant message) {
 }
 
 void TelephonyManager::showOverlay(){
-    QVariantMap map;
-    map["source"] = "qrc:/PhoneBluetooth/CallNotification.qml";
-
-    emit action("GUI::OpenOverlay", map);
+    if(m_androidAutoConnected) {
+        emit action("GUI::changePageIndex", 0);
+    } else {
+        QVariantMap map;
+        map["source"] = "qrc:/PhoneBluetooth/CallNotification.qml";
+        emit action("GUI::OpenOverlay", map);
+    }
 }
 
 void TelephonyManager::hideOverlay() {
-    emit action("GUI::CloseOverlay", QVariant());
+    if(m_androidAutoConnected) {
+        emit action("GUI::changePagePrevIndex", 0);
+    } else {
+        emit action("GUI::CloseOverlay", QVariant());
+    }
 }
+
 void TelephonyManager::pullCallHistory() {
     getPhonebooks(m_activeDevice->address(), true);
 }

@@ -28,6 +28,7 @@
 #include <QLoggingCategory>
 #include <QFileSystemWatcher>
 
+#include <QTimer>
 
 #include "ofonomanager.h"
 #include "bluezagent.h"
@@ -92,8 +93,9 @@ signals:
     void prevTrack() override;
     void nextTrack() override;
     void setMediaVolume(uint8_t volume) override;
-
     void playbackStarted() override;
+    void trackChanged(QVariantMap track) override;
+    void mediaPositionChanged(quint32 position) override;
 
 public slots:
     void enablePairing();
@@ -124,8 +126,19 @@ private slots:
 
     void contactsFolderChanged(const QString &path);
     void contactsChanged(const QString &path);
+
+    void onMediaPosition(quint32 position);
+    void onMediaTrack(BluezQt::MediaPlayerTrack track);
+    void onMediaPlayer(BluezQt::MediaPlayerPtr mediaPlayer);
+    void onMediaStatus(BluezQt::MediaPlayer::Status status);
+    void mediaTrackTimerElapsed();
+
 private:
     QString m_contactsFolder = "contacts/";
+    QTimer m_mediaTrackTimer;
+
+    quint32 m_mediaTrackPosition = 0;
+    bool m_mediaTrackGotPosition = false;
 
     BluezQt::Manager m_bluez_manager;
     BluezQt::Device* m_activeDevice = nullptr;
@@ -141,12 +154,13 @@ private:
     void setBluezDevice(BluezQt::Device* device);
     void initAdapter(BluezQt::AdapterPtr adapter);
     void pullPhonebook (QString path, QString type, QString output);
-
+    void initMediaPlayer();
     QVariantMap m_pairedDevices;
     QStringList m_adapters;
     void updateAdapters();
     void connectToNextDevice();
 
+    QTimer reconnectTimer;
     OfonoManager m_ofonoManagerClass;
     PhonebookModel m_phonebookModel;
     PhonebookModel m_callHistoryModel;
