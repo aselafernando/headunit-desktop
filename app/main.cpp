@@ -30,7 +30,8 @@ int main(int argc, char *argv[])
     QCoreApplication::setOrganizationName("viktorgino");
     QCoreApplication::setOrganizationDomain("https://github.com/viktorgino/headunit-desktop");
     QCoreApplication::setApplicationName("viktorgino's HeadUnit Desktop");
-    QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+    //Always enabled in Qt6
+    //QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 
     QApplication app(argc, argv);
     QLoggingCategory::setFilterRules("");

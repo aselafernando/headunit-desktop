@@ -28,7 +28,7 @@ void HVACPlugin::loadBottomBarSettings() {
     QStringList keys = m_hvacSettings.keys();
 
 
-    for(const QString &key : qAsConst(keys)){
+    for(const QString &key : std::as_const(keys)){
         if(zoneKeys.contains(key)){
             QVariantMap settingsItem = m_hvacSettings[key].toMap();
             QStringList enabledItems;
@@ -45,7 +45,7 @@ void HVACPlugin::loadBottomBarSettings() {
                 enabledItems << "SeatHeating";
             }
 
-            for(const QString &itemName : qAsConst(enabledItems)){
+            for(const QString &itemName : std::as_const(enabledItems)){
                 QVariantMap item;
                 QVariantMap properties;
                 bool inverted = key.contains("right", Qt::CaseInsensitive);

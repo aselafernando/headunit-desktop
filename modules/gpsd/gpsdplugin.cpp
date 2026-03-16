@@ -88,7 +88,7 @@ QObject *GPSDPlugin::getContextProperty(){
     return this;
 }
 
-void GPSDPlugin::eventMessage(QString id, QVariant message) {
+void GPSDPlugin::eventMessage(__attribute__((unused)) QString id, __attribute__((unused)) QVariant message) {
 }
 
 GPSDPlugin::~GPSDPlugin() {

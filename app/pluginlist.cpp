@@ -10,7 +10,7 @@ PluginList::~PluginList() {
     qDebug() << "Plugin list destroyed";
 }
 void PluginList::initPlugins()  {
-    for(PluginObject * plugin : qAsConst(m_plugins)){
+    for(PluginObject * plugin : std::as_const(m_plugins)){
         plugin->init();
     }
 }
@@ -30,7 +30,7 @@ void PluginList::addPlugin(PluginObject *plugin) {
 }
 
 bool PluginList::containsPlugin(QString pluginName){
-    for(PluginObject * plugin : qAsConst(m_plugins)){
+    for(PluginObject * plugin : std::as_const(m_plugins)){
         if(plugin->getName() == pluginName) {
             return true;
         }
@@ -39,7 +39,7 @@ bool PluginList::containsPlugin(QString pluginName){
 }
 
 PluginObject *PluginList::getPlugin(QString pluginName) {
-    for(PluginObject * plugin : qAsConst(m_plugins)){
+    for(PluginObject * plugin : std::as_const(m_plugins)){
         if(plugin->getName() == pluginName) {
             return plugin;
         }
@@ -49,7 +49,7 @@ PluginObject *PluginList::getPlugin(QString pluginName) {
 
 
 void PluginList::handleMessage(QString id, QVariant message){
-    for(PluginObject * plugin : qAsConst(m_plugins)){
+    for(PluginObject * plugin : std::as_const(m_plugins)){
         plugin->handleMessage(id, message);
     }
 }

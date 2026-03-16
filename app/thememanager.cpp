@@ -117,7 +117,7 @@ void ThemeManager::processThemeSettings(QJsonObject json){
 
     QJsonArray settingsJson = json.value("settings").toArray();
 
-    for(const QJsonValue &item : qAsConst(settingsJson)){
+    for(const QJsonValue &item : std::as_const(settingsJson)){
         if(!item.isObject()){
             qDebug() << "Item is not object";
             continue;
@@ -154,7 +154,7 @@ QVariantMap ThemeManager::loadSettingsMap(QString name, QString label, QString t
 QVariantList ThemeManager::themeSettingsToSettingsItems(QVariantList items, QString type){
     QVariantList settingsList;
     for(const QVariant &itemVariant : items){
-        if(itemVariant.type() != static_cast<QVariant::Type>(QMetaType::QVariantMap)){
+        if(itemVariant.metaType() != QMetaType(QMetaType::QVariantMap)){
             qCDebug(THEMEMANAGER) << " : Invalid settings type, skipping";
             continue;
         }
@@ -183,7 +183,7 @@ QVariantList &ThemeManager::getBottomBarItems() {
 }
 
 ThemeManager::~ThemeManager(){
-    for(SettingsLoader * settings : qAsConst(m_settings)){
+    for(SettingsLoader * settings : std::as_const(m_settings)){
         delete(settings);
     }
     qDebug() << "Theme manager dead";

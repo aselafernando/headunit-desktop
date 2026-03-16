@@ -56,8 +56,8 @@ void UsbConnectionListener::run() {
     int rc;
     libusb_context *hotplug_context = nullptr;
     libusb_hotplug_callback_handle callback_handle = 0;
-    struct timeval timeout;
-    timeout.tv_usec = 1;
+    //struct timeval timeout;
+    //timeout.tv_usec = 1;
 
     if (libusb_init(&hotplug_context) < 0)
     {

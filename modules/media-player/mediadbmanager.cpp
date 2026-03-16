@@ -44,14 +44,14 @@ void MediaDBManager::updateLocations() {
 
 QVariantList MediaDBManager::getLocations() {
     QVariantList ret;
-    for(MediaDB *mediaDb : qAsConst(m_mediaDBs)){
+    for(MediaDB *mediaDb : std::as_const(m_mediaDBs)){
         ret.append(mediaDb->getLocations());
     }
     return ret;
 }
 
 MediaDB * MediaDBManager::getMediaDB(QString mountPoint) {
-    for(MediaDB *p_mediaDb : qAsConst(m_mediaDBs)){
+    for(MediaDB *p_mediaDb : std::as_const(m_mediaDBs)){
         if(p_mediaDb->getPath() == mountPoint){
             return p_mediaDb;
         }

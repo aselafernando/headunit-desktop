@@ -274,7 +274,7 @@ void PluginObject::loadBottomBarItems(QVariantList bottomBarItems) {
             panelItem.contextProperty = getContextProperty();
 
             bool itemExists = false;
-            for(const PanelItem &item : qAsConst(m_bottomBarItems)){
+            for(const PanelItem &item : std::as_const(m_bottomBarItems)){
                 if(item.name == panelItem.name) {
                     itemExists = true;
                 }

@@ -117,7 +117,7 @@ QVariant PluginListModel::data(const QModelIndex &index, int role) const {
 
         QVariantList bottomBarItems;
 
-        for (const PanelItem &panelItem : qAsConst(panelItems)) {
+        for (const PanelItem &panelItem : std::as_const(panelItems)) {
             QVariantMap item;
             item.insert("name", panelItem.name);
             item.insert("label", panelItem.label);

@@ -65,7 +65,7 @@ void MediaPlayerPlaylistModel::setItems(QVariantList items){
 
 QVariantList MediaPlayerPlaylistModel::getSources(){
     QVariantList ret;
-    for(QVariant item : qAsConst(m_playlistContent)){
+    for(QVariant item : std::as_const(m_playlistContent)){
         ret.append("file://" + item.toMap()["path"].toString());
     }
     return ret;

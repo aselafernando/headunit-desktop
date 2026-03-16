@@ -29,17 +29,17 @@ QQmlPropertyMap *SettingsLoader::createPropertyMap(QString group, QVariantMap ma
             if(settings.contains(item)){
                 QVariant value = settings.value(item);
 
-                QMap<QJsonValue::Type, QVariant::Type> typeMapping = {
-                    {QJsonValue::Bool, QVariant::Bool},
-                    {QJsonValue::Double, QVariant::Double},
-                    {QJsonValue::String, QVariant::String},
-                    {QJsonValue::Array, QVariant::List},
-                    {QJsonValue::Object, QVariant::Map},
+                QMap<QJsonValue::Type, QMetaType::Type> typeMapping = {
+                    {QJsonValue::Bool, QMetaType::Bool},
+                    {QJsonValue::Double, QMetaType::Double},
+                    {QJsonValue::String, QMetaType::QString},
+                    {QJsonValue::Array, QMetaType::QVariantList},
+                    {QJsonValue::Object, QMetaType::QVariantMap},
                 };
 
                 QJsonValue::Type jsonType = map.value(item).value<QJsonValue>().type();
                 if(typeMapping.keys().contains(jsonType)){
-                    value.convert(static_cast<int>(typeMapping.value(jsonType)));
+                    value.convert(QMetaType(typeMapping.value(jsonType)));
                 }
 
                 QJsonValue jsonValue = QJsonValue::fromVariant(value);
@@ -76,12 +76,12 @@ void SettingsLoader::saveSettings(QString group, QQmlPropertyMap *settingsMap){
             }
             saveSettings(item, propMap);
         } else {
-            if (settingsMap->value(item).type() == QMetaType::QObjectStar ){
+            if (settingsMap->value(item).metaType() == QMetaType(QMetaType::QObjectStar)){
                 continue;
             }
             if(settings.value(item) != settingsMap->value(item)){
                 QVariant value = settingsMap->value(item);
-                if(value.type() == QMetaType::QJsonValue){
+                if(value.metaType() == QMetaType(QMetaType::QJsonValue)){
                     settings.setValue(item, value.value<QJsonValue>().toVariant());
                 } else {
                     settings.setValue(item, value);
@@ -103,7 +103,7 @@ void SettingsLoader::loadJson(QJsonObject json){
     QVariant root = processItem(json);
     settings.endGroup();
 
-    if(root.type() != static_cast<QVariant::Type>(QMetaType::QVariantMap)){
+    if(root.metaType() != QMetaType(QMetaType::QVariantMap)){
         qCDebug(SETTINGSLOADER) << "Invalid root object";
         return;
     }
@@ -153,7 +153,7 @@ QVariant SettingsLoader::processItem(QJsonObject json){
 
         QVariantList items = json.value("items").toArray().toVariantList();
         for(QVariant item : items){
-            if(item.type() != static_cast<QVariant::Type>(QMetaType::QVariantMap)){
+            if(item.metaType() != QMetaType(QMetaType::QVariantMap)){
                 qCDebug(SETTINGSLOADER) << settings.group() << " : Invalid items type, skipping.";
                 continue;
             }
@@ -177,7 +177,7 @@ QVariant SettingsLoader::processItem(QJsonObject json){
         return itemsMap;
     } else if (types.keys().contains(json.value("type").toString())) {
         QVariant value = settings.value(json.value("name").toString());
-        value.convert(types.value(json.value("type").toString()));
+        value.convert(QMetaType(types.value(json.value("type").toString())));
 
         if(value.isNull()){
             if(json.value("defaultValue").isUndefined()){

@@ -56,7 +56,8 @@ bool PluginManager::loadPlugins(QStringList filterList)
             QPluginLoader pluginLoader(pluginsDir.absoluteFilePath(fileName));
             QJsonValue uri = pluginLoader.metaData().value("MetaData").toObject().value("uri");
             QList<QQmlError> errors;
-            m_engine->importPlugin(pluginsDir.absoluteFilePath(fileName),uri.toString(),&errors);
+            //m_engine->importPlugin(pluginsDir.absoluteFilePath(fileName),uri.toString(),&errors);
+            m_engine->load(pluginLoader.metaData().value("MetaData").toObject().value("uri").toString());
         }
     }
 

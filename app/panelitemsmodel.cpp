@@ -55,7 +55,7 @@ void PanelItemsModel::setPluginList(PluginList *pluginList) {
     }
     m_pluginList = pluginList;
     for(int i = 0; i < m_pluginList->size(); i++){
-        PluginObject *plugin = m_pluginList->at(i);
+        //PluginObject *plugin = m_pluginList->at(i);
         connect(m_pluginList,&PluginList::pluginAdded, [=](const int pluginIndex) {
             beginInsertRows(QModelIndex(), pluginIndex, pluginIndex);
             endInsertRows();
@@ -69,7 +69,7 @@ void PanelItemsModel::loadList() {
     QStringList bottomBarItems = settings.value("bottomBarItems").toString().split(",");
 
     int i = 0;
-    for(const QString &item : qAsConst(bottomBarItems)){
+    for(const QString &item : std::as_const(bottomBarItems)){
         insertPluginItem(i++, item);
     }
 }
@@ -86,7 +86,7 @@ void PanelItemsModel::removeUnusedItems(){
 
         QList<PanelItem> itemList = plugin->getBottomBarItems();
 
-        for(const PanelItem &item : qAsConst(itemList)){
+        for(const PanelItem &item : std::as_const(itemList)){
             availableItems << item.name;
         }
     }
@@ -126,7 +126,7 @@ void PanelItemsModel::saveList() {
 
     QStringList items;
 
-    for(const PanelItem &panelItem : qAsConst(m_modelItems)){
+    for(const PanelItem &panelItem : std::as_const(m_modelItems)){
         items << panelItem.name;
     }
     settings.setValue("bottomBarItems", items.join(","));
@@ -154,7 +154,7 @@ void PanelItemsModel::insertPluginItem(int position, QString name) {
     QList<PanelItem> itemList = plugin->getBottomBarItems();
 
     PanelItem panelItem;
-    for(const PanelItem &item : qAsConst(itemList)){
+    for(const PanelItem &item : std::as_const(itemList)){
         if(item.name == name){
             panelItem = item;
             break;
