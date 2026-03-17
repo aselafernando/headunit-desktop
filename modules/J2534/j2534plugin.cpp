@@ -3,8 +3,11 @@
 #include <dlfcn.h>
 #include <cstring>
 #include <cmath>
+#include <QLoggingCategory>
 
 #include "j2534plugin.h"
+
+Q_LOGGING_CATEGORY(J2534, "J2534")
 
 _PassThruConnect PassThruConnect = NULL;
 _PassThruDisconnect PassThruDisconnect = NULL;
@@ -36,76 +39,76 @@ void J2534Plugin::init() {
     this->m_reversePageIndex = m_settings.value("reverse_page_index").toInt();
 
     if (!handle) {
-        qDebug() << "J2534: Cannot load libJ2534.so " << dlerror();
+        qCDebug(J2534) << "Cannot load libJ2534.so " << dlerror();
     } else {
         //clear existing errors
         dlerror();
         //map functions
         PassThruConnect = (_PassThruConnect)dlsym(handle, "PassThruConnect");
         if((error = dlerror()) != NULL) {
-            qDebug() << "J2534: PassThruConnect " << error;
+            qCDebug(J2534) << "PassThruConnect " << error;
         }
         PassThruDisconnect = (_PassThruDisconnect)dlsym(handle, "PassThruDisconnect");
         if ((error = dlerror()) != NULL) {
-            qDebug() << "J2534: PassThruDisconnect " << error;
+            qCDebug(J2534) << "PassThruDisconnect " << error;
         }
         PassThruReadMsgs = (_PassThruReadMsgs)dlsym(handle, "PassThruReadMsgs");
         if ((error = dlerror()) != NULL) {
-            qDebug() << "J2534: PassThruReadMsgs " << error;
+            qCDebug(J2534) << "PassThruReadMsgs " << error;
         }
         PassThruWriteMsgs = (_PassThruWriteMsgs)dlsym(handle, "PassThruWriteMsgs");
         if ((error = dlerror()) != NULL) {
-            qDebug() << "J2534: PassThruWriteMsgs " << error;
+            qCDebug(J2534) << "PassThruWriteMsgs " << error;
         }
         PassThruStartPeriodicMsg = (_PassThruStartPeriodicMsg)dlsym(handle, "PassThruStartPeriodicMsg");
         if ((error = dlerror()) != NULL) {
-            qDebug() << "J2534: PassThruStartPeriodicMsg " << error;
+            qCDebug(J2534) << "PassThruStartPeriodicMsg " << error;
         }
         PassThruStopPeriodicMsg = (_PassThruStopPeriodicMsg)dlsym(handle, "PassThruStopPeriodicMsg");
         if ((error = dlerror()) != NULL) {
-            qDebug() << "J2534: PassThruStopPeriodicMsg " << error;
+            qCDebug(J2534) << "PassThruStopPeriodicMsg " << error;
         }
         PassThruStartMsgFilter = (_PassThruStartMsgFilter)dlsym(handle, "PassThruStartMsgFilter");
         if ((error = dlerror()) != NULL) {
-            qDebug() << "J2534: PassThruStartMsgFilter " << error;
+            qCDebug(J2534) << "PassThruStartMsgFilter " << error;
         }
         PassThruStopMsgFilter = (_PassThruStopMsgFilter)dlsym(handle, "PassThruStopMsgFilter");
         if ((error = dlerror()) != NULL) {
-            qDebug() << "J2534: PassThruStopMsgFilter " << error;
+            qCDebug(J2534) << "PassThruStopMsgFilter " << error;
         }
         PassThruSetProgrammingVoltage = (_PassThruSetProgrammingVoltage)dlsym(handle, "PassThruSetProgrammingVoltage");
         if ((error = dlerror()) != NULL) {
-            qDebug() << "J2534: PassThruSetProgrammingVoltage " << error;
+            qCDebug(J2534) << "PassThruSetProgrammingVoltage " << error;
         }
         PassThruReadVersion = (_PassThruReadVersion)dlsym(handle, "PassThruReadVersion");
         if ((error = dlerror()) != NULL) {
-            qDebug() << "J2534: PassThruReadVersion " << error;
+            qCDebug(J2534) << "PassThruReadVersion " << error;
         }
         PassThruGetLastError = (_PassThruGetLastError)dlsym(handle, "PassThruGetLastError");
         if ((error = dlerror()) != NULL) {
-            qDebug() << "J2534: PassThruGetLastError " << error;
+            qCDebug(J2534) << "PassThruGetLastError " << error;
         }
         PassThruIoctl = (_PassThruIoctl)dlsym(handle, "PassThruIoctl");
         if ((error = dlerror()) != NULL) {
-            qDebug() << "J2534: PassThruIoctl " << error;
+            qCDebug(J2534) << "PassThruIoctl " << error;
         }
         PassThruOpen = (_PassThruOpen)dlsym(handle, "PassThruOpen");
         if ((error = dlerror()) != NULL) {
-            qDebug() << "J2534: PassThruOpen " << error;
+            qCDebug(J2534) << "PassThruOpen " << error;
         }
         PassThruClose = (_PassThruClose)dlsym(handle, "PassThruClose");
         if ((error = dlerror()) != NULL) {
-            qDebug() << "J2534: PassThruClose " << error;
+            qCDebug(J2534) << "PassThruClose " << error;
         }
         PassThruReset = (_PassThruReset)dlsym(handle, "PassThruReset");
         if ((error = dlerror()) != NULL) {
-            qDebug() << "J2534: PassThruReset " << error;
+            qCDebug(J2534) << "PassThruReset " << error;
         }
         PassThruGetLastSocketError = (_PassThruGetLastSocketError)dlsym(handle, "PassThruGetLastSocketError");
         if ((error = dlerror()) != NULL) {
-            qDebug() << "J2534: PassThruGetLastSocketError " << error;
+            qCDebug(J2534) << "PassThruGetLastSocketError " << error;
         }
-        qDebug() << "J2534: Loaded functions";
+        qCDebug(J2534) << "Loaded functions";
 
         startWorker();
     }
@@ -129,7 +132,7 @@ void J2534Plugin::startWorker() {
         connect(worker, &J2534Worker::stftb2, this, &J2534Plugin::handleSTFTB2);
         workerThread.start();
         operate();
-        qDebug() << "J2534: Started worker thread: " << workerThread.isRunning();
+        qCDebug(J2534) << "Started worker thread: " << workerThread.isRunning();
     }
 }
 
@@ -236,7 +239,7 @@ void J2534Plugin::eventMessage(QString id, QVariant message) {
     if(id == "AndroidAuto::connected") {
         if(message.toBool()) {
             //resend latest data;
-            qDebug() << "J2534: Resending data";
+            qCDebug(J2534) << "Resending data";
             emit this->message("Gear", this->m_gear);
             emit this->message("VSS", this->m_vss);
         }
@@ -250,7 +253,7 @@ void J2534Plugin::settingsChanged(const QString &key, const QVariant &){
 }
 
 void J2534Plugin::PrintString(char *message) {
-    qDebug() << "J2534 DEBUG : " << message;
+    qCDebug(J2534) << "J2534 DEBUG : " << message;
 }
 
 bool J2534Worker::startMsgFilters() {
@@ -471,55 +474,55 @@ void J2534Worker::keepReading()
 }
 
 void J2534Worker::j2534Connect() {
-    qDebug() << "J2534: Connecting to J2534 Server";
+    qCDebug(J2534) << "Connecting to J2534 Server";
     QThread::sleep(3);
 
     while (QThread::currentThread()->isInterruptionRequested() == false) {
         deviceID = 0;
 
         if (PassThruOpen(NULL, &deviceID) == RETURN_STATUS::STATUS_NOERROR) {
-            qDebug() << "J2534: PassThru opened";
+            qCDebug(J2534) << "PassThru opened";
             if (PassThruConnect(deviceID, ProtocolID::ISO14230, 4096, 10400, &channelID) == RETURN_STATUS::STATUS_NOERROR) {
-                qDebug() << "J2534: PassThru connected";
+                qCDebug(J2534) << "PassThru connected";
                 if (startMsgFilters()) {
-                    qDebug() << "J2534: Set message filters";
+                    qCDebug(J2534) << "Set message filters";
                     if (setConfig()) {
-                        qDebug() << "J2534: Set config";
+                        qCDebug(J2534) << "Set config";
                         if (fastInit(0x19)) {
-                            qDebug() << "J2534: Fast Init Done";
+                            qCDebug(J2534) << "Fast Init Done";
                             getData();
-                            qDebug() << "J2534: getData finished";
+                            qCDebug(J2534) << "getData finished";
                             PassThruDisconnect(channelID);
                             PassThruClose(deviceID);
                         } else {
-                            qDebug() << "J2534: PassThru fast init failed";
+                            qCDebug(J2534) << "PassThru fast init failed";
                             PassThruDisconnect(channelID);
                             PassThruClose(deviceID);
                         }
                     } else {
-                        qDebug() << "J2534: PassThru couldn't set config";
+                        qCDebug(J2534) << "PassThru couldn't set config";
                         PassThruDisconnect(channelID);
                         PassThruClose(deviceID);
                     }
                 } else {
-                     qDebug() << "J2534: PassThru can't start message filters";
+                     qCDebug(J2534) << "PassThru can't start message filters";
                     PassThruDisconnect(channelID);
                     PassThruClose(deviceID);
                 }
             } else {
-                qDebug() << "J2534: PassThru couldn't connect";
+                qCDebug(J2534) << "PassThru couldn't connect";
                 PassThruClose(deviceID);
             }
         }
 
         if(QThread::currentThread()->isInterruptionRequested() == false) {
-            qDebug() << "J2534: Looping awaiting to reconnect";
+            qCDebug(J2534) << "Looping awaiting to reconnect";
             QThread::sleep(15);
         } else {
             break;
         }
     }
-    qDebug() << "J2534: Stopped connecting to J2534 server";
+    qCDebug(J2534) << "Stopped connecting to J2534 server";
 }
 
 void J2534Worker::getData()

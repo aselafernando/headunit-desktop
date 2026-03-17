@@ -1,5 +1,9 @@
 #include "car2pcplugin.h"
 #include <math.h>
+#include <QLoggingCategory>
+
+Q_LOGGING_CATEGORY(CAR2PC, "Car2PC")
+
 //Car2PC device only supports 9600 baud 8N1
 #define CAR2PC_BAUD 9600
 
@@ -79,7 +83,7 @@ void Car2PCPlugin::serialConnect(){
     m_serial.setBaudRate(CAR2PC_BAUD);
 
     if (m_serial.open(QIODevice::ReadWrite)) {
-        qDebug() << "Car2PC: Connected to Serial : " << m_serial.portName() << m_serial.baudRate();
+        qCDebug(CAR2PC) << "Connected to Serial : " << m_serial.portName() << m_serial.baudRate();
         m_connected = true;
         emit connectedUpdated();
     }
@@ -88,7 +92,7 @@ void Car2PCPlugin::serialConnect(){
 void Car2PCPlugin::serialDisconnect(){
     if(m_serial.isOpen()){
         m_serial.close();
-        qDebug() << "Car2PC: Disconnected from serial : " << m_serial.portName();
+        qCDebug(CAR2PC) << "Disconnected from serial : " << m_serial.portName();
     }
     m_connected = false;
     emit connectedUpdated();
@@ -108,7 +112,7 @@ void Car2PCPlugin::handleSerialError(QSerialPort::SerialPortError error){
         case QSerialPort::DeviceNotFoundError:
         case QSerialPort::PermissionError:
         case QSerialPort::TimeoutError:
-            qDebug() << "Car2PC: Error : " << m_settings.value("port").toString() << " - " << m_serial.errorString();
+            qCDebug(CAR2PC) << "Error : " << m_settings.value("port").toString() << " - " << m_serial.errorString();
             if(m_serial.isOpen()){
                 m_serial.close();
             }
@@ -223,10 +227,10 @@ void Car2PCPlugin::ButtonInputCommandCallback(Button btn) {
 
     if (cmd != "") {
         emit action(cmd, 0);
-        qDebug() << "Car2PC Calling Action: " << cmd;
+        qCDebug(CAR2PC) << "Car2PC Calling Action: " << cmd;
     }
 }
 
 void Car2PCPlugin::PrintString(const char* message, int length) {
-    qDebug() << "Car2PC: " << QString::fromUtf8(message, length);
+    qCDebug(CAR2PC) << "" << QString::fromUtf8(message, length);
 }

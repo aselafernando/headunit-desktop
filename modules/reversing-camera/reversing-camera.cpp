@@ -1,138 +1,214 @@
+#include <QQuickWindow>
+#include <QRunnable>
+#include <QQuickView>
+#include <QDebug>
+#include <QLoggingCategory>
+
 #include "reversing-camera.h"
 
+Q_LOGGING_CATEGORY(REVERSECAMERA, "ReverseCamera")
 
-struct VideoFormat
+class SetPlaying : public QRunnable
 {
-    QVideoFrame::PixelFormat pixelFormat;
-    GstVideoFormat gstFormat;
+public:
+  SetPlaying(GstElement *);
+  ~SetPlaying();
+
+  void run ();
+
+private:
+  GstElement * pipeline_;
 };
 
-static const VideoFormat qt_videoFormatLookup[] =
+SetPlaying::SetPlaying (GstElement * pipeline)
 {
-    { QVideoFrame::Format_YUV420P, GST_VIDEO_FORMAT_I420 },
-    { QVideoFrame::Format_YUV422P, GST_VIDEO_FORMAT_Y42B },
-    { QVideoFrame::Format_YV12   , GST_VIDEO_FORMAT_YV12 },
-    { QVideoFrame::Format_UYVY   , GST_VIDEO_FORMAT_UYVY },
-    { QVideoFrame::Format_YUYV   , GST_VIDEO_FORMAT_YUY2 },
-    { QVideoFrame::Format_NV12   , GST_VIDEO_FORMAT_NV12 },
-    { QVideoFrame::Format_NV21   , GST_VIDEO_FORMAT_NV21 },
-    { QVideoFrame::Format_AYUV444   , GST_VIDEO_FORMAT_AYUV },
-    { QVideoFrame::Format_Y8     , GST_VIDEO_FORMAT_GRAY8 },
-#if Q_BYTE_ORDER == Q_LITTLE_ENDIAN
-    { QVideoFrame::Format_Y16 , GST_VIDEO_FORMAT_GRAY16_LE },
-#else
-    { QVideoFrame::Format_Y16 , GST_VIDEO_FORMAT_GRAY16_BE },
-    { QVideoFrame::Format_P010 , GST_VIDEO_FORMAT_P010_10BE },
-#endif
-};
+  this->pipeline_ = pipeline ? static_cast<GstElement *> (gst_object_ref (pipeline)) : NULL;
+}
 
-static int indexOfVideoFormat(GstVideoFormat format)
+SetPlaying::~SetPlaying ()
 {
-    for (int i = 0; i < sizeof(qt_videoFormatLookup); ++i)
-        if (qt_videoFormatLookup[i].gstFormat == format)
-            return i;
-
-    return -1;
+  if (this->pipeline_)
+    gst_object_unref (this->pipeline_);
 }
 
-ReversingCamera::ReversingCamera(QObject *parent) : QObject (parent)
+void
+SetPlaying::run ()
 {
-    connect(this, &ReversingCamera::receivedVideoFrame, this, &ReversingCamera::videoFrameHandler);
+  if (this->pipeline_)
+    gst_element_set_state (this->pipeline_, GST_STATE_PLAYING);
 }
 
-void ReversingCamera::init() {
-    if (!gst_is_initialized ()){
-        gst_init(NULL, NULL);
-    }
-    setupPipeline();
+ReversingCamera::ReversingCamera(QObject *parent)
+    : QObject (parent)
+{
+    //m_pluginSettings.eventListeners = QStringList();
+    //m_pluginSettings.events = QStringList();
 }
 
-void ReversingCamera::setupPipeline() {
-    if(m_vid_pipeline){
-        gst_element_set_state(m_vid_pipeline, GST_STATE_NULL);
-        gst_object_unref(m_vid_pipeline);
-        m_vid_pipeline = nullptr;
-    }
-    GError *error = NULL;    
-    QString pipelineSource;
-
-    if(m_settings["camera"] == "auto"){
-        pipelineSource = "v4l2src ! videoconvert";
-    } else if(m_settings["camera"] == "rpi"){
-        pipelineSource = "v4l2src ! video/x-raw,format=UYVY,colorimetry=bt601";
-    } else if(m_settings["camera"] == "custom"){
-        pipelineSource = m_settings["custom_pipeline"].toString();
-    } 
-
-    QString pipeline = QString("%1 ! appsink emit-signals=true sync=false name=vid_sink").arg(pipelineSource);
-    qDebug() << pipeline;
-    m_vid_pipeline = gst_parse_launch(pipeline.toLocal8Bit().data(), &error);
-
-    GstElement *vid_sink = gst_bin_get_by_name(GST_BIN(m_vid_pipeline), "vid_sink");
-
-    g_signal_connect(vid_sink, "new-sample", G_CALLBACK(&ReversingCamera::newVideoSample), this);
-
-    if (error != NULL) {
-        qDebug("Could not construct video pipeline: %s", error->message);
-        g_clear_error(&error);
-    }
-
-    gst_element_set_state(m_vid_pipeline, GST_STATE_PLAYING);
-}
-
-void ReversingCamera::onSettingsPageDestroyed(){
-    setupPipeline();
+ReversingCamera::~ReversingCamera() {
+    destroyPipeline();
+    gst_deinit ();
 }
 
 QObject *ReversingCamera::getContextProperty(){
     return this;
 }
 
-void ReversingCamera::setVideoSurface(QAbstractVideoSurface *surface)
-{
-    qDebug() << "Setting video surface";
-    if (m_surface != surface && m_surface && m_surface->isActive()) {
-        m_surface->stop();
-    }
-    m_surface = surface;
-}
-
-void ReversingCamera::videoFrameHandler(const QVideoFrame &frame)
-{
-    if (m_surface != nullptr) {
-        if(!m_videoStarted){
-            m_videoStarted = true;
-            QVideoSurfaceFormat format(frame.size(), frame.pixelFormat());
-            m_surface->start(format);
-            qDebug() << frame.pixelFormat();
+void ReversingCamera::videoItemLoaded(QQuickItem *vi) {
+    videoItem = vi;
+    if(videoItem) {
+        g_object_set(sink, "widget", videoItem, NULL);
+        rootObject = videoItem->window();
+        if(rootObject) {
+            qCDebug(REVERSECAMERA) << "Root Object Found";
+            rootObject->scheduleRenderJob (new SetPlaying (pipeline),
+                QQuickWindow::BeforeSynchronizingStage);
         }
-        m_surface->present(frame);
     }
 }
 
-GstFlowReturn ReversingCamera::newVideoSample (GstElement * appsink, ReversingCamera * _this){
-    GstSample *gstsample = gst_app_sink_pull_sample(GST_APP_SINK(appsink));
-    if (!gstsample) {
-        return GST_FLOW_ERROR;
+void ReversingCamera::eventMessage(__attribute__((unused)) QString id, __attribute__((unused)) QVariant message) {
+}
+
+void ReversingCamera::actionMessage(__attribute__((unused)) QString id, __attribute__((unused)) QVariant message) {
+}
+
+void ReversingCamera::settingsChanged(const QString &key, const QVariant &) {
+    if (key == "gs_src") {
+         qCDebug(REVERSECAMERA) << "gs_src";
+    } else if(key == "gs_pipeline") {
+         qCDebug(REVERSECAMERA) << "gs_pipeline";
+    }
+}
+
+void ReversingCamera::init() {
+    if (!gst_is_initialized()){
+        gst_init(NULL, NULL);
     }
 
-    GstBuffer *gstbuf = gst_sample_get_buffer(gstsample);
-    if(!gstbuf){
-        gst_sample_unref(gstsample);
-        return GST_FLOW_ERROR;
+    QQuickWindow::setGraphicsApi(QSGRendererInterface::OpenGL);
+    setupPipeline();
+}
+
+void ReversingCamera::destroyPipeline() {
+   qCDebug(REVERSECAMERA) << "destroyPipeline()";
+
+    if(pipeline) {
+        gst_element_set_state (pipeline, GST_STATE_NULL);
+        gst_object_unref (pipeline);
+        pipeline = nullptr;
+    }
+    if(processPipeline) {
+        gst_object_unref (processPipeline);
+        processPipeline = nullptr;
+    }
+    if(src) {
+        gst_object_unref (src);
+        src = nullptr;
+    }
+    if(glupload) {
+        gst_object_unref (glupload);
+        processPipeline = nullptr;
+    }
+    if(glcolorconvert) {
+        gst_object_unref (processPipeline);
+        processPipeline = nullptr;
+    }
+    if(sink) {
+        gst_object_unref (sink);
+        sink = nullptr;
+    }
+}
+
+void ReversingCamera::setupPipeline() {
+    GError* error = nullptr;
+    //rtspsrc location=rtsp://10.20.1.34:554/axis-media/media.amp?videocodec=h264 latency=100 buffer-mode=auto ! rtph264depay ! h264parse ! capssetter caps=\"video/x-h264,colorimetry=bt709\" ! avdec_h264
+    pipeline = gst_pipeline_new (NULL);
+
+    QString gs_src = m_settings["gs_src"].toString();
+    QString gs_pipeline = m_settings["gs_pipeline"].toString();
+
+    qCDebug(REVERSECAMERA) << "GStreamer Src:" << gs_src;
+    qCDebug(REVERSECAMERA) << "GStreamer Pipeline:" << gs_pipeline;
+
+    if(gs_src != "") {
+        src = gst_parse_bin_from_description_full (gs_src.toUtf8().constData(), TRUE, NULL, GST_PARSE_FLAG_NO_SINGLE_ELEMENT_BINS, &error);
+        //src = gst_parse_bin_from_description_full ("rtspsrc location=rtsp://10.20.1.34:554/axis-media/media.amp?videocodec=h264 latency=100 buffer-mode=auto", TRUE, NULL, GST_PARSE_FLAG_NO_SINGLE_ELEMENT_BINS, &error);
+        //src = gst_parse_bin_from_description_full ("videotestsrc", TRUE, NULL, GST_PARSE_FLAG_NO_SINGLE_ELEMENT_BINS, &error);
+        if (error) {
+            qCDebug(REVERSECAMERA) << error->message;
+            g_error_free(error);
+            destroyPipeline();
+            return;
+        }
+        g_assert (src);
     }
 
-    GstCaps* caps = gst_sample_get_caps (gstsample);
-    GstVideoInfo info;
-    gst_video_info_from_caps (&info, caps);
+    processPipeline = gst_parse_bin_from_description (gs_pipeline.toUtf8().constData(), TRUE, &error);
+    //processPipeline = gst_parse_bin_from_description ("rtph264depay ! h264parse ! capssetter caps=\"video/x-h264,colorimetry=bt709\" ! avdec_h264", TRUE, &error);
+    //processPipeline = gst_parse_bin_from_description ("capsfilter caps=\"video/x-raw,format=YV12\"", TRUE, &error);
+    if (error) {
+        qCDebug(REVERSECAMERA) << error->message;
+        g_error_free(error);
+        destroyPipeline();
+        return;
+    }
 
-    int index = indexOfVideoFormat(info.finfo->format);
+    g_assert (processPipeline);
 
-    QGstVideoBuffer *qgstBuf = new QGstVideoBuffer(gstbuf,info);
-    QVideoFrame frame(static_cast<QAbstractVideoBuffer *>(qgstBuf), QSize(info.width,info.height), qt_videoFormatLookup[index].pixelFormat);
+    if(!processPipeline) {
+        qCDebug(REVERSECAMERA) << "gstreamer process pipeline error in configuration!";
+        destroyPipeline();
+        return;
+    }
 
-    emit _this->receivedVideoFrame(frame);
+    sink = gst_element_factory_make ("qml6glsink", NULL);
 
-    gst_sample_unref(gstsample);
-    return GST_FLOW_OK;
+    /*glupload = gst_element_factory_make ("glupload", NULL);
+    glcolorconvert = gst_element_factory_make ("glcolorconvert", NULL);
+
+    if(!glupload) {
+        qCDebug(REVERSECAMERA) << "gstreamer glupload missing";
+        destroyPipeline();
+        return;
+    }
+
+    if(!glcolorconvert) {
+        qCDebug(REVERSECAMERA) << "gstreamer glcolorconvert missing";
+        destroyPipeline();
+        return;
+    }
+    */
+    if(!sink) {
+        qCDebug(REVERSECAMERA) << "gstreamer qml6glsink missing?";
+        destroyPipeline();
+        return;
+    }
+
+    if(src) {
+        qCDebug(REVERSECAMERA) << "Linking with delayed pads";
+        gst_bin_add_many(GST_BIN(pipeline), src, processPipeline, sink, NULL);
+
+        g_signal_connect(src, "pad-added", G_CALLBACK(+[](__attribute__((unused)) GstElement *src, GstPad *pad, GstElement *sink) {
+                qCDebug(REVERSECAMERA) << "GStreamer src pad-added";
+                GstPad *sinkpad = gst_element_get_static_pad(sink, "sink");
+                gst_pad_link(pad, sinkpad);
+                gst_object_unref(sinkpad);
+        }), processPipeline);
+
+    } else {
+        qCDebug(REVERSECAMERA) << "Linking with present pads";
+        gst_bin_add_many(GST_BIN(pipeline), processPipeline, sink, NULL);
+    }
+
+    gst_element_link_many(processPipeline, sink, NULL);
+
+    qCDebug(REVERSECAMERA) << "Pipeline Made";
+}
+
+void ReversingCamera::onSettingsPageDestroyed(){
+    //setupPipeline();
+    qCDebug(REVERSECAMERA) << "Settings Destroyed";
+    destroyPipeline();
+    setupPipeline();
 }

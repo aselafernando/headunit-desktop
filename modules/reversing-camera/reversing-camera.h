@@ -1,51 +1,62 @@
-#ifndef SAMPLEPLUGIN_H
-#define SAMPLEPLUGIN_H
+#ifndef REVERSECAMERAPLUGIN_H
+#define REVERSECAMERAPLUGIN_H
 
-#include <QDebug>
-#include <plugininterface.h>
-
-#include <QAbstractVideoBuffer>
-#include <QAbstractVideoSurface>
-#include <QVideoSurfaceFormat>
-#include <QVideoFrame>
-
-#include <gst/app/gstappsink.h>
-#include <gst/app/gstappsrc.h>
+#include <QObject>
+#include <QQuickItem>
 #include <gst/gst.h>
 
-#include "qgstvideobuffer.h"
+#include <plugininterface.h>
 
 class ReversingCamera : public QObject, PluginInterface
 {
     Q_OBJECT
-    Q_PLUGIN_METADATA(IID "org.viktorgino.headunit.reversing-camera" FILE "config.json")
+    Q_PLUGIN_METADATA(IID "org.aselafernando.headunit.reversing-camera" FILE "config.json")
     Q_INTERFACES(PluginInterface)
-    Q_PROPERTY(QAbstractVideoSurface *videoSurface READ videoSurface WRITE setVideoSurface)
+
 public:
     explicit ReversingCamera(QObject *parent = nullptr);
-
-    void init() override;
+    ~ReversingCamera();
     QObject *getContextProperty() override;
 
-    QAbstractVideoSurface *videoSurface() const {
-        return m_surface;
-    }
-    void setVideoSurface(QAbstractVideoSurface *surface);
+    void init() override;
 
 signals:
     void message(QString id, QVariant message);
-    void receivedVideoFrame(const QVideoFrame &frame);
-public slots: 
-    void onSettingsPageDestroyed();
-private slots :
-    void videoFrameHandler(const QVideoFrame &frame);
-private:
-    QAbstractVideoSurface *m_surface = nullptr;
-    GstElement *m_vid_pipeline = nullptr;
-    bool m_videoStarted = false;
+    void action(QString id, QVariant message);
 
-    static GstFlowReturn newVideoSample(GstElement *appsink, ReversingCamera *_this);
+public slots:
+    void onSettingsPageDestroyed();
+
+    void eventMessage(QString id, QVariant message) override;
+    void actionMessage(QString id, QVariant message);
+
+    void videoItemLoaded(QQuickItem *videoItem);
+
+private slots :
+    void settingsChanged(const QString &key, const QVariant &);
+
+private:
+    //GstElement *rtph264depay = nullptr;
+    //GstElement *h264parse = nullptr;
+    //GstElement *capssetter = nullptr;
+    //GstElement *h264dec = nullptr;
+    //GstElement *capsfilter = nullptr;
+
+    GstElement *pipeline = nullptr;
+
+    GstElement *src = nullptr;
+    GstElement *processPipeline = nullptr;
+
+    GstElement *glupload = nullptr;
+    GstElement *glcolorconvert = nullptr;
+    GstElement *sink = nullptr;
+
+    QQuickItem *videoItem = nullptr;
+    QQuickWindow *rootObject = nullptr;
+
     void setupPipeline();
+    void destroyPipeline();
 };
 
-#endif // SAMPLEPLUGIN_H
+
+#endif // REVERSECAMERAPLUGIN_H

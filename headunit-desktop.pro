@@ -13,7 +13,7 @@ SUBDIRS = \
           modules/J2534 \
           modules/gpsd \
           modules/i2c-light-sensor \
-#          modules/reversing-camera \
+          modules/reversing-camera \
           modules/usbconnectionlistener \
 #          modules/welle-io \
 #          modules/navit \
