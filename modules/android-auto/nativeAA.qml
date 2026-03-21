@@ -2,8 +2,10 @@ import QtQuick
 import Qt.labs.settings 1.0
 import QtMultimedia 5.11
 import QtQml 2.11
+import org.freedesktop.gstreamer.Qt6GLVideoItem 1.0
 
 import HUDTheme 1.0
+
 ThemeRoot {
     id:__root
 
@@ -35,14 +37,14 @@ ThemeRoot {
         }
     }
 
-    VideoOutput {
+    GstGLQt6VideoItem {
         id: aaVideo
         visible: pluginContext.status === 2 /*AndroidAuto.RUNNING*/
         anchors.verticalCenter: parent.verticalCenter
         anchors.horizontalCenter: parent.horizontalCenter
         width:parent.width * pluginContext.videoHeight/pluginContext.videoWidth < parent.height ? parent.width : parent.height * pluginContext.videoWidth/pluginContext.videoHeight
         height:parent.width * pluginContext.videoHeight/pluginContext.videoWidth < parent.height ? parent.width * pluginContext.videoHeight/pluginContext.videoWidth : parent.height
-        source: pluginContext
+        //source: pluginContext
         MouseArea {
             id: mouseArea1
             anchors.fill: parent
@@ -65,15 +67,16 @@ ThemeRoot {
         }
 
         onWidthChanged: {
-            pluginContext.outputWidth = aaVideo.width
+            pluginContext.outputWidth = aaVideo.width;
         }
         onHeightChanged: {
-            pluginContext.outputHeight = aaVideo.height
+            pluginContext.outputHeight = aaVideo.height;
         }
 
         Component.onCompleted:{
-            pluginContext.outputHeight = aaVideo.height
-            pluginContext.outputWidth = aaVideo.width
+            pluginContext.outputHeight = aaVideo.height;
+            pluginContext.outputWidth = aaVideo.width;
+            pluginContext.videoItemLoaded(this);
         }
 
     }

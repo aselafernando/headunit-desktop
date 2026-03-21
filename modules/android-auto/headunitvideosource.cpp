@@ -1,9 +1,9 @@
 #include "headunitvideosource.h"
 
-#include <gst/app/gstappsink.h>
-#include <gst/app/gstappsrc.h>
+//#include <gst/app/gstappsink.h>
+//#include <gst/app/gstappsrc.h>
 #include <gst/gst.h>
-#include <gst/video/video.h>
+//#include <gst/video/video.h>
 
 #include <QDebug>
 #include <QFile>
@@ -25,8 +25,8 @@ HeadunitVideoSource::HeadunitVideoSource(QObject* parent) : QObject(parent), m_e
     m_mediaPipeline.setMicrophoneDataHandler(&m_eventHandler);
 
     connect(&m_mediaPipeline, &HeadunitMediaPipeline::pipelineStatusChanged, this, &HeadunitVideoSource::onPipelineStatusChanged);
-    connect(&m_mediaPipeline, &HeadunitMediaPipeline::receivedVideoFrame, this, &HeadunitVideoSource::videoFrameHandler);
-        
+    //connect(&m_mediaPipeline, &HeadunitMediaPipeline::receivedVideoFrame, this, &HeadunitVideoSource::videoFrameHandler);
+
     connect(&m_eventHandler, &HeadunitEventHandler::phoneConnected, this, &HeadunitVideoSource::onPhoneConnected);
     connect(&m_eventHandler, &HeadunitEventHandler::phoneDisconnected, this, &HeadunitVideoSource::onPhoneDisconnected);
 }
@@ -43,6 +43,10 @@ HeadunitVideoSource::~HeadunitVideoSource() {
 
 void HeadunitVideoSource::init() {
     m_mediaPipeline.init();
+}
+
+void HeadunitVideoSource::videoItemLoaded(QQuickItem *videoItem) {
+   m_mediaPipeline.videoItemLoaded(videoItem);
 }
 
 void HeadunitVideoSource::startHU() {
@@ -88,7 +92,7 @@ void HeadunitVideoSource::startHU() {
     headunit->start();
 }
 
-void HeadunitVideoSource::setVideoSurface(QAbstractVideoSurface* surface) {
+/*void HeadunitVideoSource::setVideoSurface(QAbstractVideoSurface* surface) {
     qDebug() << "Setting video surface";
     if (m_surface != surface && m_surface && m_surface->isActive()) {
         m_surface->stop();
@@ -105,7 +109,7 @@ void HeadunitVideoSource::videoFrameHandler(const QVideoFrame& frame) {
         }
         m_surface->present(frame);
     }
-}
+}*/
 
 void HeadunitVideoSource::onPipelineStatusChanged(const Headunit::Pipeline& pipeline, const Headunit::PipelineStatus& status) {
     switch (pipeline) {

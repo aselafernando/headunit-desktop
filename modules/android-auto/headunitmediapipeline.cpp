@@ -8,7 +8,44 @@
 #include <QJsonObject>
 #include <QSettings>
 
-#include "qgstvideobuffer.h"
+#include <QQuickWindow>
+#include <QRunnable>
+#include <QQuickView>
+#include <QDebug>
+#include <QLoggingCategory>
+//#include "qgstvideobuffer.h"
+
+Q_LOGGING_CATEGORY(ANDROIDAUTO, "AndroidAuto")
+
+class SetPlaying : public QRunnable
+{
+public:
+  SetPlaying(GstElement *);
+  ~SetPlaying();
+
+  void run ();
+
+private:
+  GstElement * pipeline_;
+};
+
+SetPlaying::SetPlaying (GstElement * pipeline)
+{
+  this->pipeline_ = pipeline ? static_cast<GstElement *> (gst_object_ref (pipeline)) : NULL;
+}
+
+SetPlaying::~SetPlaying ()
+{
+  if (this->pipeline_)
+    gst_object_unref (this->pipeline_);
+}
+
+void
+SetPlaying::run ()
+{
+  if (this->pipeline_)
+    gst_element_set_state (this->pipeline_, GST_STATE_PLAYING);
+}
 
 HeadunitMediaPipeline::HeadunitMediaPipeline(QObject* parent) : QObject{parent} {
 }
@@ -30,9 +67,31 @@ void HeadunitMediaPipeline::setMicrophoneDataHandler(HeadunitMicrophoneDataHandl
     m_microphoneDataHandler = microphoneDataHandler;
 }
 
+void HeadunitMediaPipeline::videoItemLoaded(QQuickItem *vi) {
+    videoItem = vi;
+    qCDebug(ANDROIDAUTO) << "videoItemLoaded";
+
+    if(videoItem) {
+        qCDebug(ANDROIDAUTO) << "videoItem";
+        GstElement* sink = gst_bin_get_by_name(GST_BIN(vid_pipeline), "vid_sink");
+        g_object_set(sink, "widget", videoItem, NULL);
+        rootObject = videoItem->window();
+        gst_object_unref(sink);
+        if(rootObject) {
+            qCDebug(ANDROIDAUTO) << "Root Object Found";
+            rootObject->scheduleRenderJob (new SetPlaying (vid_pipeline),
+                QQuickWindow::BeforeSynchronizingStage);
+        }
+    }
+}
+
 int HeadunitMediaPipeline::init() {
     GstBus* bus;
     GError* error = NULL;
+
+    if (!gst_is_initialized()){
+        gst_init(NULL, NULL);
+    }
 
     /*
      * Initialize Video pipeline
@@ -45,7 +104,7 @@ int HeadunitMediaPipeline::init() {
 #else
                                  "avdec_h264 ! "
 #endif
-                                 "appsink caps=\"video/x-raw,format=I420\" emit-signals=true sync=false name=vid_sink";
+                                 "glupload ! glcolorconvert ! qml6glsink name=vid_sink";
 
     vid_pipeline = gst_parse_launch(vid_launch_str, &error);
 
@@ -53,10 +112,10 @@ int HeadunitMediaPipeline::init() {
     gst_bus_add_watch(bus, (GstBusFunc)HeadunitMediaPipeline::bus_callback, this);
     gst_object_unref(bus);
 
-    GstElement* vid_sink = gst_bin_get_by_name(GST_BIN(vid_pipeline), "vid_sink");
+    /*GstElement* vid_sink = gst_bin_get_by_name(GST_BIN(vid_pipeline), "vid_sink");
 
     g_signal_connect(vid_sink, "new-sample", G_CALLBACK(&HeadunitMediaPipeline::newVideoSample), this);
-
+    */
     if (error != NULL) {
         qDebug("Could not construct video pipeline: %s", error->message);
         g_clear_error(&error);
@@ -129,7 +188,7 @@ int HeadunitMediaPipeline::init() {
 
     return 0;
 }
-
+/*
 GstFlowReturn HeadunitMediaPipeline::newVideoSample(GstElement* appsink, HeadunitMediaPipeline* _this) {
     GstSample* gstsample = gst_app_sink_pull_sample(GST_APP_SINK(appsink));
     if (!gstsample) {
@@ -157,7 +216,7 @@ GstFlowReturn HeadunitMediaPipeline::newVideoSample(GstElement* appsink, Headuni
     gst_buffer_unmap(gstbuf, const_cast<GstMapInfo*>(&mapInfo));
     gst_sample_unref(gstsample);
     return GST_FLOW_OK;
-}
+}*/
 
 void HeadunitMediaPipeline::handleMicrophoneData(const uint64_t timestamp, const unsigned char* bufferData, const int bufferSize) {
     if (m_microphoneDataHandler == nullptr) {

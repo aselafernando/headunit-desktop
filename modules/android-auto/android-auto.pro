@@ -13,8 +13,7 @@ SOURCES += \
     androidauto.cpp \
     headuniteventhandler.cpp \
     headunitmediapipeline.cpp \
-    headunitvideosource.cpp \
-    qgstvideobuffer.cpp
+    headunitvideosource.cpp
 
 RESOURCES += qml.qrc
 
@@ -29,8 +28,7 @@ HEADERS += \
     headunit_common.h \
     headuniteventhandler.h \
     headunitmediapipeline.h \
-    headunitvideosource.h \
-    qgstvideobuffer.h
+    headunitvideosource.h
 
 include($${PWD}/headunit/headunit.pri)
 

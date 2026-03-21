@@ -7,7 +7,7 @@ SUBDIRS = \
           app \
 #          modules/volume-control \
 #          modules/phone-bluetooth \
-#          modules/android-auto \
+          modules/android-auto \
 #          modules/media-player \
           modules/Car2PC \
           modules/J2534 \

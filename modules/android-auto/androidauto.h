@@ -15,6 +15,7 @@ class AndroidAutoPlugin : public QObject, PluginInterface, public MediaInterface
     Q_OBJECT
     Q_PLUGIN_METADATA(IID "org.viktorgino.headunit.androidauto" FILE "config.json")
     Q_INTERFACES(PluginInterface)
+
 public:
     explicit AndroidAutoPlugin(QObject* parent = nullptr);
     ~AndroidAutoPlugin();
@@ -27,6 +28,7 @@ public:
     void nextTrack() override;
     void setMediaVolume(uint8_t volume) override;
     void setVoiceVolume(uint8_t volume) override;
+
 signals:
     void playbackStarted() override;
     void message(QString id, QVariant message);

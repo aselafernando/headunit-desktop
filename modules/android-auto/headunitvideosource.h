@@ -1,12 +1,10 @@
 #ifndef HEADUNITPLAYER_H
 #define HEADUNITPLAYER_H
 
-#include <gst/app/gstappsink.h>
-#include <gst/app/gstappsrc.h>
+//#include <gst/app/gstappsink.h>
+//#include <gst/app/gstappsrc.h>
 #include <gst/gst.h>
 
-#include <QAbstractVideoBuffer>
-#include <QAbstractVideoSurface>
 #include <QBluetoothLocalDevice>
 #include <QObject>
 #include <QPoint>
@@ -14,7 +12,7 @@
 #include <QSettings>
 #include <QString>
 #include <QVariant>
-#include <QVideoSurfaceFormat>
+//#include <QVideoSurfaceFormat>
 #include <atomic>
 
 #include "headuniteventhandler.h"
@@ -28,7 +26,7 @@ class HeadunitVideoSource : public QObject {
     Q_PROPERTY(int videoWidth READ videoWidth NOTIFY videoResized)
     Q_PROPERTY(int videoHeight READ videoHeight NOTIFY videoResized)
     Q_PROPERTY(hu_status status READ status NOTIFY statusChanged)
-    Q_PROPERTY(QAbstractVideoSurface *videoSurface READ videoSurface WRITE setVideoSurface CONSTANT)
+//    Q_PROPERTY(QAbstractVideoSurface *videoSurface READ videoSurface WRITE setVideoSurface CONSTANT)
 
 public:
     HeadunitVideoSource(QObject *parent = nullptr);
@@ -57,10 +55,10 @@ public:
     void setGear(int gear);
     void setLocation(double latitude, double longitude, double track, double speed, double altitude, double eph);
 
-    QAbstractVideoSurface *videoSurface() const {
-        return m_surface;
-    }
-    void setVideoSurface(QAbstractVideoSurface *surface);
+    //QAbstractVideoSurface *videoSurface() const {
+    //    return m_surface;
+    //}
+    //void setVideoSurface(QAbstractVideoSurface *surface);
 
     uint8_t m_mediaPipelineVolume = 100;
     uint8_t m_voicePipelineVolume = 100;
@@ -80,10 +78,11 @@ public slots:
     bool mouseUp(QPoint point);
     bool keyEvent(QString key);
 
-    void videoFrameHandler(const QVideoFrame &frame);
+  //  void videoFrameHandler(const QVideoFrame &frame);
     void onPhoneDisconnected();
     void onPhoneConnected();
     void onPipelineStatusChanged(const Headunit::Pipeline &pipeline, const Headunit::PipelineStatus &status);
+    void videoItemLoaded(QQuickItem *videoItem);
 
 private:
     AndroidAuto::HUServer *headunit;
@@ -98,8 +97,8 @@ private:
 
     void touchEvent(HU::TouchInfo::TOUCH_ACTION action, QPoint *point);
 
-    QAbstractVideoSurface *m_surface = nullptr;
-    QVideoSurfaceFormat m_format;
+    //QAbstractVideoSurface *m_surface = nullptr;
+    //QVideoSurfaceFormat m_format;
     bool m_videoStarted = false;
     HeadunitMediaPipeline m_mediaPipeline;
 

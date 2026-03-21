@@ -4,12 +4,12 @@
 #include <gst/app/gstappsink.h>
 #include <gst/app/gstappsrc.h>
 #include <gst/gst.h>
-#include <gst/video/video.h>
-
-#include <QAbstractVideoBuffer>
-#include <QAbstractVideoSurface>
+//#include <gst/video/video.h>
+#include <QQuickItem>
+//#include <QAbstractVideoBuffer>
+//#include <QAbstractVideoSurface>
 #include <QObject>
-#include <QVideoSurfaceFormat>
+//#include <QVideoSurfaceFormat>
 
 #include "headunit_common.h"
 
@@ -32,8 +32,11 @@ public:
     void handleMediaData(Headunit::Pipeline pipeline, uint64_t timestamp, const unsigned char* bufferData, int bufferSize) override;
     void handleMicrophoneData(const uint64_t timestamp, const unsigned char* bufferData, const int bufferSize);
 
+//public slots:
+     void videoItemLoaded(QQuickItem *videoItem);
+
 signals:
-    void receivedVideoFrame(const QVideoFrame& frame);
+    //void receivedVideoFrame(const QVideoFrame& frame);
     void pipelineStatusChanged(const Headunit::Pipeline& pipeline, const Headunit::PipelineStatus& status);
 
 private:
@@ -45,12 +48,15 @@ private:
     GstAppSrc* m_aud_src = nullptr;
     GstAppSrc* m_au1_src = nullptr;
 
+    QQuickItem *videoItem = nullptr;
+    QQuickWindow *rootObject = nullptr;
+
     HeadunitMicrophoneDataHandlerInterface* m_microphoneDataHandler = nullptr;
 
     static GstFlowReturn newMicrophoneSample(GstElement* appsink, HeadunitMediaPipeline* _this);
     static int bus_callback(GstBus* bus, GstMessage* message, gpointer* ptr);
 
-    static GstFlowReturn newVideoSample(GstElement* appsink, HeadunitMediaPipeline* _this);
+    //static GstFlowReturn newVideoSample(GstElement* appsink, HeadunitMediaPipeline* _this);
     static uint64_t get_cur_timestamp();
 };
 

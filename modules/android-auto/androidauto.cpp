@@ -1,3 +1,5 @@
+#include <QQuickWindow>
+
 #include "androidauto.h"
 
 
@@ -8,7 +10,7 @@ AndroidAutoPlugin::AndroidAutoPlugin(QObject *parent)
 {
     m_pluginSettings.eventListeners = QStringList() << "UsbConnectionListenerPlugin::UsbDeviceAdded" << "SYSTEM::SetNightMode" << "J2534::VSS" << "J2534::Gear" << "GPSD::Location";
     m_pluginSettings.events = QStringList() << "connected";
-    gst_init(NULL, NULL);
+    //gst_init(NULL, NULL);
 
     m_interfaceSettings.mediaStream = true;
     m_interfaceSettings.voiceStream = true;
@@ -46,6 +48,7 @@ void AndroidAutoPlugin::eventMessage(QString id, QVariant message){
     }
 }
 void AndroidAutoPlugin::init(){
+    QQuickWindow::setGraphicsApi(QSGRendererInterface::OpenGL);
     m_headunit.init();
     m_headunit.startHU();
 
