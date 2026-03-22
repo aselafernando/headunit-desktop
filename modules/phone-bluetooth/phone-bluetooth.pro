@@ -1,13 +1,12 @@
 TEMPLATE = lib
 CONFIG += c++11 plugin link_pkgconfig
-QT += qml quick bluetooth dbus BluezQt
+PKGCONFIG += KF6BluezQt
+QT += qml quick bluetooth dbus core5compat
 TARGET = $$qtLibraryTarget(phone-bluetooth-plugin)
 DEFINES += QT_DEPRECATED_WARNINGS
 INCLUDEPATH += $${PWD}/../../includes
 INCLUDEPATH += $${PWD}/vCard_reader
 DESTDIR = $${OUT_PWD}/../../plugins
-QMAKE_LIBS += -lKF5BluezQt
-
 
 SOURCES += \
     ofono_dbus_types.cpp \

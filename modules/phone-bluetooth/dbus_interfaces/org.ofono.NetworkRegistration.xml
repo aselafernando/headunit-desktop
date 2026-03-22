@@ -22,7 +22,7 @@
                 </signal>
                 <signal name="OperatorsChanged">
                         <arg type="a(oa{sv})"/>
-                        <annotation name="org.qtproject.QtDBus.QtTypeName.In0" value="ObjectPathPropertiesList"/>
+                        <annotation name="org.qtproject.QtDBus.QtTypeName.Out0" value="ObjectPathPropertiesList"/>
                 </signal>
         </interface>
 </node>

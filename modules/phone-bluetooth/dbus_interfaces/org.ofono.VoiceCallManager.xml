@@ -38,7 +38,7 @@
                 <signal name="CallAdded">
                         <arg type="o"/>
                         <arg type="a{sv}"/>
-                        <annotation name="org.qtproject.QtDBus.QtTypeName.In1" value="QVariantMap"/>
+                        <annotation name="org.qtproject.QtDBus.QtTypeName.Out1" value="QVariantMap"/>
                 </signal>
                 <signal name="CallRemoved">
                         <arg type="o"/>

@@ -3,7 +3,7 @@ import QtQuick
 
 import QtQuick.Controls 2.0
 import QtQuick.Layouts 1.3
-import QtBluetooth 5.7
+/*import QtBluetooth*/
 import org.kde.bluezqt 1.0 as BluezQt
 import HUDTheme 1.0
 
