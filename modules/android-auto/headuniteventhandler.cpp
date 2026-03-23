@@ -82,8 +82,8 @@ void HeadunitEventHandler::DisconnectionOrError() {
     emit phoneDisconnected();
 }
 
-void HeadunitEventHandler::CustomizeOutputChannel(AndroidAuto::ServiceChannels /* unused */,
-                                                  HU::ChannelDescriptor::OutputStreamChannel& /* unused */) {
+void HeadunitEventHandler::CustomizeOutputChannel(AndroidAuto::ServiceChannels,
+                                                  HU::ChannelDescriptor::OutputStreamChannel&) {
 }
 void HeadunitEventHandler::MediaSetupComplete(AndroidAuto::ServiceChannels chan) {
     if (chan == AndroidAuto::VideoChannel) {
@@ -91,7 +91,7 @@ void HeadunitEventHandler::MediaSetupComplete(AndroidAuto::ServiceChannels chan)
     }
 }
 
-void HeadunitEventHandler::VideoFocusRequest(AndroidAuto::ServiceChannels /* unused */, const HU::VideoFocusRequest& request) {
+void HeadunitEventHandler::VideoFocusRequest(AndroidAuto::ServiceChannels, const HU::VideoFocusRequest& request) {
     emit VideoFocusHappened(request.mode() == HU::VIDEO_FOCUS_MODE_FOCUSED, false);
 }
 
@@ -107,13 +107,13 @@ void HeadunitEventHandler::PhoneBluetoothReceived(std::string address) {
     emit bluetoothConnectionRequest(QString::fromStdString(address));
 }
 
-void HeadunitEventHandler::HandlePhoneStatus(AndroidAuto::IHUConnectionThreadInterface& stream, const HU::PhoneStatus& phoneStatus) {
+void HeadunitEventHandler::HandlePhoneStatus(__attribute__((unused)) AndroidAuto::IHUConnectionThreadInterface& stream, __attribute__((unused)) const HU::PhoneStatus& phoneStatus) {
 }
-void HeadunitEventHandler::HandleNaviStatus(AndroidAuto::IHUConnectionThreadInterface& stream, const HU::NAVMessagesStatus& request) {
+void HeadunitEventHandler::HandleNaviStatus(__attribute__((unused)) AndroidAuto::IHUConnectionThreadInterface& stream, __attribute__((unused)) const HU::NAVMessagesStatus& request) {
 }
-void HeadunitEventHandler::HandleNaviTurn(AndroidAuto::IHUConnectionThreadInterface& stream, const HU::NAVTurnMessage& request) {
+void HeadunitEventHandler::HandleNaviTurn(__attribute__((unused)) AndroidAuto::IHUConnectionThreadInterface& stream, __attribute__((unused)) const HU::NAVTurnMessage& request) {
 }
-void HeadunitEventHandler::HandleNaviTurnDistance(AndroidAuto::IHUConnectionThreadInterface& stream, const HU::NAVDistanceMessage& request) {
+void HeadunitEventHandler::HandleNaviTurnDistance(__attribute__((unused)) AndroidAuto::IHUConnectionThreadInterface& stream, __attribute__((unused)) const HU::NAVDistanceMessage& request) {
 }
 
 uint64_t HeadunitEventHandler::get_cur_timestamp() {
