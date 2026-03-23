@@ -1,5 +1,5 @@
 TEMPLATE = lib
-CONFIG += c++11 plugin
+CONFIG += c++14 plugin
 QT += network qml quick charts multimedia quickcontrols2 dbus
 TARGET = $$qtLibraryTarget(welle-io-plugin)
 DEFINES += QT_DEPRECATED_WARNINGS
@@ -23,6 +23,9 @@ INSTALLS += target
 
 DEFINES += QT_NO_SYSTEMTRAYICON
 DEFINES += QUIET_MPG123
+DEFINES += CURRENT_VERSION="\\\"$(shell cat $${PWD}/welle.io/src/welle-gui/_current_version)\\\""
+DEFINES += BUILD_DATE="\\\"$(shell date -u +%s)\\\""
+DEFINES += GITHASH="\\\"$(shell git -C $${PWD}/welle.io rev-parse HEAD)\\\""
 
 DISTFILES += \
     config.json

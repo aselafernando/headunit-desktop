@@ -15,7 +15,7 @@ SUBDIRS = \
           modules/i2c-light-sensor \
           modules/reversing-camera \
           modules/usbconnectionlistener \
-#          modules/welle-io \
+          modules/welle-io \
 #          modules/navit \
 #          modules/fm-radio \
 #          modules/hvac \
