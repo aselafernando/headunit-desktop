@@ -65,7 +65,7 @@ void HeadunitVideoSource::startHU() {
 
     if (settings.childKeys().contains("resolution")) {
         QVariant res = settings.value("resolution");
-        if (res.canConvert(QMetaType::Int)) {
+        if (res.canConvert<int>()) {
             switch (res.toInt()) {
                 case 1:
                     setVideoWidth(800);

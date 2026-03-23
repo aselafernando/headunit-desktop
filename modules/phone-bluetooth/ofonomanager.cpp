@@ -118,7 +118,7 @@ void OfonoManager::CallAdded(const QDBusObjectPath &path, const QVariantMap &pro
     emit showOverlay();
 }
 
-void OfonoManager::CallRemoved(const QDBusObjectPath &path) {
+void OfonoManager::CallRemoved(__attribute__((unused)) const QDBusObjectPath &path) {
     qCWarning(OFONO2)  << ": Call Removed";
     emit hideOverlay();
     emit callFinished();
@@ -139,7 +139,7 @@ void OfonoManager::CallPropertyChanged(const QString &property, const QDBusVaria
     }
 }
 
-void OfonoManager::ModemAdded(const QDBusObjectPath &path, const QVariantMap &properties) {
+void OfonoManager::ModemAdded(const QDBusObjectPath &path, __attribute__((unused)) const QVariantMap &properties) {
     if(path.path() == m_deviceDefaultPath){
         setModem(path.path());
     }

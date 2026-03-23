@@ -6,7 +6,7 @@ Q_LOGGING_CATEGORY(HEADUNIT, "telephony")
 Q_LOGGING_CATEGORY(OFONO, "telephony [qoFono]")
 Q_LOGGING_CATEGORY(BLUEZ, "telephony [BluezQt]")
 TelephonyManager::TelephonyManager(QObject *parent) : QObject(parent),
-      m_bluez_manager(this), m_obexManager(this), m_ofonoManagerClass(this), m_phonebookModel(this), m_callHistoryModel(this), m_mediaTrackTimer(this)
+      m_mediaTrackTimer(this), m_bluez_manager(this), m_obexManager(this), m_ofonoManagerClass(this), m_phonebookModel(this), m_callHistoryModel(this)
 {
     m_contactsFolder = QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation) + "/contacts";
 
@@ -435,7 +435,7 @@ void TelephonyManager::disablePairing(){
 
 void TelephonyManager::settingsChanged(const QString &key, const QVariant &value){
     if(key == "adapterName") {
-        if(value.canConvert(QMetaType::QString)){
+        if(value.canConvert<QString>()){
             m_bluez_adapter->setName(value.toString());
         }
     }
@@ -463,7 +463,7 @@ void TelephonyManager::eventMessage(QString id, QVariant message) {
 }
 
 //Allow control from external plugins
-void TelephonyManager::actionMessage(QString id, QVariant message) {
+void TelephonyManager::actionMessage(QString id, __attribute__((unused)) QVariant message) {
     qCDebug(BLUEZ) << "Action Message: " << id;
 
     if (id == "Answer") {
