@@ -1,5 +1,5 @@
 TEMPLATE = lib
-CONFIG += plugin link_pkgconfig
+CONFIG += c++14 plugin link_pkgconfig
 QT += quick bluetooth multimedia
 TARGET = $$qtLibraryTarget(android-auto-plugin)
 DEFINES += QT_DEPRECATED_WARNINGS
