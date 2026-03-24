@@ -20,6 +20,8 @@ class VolumeControl : public QObject, PluginInterface
     Q_INTERFACES(PluginInterface)
 public:
     explicit VolumeControl(QObject *parent = nullptr);
+    ~VolumeControl();
+
     void init() override;
     QObject *getContextProperty() override;
 

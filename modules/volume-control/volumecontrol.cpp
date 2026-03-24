@@ -14,6 +14,12 @@ VolumeControl::VolumeControl(QObject *parent) : QObject (parent)
     qmlRegisterType<PulseAudioQt::ModuleModel>("HUDVolume", 1, 0, "ModuleModel");
 }
 
+VolumeControl::~VolumeControl() {
+    if(server) {
+        disconnect(server, &PulseAudioQt::Server::defaultSinkChanged, this, &VolumeControl::defaultSinkChanged);
+    }
+}
+
 void VolumeControl::init(){
     defaultSinkChanged();
     m_pluginSettings.actions = QStringList() << "VolumeUp" << "VolumeDown";
@@ -41,6 +47,7 @@ void VolumeControl::defaultSinkChanged() {
         qDebug () << "Setting volume to : " << m_settings["volume"].toInt();
     }
 }
+
 QObject *VolumeControl::getContextProperty(){
     return this;
 }
