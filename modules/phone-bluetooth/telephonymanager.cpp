@@ -202,7 +202,7 @@ void TelephonyManager::getPhonebooks(QString destination, bool callHistoryOnly){
         BluezQt::PendingCall * call = m_obexManager.createSession(destination, args);
 
         connect(call, &BluezQt::PendingCall::finished, this,
-                [=]() {
+                [=, this]() {
                     if(call->value().canConvert<QDBusObjectPath>()) {
                         QDBusObjectPath objectPath = qvariant_cast<QDBusObjectPath>(call->value());
                         pullPhonebook(objectPath.path(), "cch", m_contactsFolder + "/callHistory.vcf");

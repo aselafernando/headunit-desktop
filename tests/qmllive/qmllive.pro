@@ -1,7 +1,7 @@
 TEMPLATE = app
 
 QT += qml quick multimedia multimediawidgets sql
-CONFIG += c++11 link_pkgconfig
+CONFIG += c++17 link_pkgconfig
 
 SOURCES += \
     main.cpp \

@@ -1,5 +1,5 @@
 TEMPLATE = lib
-CONFIG += c++14 link_pkgconfig plugin
+CONFIG += c++17 link_pkgconfig plugin
 QT += quick dbus
 
 PKGCONFIG += libpulse-simple libpulse libpulse-mainloop-glib

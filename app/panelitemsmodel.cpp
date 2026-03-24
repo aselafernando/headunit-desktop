@@ -56,7 +56,7 @@ void PanelItemsModel::setPluginList(PluginList *pluginList) {
     m_pluginList = pluginList;
     for(int i = 0; i < m_pluginList->size(); i++){
         //PluginObject *plugin = m_pluginList->at(i);
-        connect(m_pluginList,&PluginList::pluginAdded, [=](const int pluginIndex) {
+        connect(m_pluginList,&PluginList::pluginAdded, [=, this](const int pluginIndex) {
             beginInsertRows(QModelIndex(), pluginIndex, pluginIndex);
             endInsertRows();
         });

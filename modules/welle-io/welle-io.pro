@@ -1,5 +1,5 @@
 TEMPLATE = lib
-CONFIG += c++14 plugin
+CONFIG += c++17 plugin
 QT += network qml quick charts multimedia quickcontrols2 dbus
 TARGET = $$qtLibraryTarget(welle-io-plugin)
 DEFINES += QT_DEPRECATED_WARNINGS

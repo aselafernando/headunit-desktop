@@ -1,5 +1,5 @@
 TEMPLATE = lib
-CONFIG += c++11 plugin link_pkgconfig
+CONFIG += c++17 plugin link_pkgconfig
 QT += quick multimedia multimediawidgets sql
 TARGET = $$qtLibraryTarget(media-player-plugin)
 DEFINES += QT_DEPRECATED_WARNINGS

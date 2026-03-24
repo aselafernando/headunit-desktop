@@ -1,6 +1,6 @@
 QT += qml quick widgets
 
-CONFIG += c++11
+CONFIG += c++17
 
 SOURCES += main.cpp \
     dabHelper.cpp

@@ -148,7 +148,7 @@ void PluginListModel::setPlugins(PluginList *plugins) {
             connect(plugin,&PluginObject::loadedChanged, this, &PluginListModel::onDataChanged);
             connect(plugin,&PluginObject::sourceChanged, this, &PluginListModel::onDataChanged);
         }
-        connect(m_plugins,&PluginList::pluginAdded, [=](const int pluginIndex) {
+        connect(m_plugins,&PluginList::pluginAdded, [=, this](const int pluginIndex) {
             beginInsertRows(QModelIndex(), pluginIndex, pluginIndex);
             endInsertRows();
         });

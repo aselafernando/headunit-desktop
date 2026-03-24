@@ -1,5 +1,5 @@
 TEMPLATE = lib
-CONFIG += c++11 plugin link_pkgconfig
+CONFIG += c++17 plugin link_pkgconfig
 PKGCONFIG += KF6BluezQt
 QT += qml quick bluetooth dbus core5compat
 TARGET = $$qtLibraryTarget(phone-bluetooth-plugin)
