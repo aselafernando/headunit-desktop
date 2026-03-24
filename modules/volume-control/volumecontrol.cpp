@@ -1,3 +1,6 @@
+#include <PulseAudioQt/Models>
+#include <PulseAudioQt/Sink>
+
 #include "volumecontrol.h"
 
 VolumeControl::VolumeControl(QObject *parent) : QObject (parent)
@@ -14,7 +17,13 @@ VolumeControl::VolumeControl(QObject *parent) : QObject (parent)
 void VolumeControl::init(){
     defaultSinkChanged();
     m_pluginSettings.actions = QStringList() << "VolumeUp" << "VolumeDown";
-    connect(&m_sinkModel, &PulseAudioQt::SinkModel::defaultSinkChanged, this, &VolumeControl::defaultSinkChanged);
+
+    context = PulseAudioQt::Context::instance();
+    server = context->server();
+
+    if (server) {
+        connect(server, &PulseAudioQt::Server::defaultSinkChanged, this, &VolumeControl::defaultSinkChanged);
+    }
 }
 
 void VolumeControl::setDefaultVolume(int volume){
@@ -24,8 +33,10 @@ void VolumeControl::setDefaultVolume(int volume){
 }
 
 void VolumeControl::defaultSinkChanged() {
-    PulseAudioQt::Sink * defaultSink = m_sinkModel.defaultSink();
-    if( defaultSink != nullptr) {
+    if(server == nullptr) return;
+
+    PulseAudioQt::Sink * defaultSink = server->defaultSink();
+    if(defaultSink != nullptr) {
         defaultSink->setVolume(m_settings["volume"].toInt());
         qDebug () << "Setting volume to : " << m_settings["volume"].toInt();
     }
@@ -34,9 +45,11 @@ QObject *VolumeControl::getContextProperty(){
     return this;
 }
 
-void VolumeControl::actionMessage(QString id, QVariant message){
-    PulseAudioQt::Sink * defaultSink = m_sinkModel.defaultSink();
-    if( defaultSink != nullptr) {
+void VolumeControl::actionMessage(QString id, __attribute__((unused)) QVariant message){
+    if(server == nullptr) return;
+
+    PulseAudioQt::Sink * defaultSink = server->defaultSink();
+    if(defaultSink != nullptr) {
         int volume = 0;
         if(id == "VolumeUp"){
             volume = defaultSink->volume() + (655 * 4);

@@ -10,6 +10,3 @@
 	path = modules/welle-io/welle.io
 	url = https://github.com/aselafernando/welle.io
 	branch = master
-[submodule "modules/volume-control/pulseaudio-qt"]
-	path = modules/volume-control/pulseaudio-qt
-	url = https://invent.kde.org/libraries/pulseaudio-qt.git

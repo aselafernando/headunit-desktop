@@ -4,10 +4,14 @@
 #include <QObject>
 #include <QQmlEngine>
 #include <QDebug>
+#include <PulseAudioQt/Context>
+#include <PulseAudioQt/Server>
 #include <plugininterface.h>
+/*
 #include "pulseaudio-qt/src/models.h"
 #include "pulseaudio-qt/src/sink.h"
 #include "pulseaudio-qt/src/context.h"
+*/
 
 class VolumeControl : public QObject, PluginInterface
 {
@@ -25,7 +29,9 @@ public slots:
 private slots:
     void defaultSinkChanged();
 private:
-    PulseAudioQt::SinkModel m_sinkModel;
+    PulseAudioQt::Context* context = nullptr;
+    PulseAudioQt::Server* server = nullptr;
+//    PulseAudioQt::SinkModel m_sinkModel;
 };
 
 #endif // VOLUMECONTROL_H
