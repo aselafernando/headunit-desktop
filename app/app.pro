@@ -57,5 +57,5 @@ RESOURCES += \
     main.qrc
 
 DISTFILES += \
-    boot-logo-800x480.png
+    boot-logo-1024x600.png
 
