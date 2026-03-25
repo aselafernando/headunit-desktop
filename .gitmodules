@@ -1,5 +1,5 @@
 [submodule "headunit"]
-	path = modules/android-auto/headunit
+	path = plugins/android-auto/headunit
 	url = https://github.com/aselafernando/libheadunit.git
 	branch = qt6
 [submodule "themes/default-theme"]
@@ -7,6 +7,6 @@
 	url = https://github.com/aselafernando/headunit-gui.git
 	branch = qt6
 [submodule "welle.io"]
-	path = modules/welle-io/welle.io
+	path = plugins/welle-io/welle.io
 	url = https://github.com/aselafernando/welle.io
 	branch = master

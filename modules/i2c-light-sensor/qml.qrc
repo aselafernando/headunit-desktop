@@ -1,6 +1,0 @@
-<RCC>
-    <qresource prefix="/I2CLightSensor">
-        <file>settings.qml</file>
-        <file>icons/icons8-sun-96.png</file>
-    </qresource>
-</RCC>

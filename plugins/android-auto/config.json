@@ -1,0 +1,133 @@
+{
+    "name":"android-auto",
+    "label":"Android Auto",
+    "source" : "qrc:/plugins/android-auto/nativeAA.qml",
+    "icon": "qrc:/plugins/android-auto/social-android.svg",
+    "config":{
+        "type":"items",
+        "section":"Media apps",
+        "items" : [
+            {
+                "label":"Play Native Media during VR",
+                "name": "can_play_native_media_during_vr",
+                "type":"switch",
+                "textOff":"Off",
+                "textOn": "On",
+                "defaultValue": false
+            },
+            {
+                "label":"Hide clock",
+                "name": "hide_clock",
+                "type":"switch",
+                "textOff":"Off",
+                "textOn": "On",
+                "defaultValue": false
+            },
+            {
+                "label":"Available in call",
+                "name": "available_while_in_call",
+                "type":"switch",
+                "textOff":"Off",
+                "textOn": "On",
+                "defaultValue": false
+            },
+            {
+                "label":"Pixel density",
+                "name": "dpi",
+                "type":"textfield",
+                "textType" : "int",
+                "defaultValue" : 200,
+                "suffix" : "DPI"
+            },
+            {
+                "label":"Resolution",
+                "name": "resolution",
+                "type":"combobox",
+                "values": {"1":"800x480","2":"1280x720","3":"1920x1080"},
+                "defaultValue": "1"
+            },
+            {
+                "label":"Frame rate",
+                "name": "frame_rate",
+                "type":"combobox",
+                "values": {"1" : "30 FPS","2" : "60 FPS"},
+                "defaultValue": "1"
+            },
+            {
+                "label":"Transport type",
+                "name": "transport_type",
+                "type":"combobox",
+                "values": {"usb":"USB" ,"network":"Network"},
+                "defaultValue": "usb"
+            },
+            {
+                "label":"Network Settings",
+                "type":"header"
+            },
+            {
+                "label":"Enabled",
+                "name": "enabled",
+                "type":"switch",
+                "defaultValue" : false,
+                "textOff":"No",
+                "textOn": "Yes"
+            },
+            {
+                "label":"Network address",
+                "name": "network_address",
+                "type":"textfield",
+                "textType" : "string",
+                "defaultValue" : "127.0.0.1",
+                "inputMask" : "000.000.000.000;_",
+                "conditional":true,
+                "conditionTarget": "enabled",
+                "conditionValue":"true"
+            },
+            {
+                "label":"Server mode",
+                "name": "wifi_direct",
+                "type":"switch",
+                "textOff":"Off",
+                "textOn": "On",
+                "defaultValue": true,
+                "conditional":true,
+                "conditionTarget": "enabled",
+                "conditionValue":true
+            },
+            {
+                "label":"Server WLAN settings",
+                "type":"header",
+                "conditional":true,
+                "conditionTarget": "wifi_direct",
+                "conditionValue":true
+            },
+            {
+                "label":"BSSID",
+                "name": "wlan_bssid",
+                "type":"textfield",
+                "textType" : "string",
+                "defaultValue" : "00:00:00:00:00:00",
+                "inputMask" : "HH:HH:HH:HH:HH:HH;_",
+                "conditional":true,
+                "conditionTarget": "wifi_direct",
+                "conditionValue":true
+            },
+            {
+                "label":"Network name",
+                "name": "wlan_name",
+                "type":"textfield",
+                "conditional":true,
+                "conditionTarget": "wifi_direct",
+                "conditionValue":true
+            },
+            {
+                "label":"Password",
+                "name": "wlan_password",
+                "type":"textfield",
+                "conditional":true,
+                "conditionTarget": "wifi_direct",
+                "conditionValue":true
+            }
+        ]
+    }
+}

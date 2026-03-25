@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/plugins/reverse-camera">
+        <file>reverse-camera.qml</file>
+    </qresource>
+</RCC>

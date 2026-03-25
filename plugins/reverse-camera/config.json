@@ -1,0 +1,34 @@
+{
+    "name":   "reverse-camera",
+    "label":  "Reverse Camera",
+    "source": "qrc:/plugins/reverse-camera/reverse-camera.qml",
+    "icon":   "qrc:/qml/icons/android-camera.png",
+    "config":{
+        "type": "items",
+        "items":[
+            {
+                "label": "Camera type",
+                "name":  "camera",
+                "type":  "combobox",
+                "defaultValue":"custom",
+                "values": {"auto":"Automatic", "rpi":"RPi Unicam", "custom":"Custom"}
+            },
+            {
+                "label":"GStreamer src",
+                "name": "gs_src",
+                "type": "textfield",
+                "conditional":true,
+                "conditionTarget": "camera",
+                "conditionValue":  "custom"
+            },
+            {
+                "label":"GStreamer pipeline",
+                "name": "gs_pipeline",
+                "type": "textfield",
+                "conditional":true,
+                "conditionTarget": "camera",
+                "conditionValue":  "custom"
+            }
+        ]
+    }
+}

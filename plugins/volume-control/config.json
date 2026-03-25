@@ -1,0 +1,15 @@
+{
+    "name":"volume-control",
+    "label":"Volume",
+    "icon": "qrc:/plugins/volume-control/volume.png",
+    "config":{
+        "type":"loader",
+        "source":"qrc:/plugins/volume-control/VolumeControl.qml",
+        "settings" : [
+            {
+                "name": "volume",
+                "type": "int"
+            }
+        ]
+    }
+}
