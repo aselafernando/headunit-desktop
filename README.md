@@ -14,36 +14,36 @@ This software is currently under active development and lot of the features are 
  - J2534 support
  - Reverse camera support
 
-Reverse camera and android auto leverage the gstreamer backend and OpenGL rendering to maximise hardware decoding especially on low power systems like a Rapsberry Pi.
+Reverse camera and android auto leverage a gstreamer pipeline with OpenGL rendering to maximise hardware decoding. This is especially required for smooth performance on low power systems like a Rapsberry Pi.
 
-It is currently optimised for a 1024x600 screen
+It is currently optimised for a 1024x600 screen.
 
 # Compiling on Debian 13
 
 ## Build tools
 `apt-get -y install build-essential automake git cmake`
 
-##Qt6 Packages
+## Qt6 packages
 
-`qt6-base-dev qtchooser qmake6 qt6-base-dev-tools qt6-declarative-dev qt6-multimedia-dev \
-libqt6bluetooth6 qt6-connectivity-dev qt6-charts-dev qt6-serialport-dev \
-qml6-module-qtquick qml6-module-qtquick-layouts qml6-module-qtquick-dialogs qml6-module-qtquick-controls \
-qml6-module-qtquick-window qml6-module-qtmultimedia qml6-module-qt-labs-settings \
-qml6-module-qt-labs-folderlistmodel qml6-module-qt-labs-platform libqt6bluetooth6 qml6-module-qtcharts \
-qml6-module-qt5compat-graphicaleffects \
-qt6-connectivity-dev qml6-module-qtquick-controls \
-libqt6charts6 qt6-charts-dev qml6-module-qtcharts qt6-serialport-dev \
-gstreamer1.0-qt6 \
-libkf6bluezqt-dev qt6-5compat-dev \
+`qt6-base-dev qtchooser qmake6 qt6-base-dev-tools qt6-declarative-dev qt6-multimedia-dev
+libqt6bluetooth6 qt6-connectivity-dev qt6-charts-dev qt6-serialport-dev
+qml6-module-qtquick qml6-module-qtquick-layouts qml6-module-qtquick-dialogs qml6-module-qtquick-controls
+qml6-module-qtquick-window qml6-module-qtmultimedia qml6-module-qt-labs-settings
+qml6-module-qt-labs-folderlistmodel qml6-module-qt-labs-platform libqt6bluetooth6 qml6-module-qtcharts
+qml6-module-qt5compat-graphicaleffects
+qt6-connectivity-dev qml6-module-qtquick-controls
+libqt6charts6 qt6-charts-dev qml6-module-qtcharts qt6-serialport-dev
+gstreamer1.0-qt6
+libkf6bluezqt-dev qt6-5compat-dev
 libkf6pulseaudioqt-dev`
 
-## Audio Packages
+## Audio packages
 `apt-get -y install pipewire wireplumber pipewire-audio libspa-0.2-bluetooth gstreamer1.0-pipewire`
 
-##Codecs for Bluetooth
+## Bluetooth codecs
 `apt-get -y install libfreeaptx0 libsbc1 libaacs0 libvo-aacenc0 libldacbt-abr2 libldacbt-enc2 liblc3-1 libopus0 fdkaac`
 
-##For volume control plugin
+## Volume control plugin
 `apt-get -y install libpulse-dev`
 
 ## I2C light sensor plugin
@@ -55,20 +55,22 @@ libkf6pulseaudioqt-dev`
 ## GPSD plugin
 `apt-get -y install libgps-dev gpsd`
 
-##Welle.IO DAB plugin
+## Welle.IO DAB plugin
 `apt-get -y install libfftw3-dev libmpg123-dev libfaad-dev librtlsdr-dev libairspy-dev libsoapysdr-dev libmp3lame-dev`
 
 ## Compile Instructions
 
 1. Install the dependencies above
 2. Run the following
-`git clone --recursive -b qt6 https://github.com/aselafernando/headunit-desktop.git
+```
+git clone --recursive -b qt6 https://github.com/aselafernando/headunit-desktop.git
 cd headunit-desktop
-protoc --proto_path=./plugins/android-auto/headunit --cpp_out=./pluginss/android-auto/headunit/src/protocol AndroidAuto.proto
+protoc --proto_path=./plugins/android-auto/headunit --cpp_out=./plugins/android-auto/headunit/src/protocol AndroidAuto.proto
 protoc --proto_path=./plugins/android-auto/headunit --cpp_out=./plugins/android-auto/headunit/src/protocol Bluetooth.proto
 mv ./plugins/android-auto/headunit/src/protocol/*.h ./plugins/android-auto/headunit/includes/
 mkdir build
 cd build
-qmake PREFIX=**DESTINATION DIR** ../headunit-desktop.pro
+qmake PREFIX=***DESTINATION DIR*** ../headunit-desktop.pro
 make
-make install`
+make install
+```
