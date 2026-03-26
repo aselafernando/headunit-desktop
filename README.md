@@ -1,27 +1,93 @@
 # HeadUnit Desktop
 
-[![Support Server](https://img.shields.io/discord/593745867064737792?label=DISCORD&style=for-the-badge)](https://discord.gg/WpmHjWb64p)
+This is a fork of the original [headunit-desktop](https://github.com/viktorgino/headunit-desktop) which appears abandoned.
 
-
-[![Support me on Patreon](https://img.shields.io/endpoint.svg?url=https%3A%2F%2Fshieldsio-patreon.vercel.app%2Fapi%3Fusername%3Dviktorgino%26type%3Dpatrons&style=for-the-badge)](https://patreon.com/viktorgino)
-
-HeadUnit Desktop is a Qt based free and open source software that is intended to be run on computers built into cars. HUD is designed to be highly modular and easy to extend even for beginners. Make sure you check the documentation out, which is actively being updated.
+HeadUnit Desktop is a Qt6 based free and open source software that is intended to be run on computers built into cars. HUD is designed to be highly modular and easy to extend even for beginners.
 
 This software is currently under active development and lot of the features are experimental. The main features are currently:
 
- - Media player with a media library and media scanner
- - Android Auto™ client
+ - Android Auto™ client (wired & wireless)
  - DAB radio
+ - Reverse camera support
+ - I2C light sensor support (can trigger night mode in Android Auto™)
+ - Car2PC device support
+ - GPSD support (with geofences for triggers)
+ - J2534 support
 
-Proposed features:
+Reverse camera and android auto leverage a gstreamer pipeline with OpenGL rendering to maximise hardware decoding. This is especially required for smooth performance on low power systems like a Rapsberry Pi.
 
- - FM Radio
- - CAN bus sniffer (depending on how much control different modules of the car allow and how much information, such as A/C steering wheel controls, different gauges and sensor data) with a customizable profile for each car.
+It is currently optimised for a 1024x600 screen.
 
-The GUI for some of the proposed features is already there. For screenshots of the current state of the GUI go to the [screenshots page](https://github.com/viktorgino/headunit-desktop/wiki/Screenshots) in the Wiki.
+# Known Limitations
+ - When --lazy-loading is enabled, the volume control plugin fails to work
+ - Restarting the gstreamer pipeline for the reverse-camera plugin is not supported. If the pipeline is modifed in the configuration file, the application must be restarted.
+ - With wireless Android Auto™, if the phone disconnects unintentionally, occasionally this can cause the application to lock up. Reccommended work around is to configure the systemd watchdog to restart the application if this occurs.
+ - Media player with a media library and media scanner plugin has not been ported to Qt6 yet
+ - Requires OpenGL(ES) rendering to allow the Qt6 gstreamer sink qml6glsink for accelerated video decoding. Vulkan currently is unsupported (gstreamer lists vulkan as a "bad plugin")
 
-For information on getting started on documentation go to the [Wiki](https://github.com/viktorgino/headunit-desktop/wiki)
+# Options
+## Command line
+| Option | Description |
+| ------ | ----------- |
+| --lazy-loading | Loading plugins in a separate thread (volume-control plugin seems to struggle with this) |
 
--------------------
+## Configuration file
+Located at `"~/.config/HeadUnit Desktop/HeadUnit Desktop.conf"` where ~ is the home directory of the user the application is running under
 
-If you like this project and would like to support me, then you can do it on my [Patreon page](https://www.patreon.com/viktorgino) or buy me a beer on [Amazon](http://amzn.eu/3FbYXDC)
+# Compiling on Debian 13
+Tested on x86_64 and arm64 (RPi 4 - using in-built Bluetooth & Wi-Fi)
+
+## Build tools
+`apt-get -y install build-essential automake git cmake`
+
+## Qt6 packages
+
+`qt6-base-dev qtchooser qmake6 qt6-base-dev-tools qt6-declarative-dev qt6-multimedia-dev
+libqt6bluetooth6 qt6-connectivity-dev qt6-charts-dev qt6-serialport-dev
+qml6-module-qtquick qml6-module-qtquick-layouts qml6-module-qtquick-dialogs qml6-module-qtquick-controls
+qml6-module-qtquick-window qml6-module-qtmultimedia qml6-module-qt-labs-settings
+qml6-module-qt-labs-folderlistmodel qml6-module-qt-labs-platform libqt6bluetooth6 qml6-module-qtcharts
+qml6-module-qt5compat-graphicaleffects
+qt6-connectivity-dev qml6-module-qtquick-controls
+libqt6charts6 qt6-charts-dev qml6-module-qtcharts qt6-serialport-dev
+gstreamer1.0-qt6
+libkf6bluezqt-dev qt6-5compat-dev
+libkf6pulseaudioqt-dev`
+
+## Audio packages
+`apt-get -y install pipewire wireplumber pipewire-audio gstreamer1.0-pipewire`
+
+## Bluetooth codecs
+`apt-get -y install libfreeaptx0 libsbc1 libaacs0 libvo-aacenc0 libspa-0.2-bluetooth libldacbt-abr2 libldacbt-enc2 liblc3-1 libopus0 fdkaac`
+
+## Volume control plugin
+`apt-get -y install libpulse-dev`
+
+## I2C light sensor plugin
+`apt-get -y install libi2c-dev`
+
+## USB connection listener plugin
+`apt-get -y install libusb-dev`
+
+## GPSD plugin
+`apt-get -y install libgps-dev gpsd`
+
+## Welle.IO DAB plugin
+`apt-get -y install libfftw3-dev libmpg123-dev libfaad-dev librtlsdr-dev libairspy-dev libsoapysdr-dev libmp3lame-dev`
+
+## Compile Instructions
+
+1. Install the dependencies above
+2. Run the following
+```
+git clone --recursive -b qt6 https://github.com/aselafernando/headunit-desktop.git
+cd headunit-desktop
+protoc --proto_path=./plugins/android-auto/headunit --cpp_out=./plugins/android-auto/headunit/src/protocol AndroidAuto.proto
+protoc --proto_path=./plugins/android-auto/headunit --cpp_out=./plugins/android-auto/headunit/src/protocol Bluetooth.proto
+mv ./plugins/android-auto/headunit/src/protocol/*.h ./plugins/android-auto/headunit/includes/protocol/
+mkdir build
+cd build
+qmake PREFIX=***DESTINATION DIR*** ../headunit-desktop.pro
+make
+make install
+```

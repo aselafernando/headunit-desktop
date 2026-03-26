@@ -1,12 +1,15 @@
+#include <QtDebug>
+#include <QLoggingCategory>
+
 #include "pluginobject.h"
 
-Q_LOGGING_CATEGORY(PLUGINOBJECT, "PluginObject")
+Q_LOGGING_CATEGORY(LOG_APP_PLUGINOBJECT, "app.pluginobject")
 
 PluginObject::PluginObject(QString fileName, QObject *parent) :
       QObject(parent), m_loaded(false), m_pluginFileName(fileName), m_pluginLoader(fileName, this)
 {
     if(m_pluginLoader.metaData().value("MetaData").type() != QJsonValue::Object){
-        qCDebug(PLUGINOBJECT) << "Invalid plugin : " << fileName << " config missing " << fileName << m_pluginLoader.errorString();
+        qCDebug(LOG_APP_PLUGINOBJECT) << "Invalid plugin : " << fileName << " config missing " << fileName << m_pluginLoader.errorString();
         return;
     }
 
@@ -15,14 +18,14 @@ PluginObject::PluginObject(QString fileName, QObject *parent) :
     m_plugin = m_pluginLoader.instance();
 
     if (!m_plugin) {
-        qCDebug(PLUGINOBJECT) << "Error loading plugin : " << m_name << m_pluginLoader.errorString();
+        qCDebug(LOG_APP_PLUGINOBJECT) << "Error loading plugin : " << m_name << m_pluginLoader.errorString();
         return;
     }
 
     m_pluginInterface = qobject_cast<PluginInterface *>(m_plugin);
 
     if(!m_pluginInterface){
-        qCDebug(PLUGINOBJECT) << "Error loading plugin : " << m_name << ", root component is not a valid instance of PluginInterface";
+        qCDebug(LOG_APP_PLUGINOBJECT) << "Error loading plugin : " << m_name << ", root component is not a valid instance of PluginInterface";
         return;
     }
 
@@ -72,7 +75,7 @@ PluginObject::PluginObject(QString fileName, QObject *parent) :
         m_settingsMenu = settingsObject.toVariantMap();
     }
 
-    qCDebug(PLUGINOBJECT) << "Plugin loaded : " << m_name;
+    qCDebug(LOG_APP_PLUGINOBJECT) << "Plugin loaded : " << m_name;
 
     m_mediaInterface = dynamic_cast<MediaInterface *>(m_plugin);
 
@@ -140,16 +143,16 @@ void PluginObject::connectToPropertySignal(QString propertyName, QString slotNam
                             }
                         }
                     } else {
-                        qCDebug(PLUGINOBJECT) << "Property " << propertyName << " doesn't have a notifiable signal";
+                        qCDebug(LOG_APP_PLUGINOBJECT) << "Property " << propertyName << " doesn't have a notifiable signal";
                     }
                 } else {
-                    qCDebug(PLUGINOBJECT) << "Property " << propertyName << " is not readable";
+                    qCDebug(LOG_APP_PLUGINOBJECT) << "Property " << propertyName << " is not readable";
                 }
                 break;
             }
         }
     } else {
-        qCDebug(PLUGINOBJECT) << "connectToPropertySignal : Plugin not loaded : " << m_name;
+        qCDebug(LOG_APP_PLUGINOBJECT) << "connectToPropertySignal : Plugin not loaded : " << m_name;
     }
 }
 
@@ -164,13 +167,13 @@ QVariant PluginObject::getPropertyValue(QString propertyName) {
                 if(property.isReadable()) {
                     return property.read(m_plugin);
                 } else {
-                    qCDebug(PLUGINOBJECT) << "Property " << propertyName << " is not readable";
+                    qCDebug(LOG_APP_PLUGINOBJECT) << "Property " << propertyName << " is not readable";
                 }
                 break;
             }
         }
     } else {
-        qCDebug(PLUGINOBJECT) << "getPropertyValue : Plugin not loaded : " << m_name;
+        qCDebug(LOG_APP_PLUGINOBJECT) << "getPropertyValue : Plugin not loaded : " << m_name;
     }
     return QVariant();
 }
@@ -274,7 +277,7 @@ void PluginObject::loadBottomBarItems(QVariantList bottomBarItems) {
             panelItem.contextProperty = getContextProperty();
 
             bool itemExists = false;
-            for(const PanelItem &item : qAsConst(m_bottomBarItems)){
+            for(const PanelItem &item : std::as_const(m_bottomBarItems)){
                 if(item.name == panelItem.name) {
                     itemExists = true;
                 }
@@ -282,11 +285,12 @@ void PluginObject::loadBottomBarItems(QVariantList bottomBarItems) {
             if(!itemExists) {
                 m_bottomBarItems.append(panelItem);
             } else {
-                qCDebug(PLUGINOBJECT) << "Error loading plugin bottom bar items " << m_name << ", panel item already exists : " << panelItem.name;
+                qCDebug(LOG_APP_PLUGINOBJECT) << "Error loading plugin bottom bar items " << m_name << ", panel item already exists : " << panelItem.name;
             }
         } else {
-            qCDebug(PLUGINOBJECT) << "Error loading plugin bottom bar items " << m_name << ", invalid bottomBarItems Object";
+            qCDebug(LOG_APP_PLUGINOBJECT) << "Error loading plugin bottom bar items " << m_name << ", invalid bottomBarItems Object";
         }
     }
     emit bottomBarItemsUpdated();
 }
+

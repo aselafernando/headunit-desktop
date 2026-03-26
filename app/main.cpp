@@ -19,7 +19,7 @@
 
 #include "hudloader.h"
 
-Q_DECLARE_LOGGING_CATEGORY(HEADUNIT)
+Q_LOGGING_CATEGORY(LOG_APP_MAIN, "app.main")
 
 int main(int argc, char *argv[])
 {
@@ -27,10 +27,14 @@ int main(int argc, char *argv[])
     time.start();
     setbuf(stdout, nullptr);
 
-    QCoreApplication::setOrganizationName("viktorgino");
-    QCoreApplication::setOrganizationDomain("https://github.com/viktorgino/headunit-desktop");
-    QCoreApplication::setApplicationName("viktorgino's HeadUnit Desktop");
-    QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+    QCoreApplication::setOrganizationName("HeadUnit Desktop");
+    QCoreApplication::setOrganizationDomain("https://github.com/aselafernando/headunit-desktop");
+    QCoreApplication::setApplicationName("HeadUnit Desktop");
+    //Always enabled in Qt6
+    //QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+
+    //For using Gstreamer glupload && qml6glsink
+    QQuickWindow::setGraphicsApi(QSGRendererInterface::OpenGL);
 
     QApplication app(argc, argv);
     QLoggingCategory::setFilterRules("");
@@ -39,7 +43,7 @@ int main(int argc, char *argv[])
     QQmlApplicationEngine engine;
 
     QCommandLineParser parser;
-    parser.setApplicationDescription("viktorgino's HeadUnit Desktop");
+    parser.setApplicationDescription("HeadUnit Desktop");
     parser.addHelpOption();
     parser.addVersionOption();
 
@@ -60,7 +64,7 @@ int main(int argc, char *argv[])
     bool whitelist = parser.isSet(pluginsOption);
     QStringList pluginWhitelist;
     if (whitelist) {
-        pluginWhitelist = p.split(" ",QString::SkipEmptyParts);
+        pluginWhitelist = p.split(" ",Qt::SkipEmptyParts);
     }
 
     bool lazyLoading = parser.isSet(lazyLoadingOption);
@@ -70,7 +74,7 @@ int main(int argc, char *argv[])
     engine.setInitialProperties({
         {"appLoader", QVariant::fromValue(loader)}
     });
-    qDebug("%lld ms : Loading theme loader", time.elapsed());
+    qCDebug(LOG_APP_MAIN, "%lld ms : Loading theme loader", time.elapsed());
     engine.load(QUrl(QStringLiteral("qrc:/loader.qml")));
 
     // If service Type=notify the service is only considered ready once we send this
@@ -84,12 +88,12 @@ int main(int argc, char *argv[])
 
     // Service WatchdogSec must be set for this to return > 0
     if (sd_watchdog_enabled(0, &watchdogIntervalUs) > 0) {
-        qDebug("Systemd watchdog is enabled with %lu us\n", watchdogIntervalUs);
+        qCDebug(LOG_APP_MAIN, "Systemd watchdog is enabled with %lu us\n", watchdogIntervalUs);
         // Recommended reporting interval is half the watchdog interval
         watchdogTimer.start(watchdogIntervalUs / 2000);
     }
 
-    qDebug("%lld ms : Starting main loop", time.elapsed());
+    qCDebug(LOG_APP_MAIN, "%lld ms : Starting main loop", time.elapsed());
     int ret = app.exec();
     return ret;
 }

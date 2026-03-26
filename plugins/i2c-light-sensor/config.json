@@ -1,0 +1,34 @@
+{
+  "name": "i2c-light-sensor",
+  "label": "I2C Light Sensor",
+  "icon": "qrc:/plugins/i2c-light-sensor/icons/icons8-sun-96.png",
+  "config": {
+    "type": "loader",
+    "source": "qrc:/plugins/i2c-light-sensor/settings.qml",
+    "settings": [
+      {
+        "name": "sensor_model",
+        "type": "string"
+      },
+      {
+        "name": "i2c_port",
+        "type": "string"
+      },
+      {
+        "name": "refresh_interval",
+        "type": "uint",
+        "defaultValue": 0
+      },
+      {
+        "name": "day_threshold",
+        "type": "uint",
+        "defaultValue": 1000
+      },
+      {
+        "name": "night_threshold",
+        "type": "uint",
+        "defaultValue": 500
+      }
+    ]
+  }
+}

@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/plugins/android-auto">
+        <file>social-android.svg</file>
+        <file>nativeAA.qml</file>
+    </qresource>
+</RCC>

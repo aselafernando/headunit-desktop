@@ -1,17 +1,12 @@
 [submodule "headunit"]
-	path = modules/android-auto/headunit
+	path = plugins/android-auto/headunit
 	url = https://github.com/aselafernando/libheadunit.git
-        branch = add_wireless_playback
+	branch = qt6
 [submodule "themes/default-theme"]
 	path = themes/default-theme
-	url = https://github.com/viktorgino/headunit-gui.git
+	url = https://github.com/aselafernando/headunit-gui.git
+	branch = qt6
 [submodule "welle.io"]
-	path = modules/welle-io/welle.io
-	url = https://github.com/viktorgino/welle.io
+	path = plugins/welle-io/welle.io
+	url = https://github.com/aselafernando/welle.io
 	branch = master
-[submodule "modules/navit/navit"]
-	path = modules/navit/navit
-	url = https://github.com/viktorgino/navit
-[submodule "modules/volume-control/pulseaudio-qt"]
-	path = modules/volume-control/pulseaudio-qt
-	url = https://invent.kde.org/libraries/pulseaudio-qt.git

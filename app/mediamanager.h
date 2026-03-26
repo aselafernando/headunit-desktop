@@ -5,7 +5,6 @@
 #include <QHash>
 #include <QSettings>
 #include <QQmlPropertyMap>
-#include <QDebug>
 #include <QSettings>
 #include <QMetaObject>
 #include <QMetaMethod>

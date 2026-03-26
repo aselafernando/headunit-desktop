@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/plugins/sample">
+        <file>sample.qml</file>
+        <file>icons8-help-96.png</file>
+    </qresource>
+</RCC>

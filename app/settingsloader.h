@@ -3,7 +3,6 @@
 
 #include <QObject>
 #include <QColor>
-#include <QDebug>
 #include <QQmlApplicationEngine>
 #include <QQmlPropertyMap>
 #include <QSettings>
@@ -12,7 +11,6 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonArray>
-#include <QLoggingCategory>
 #include <QSettings>
 
 class SettingsLoader : public QObject

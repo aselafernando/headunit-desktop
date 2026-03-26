@@ -1,0 +1,30 @@
+{
+    "name":"phone-bluetooth",
+    "label" : "Phone",
+    "source":"qrc:/plugins/phone-bluetooth/Phone.qml",
+    "icon": "qrc:/plugins/phone-bluetooth/bluetooth.png",
+    "overlay" : "qrc:/plugins/phone-bluetooth/CallNotification.qml",
+    "overlays" : "qrc:/plugins/phone-bluetooth/CallNotification.qml",
+    "config" :{
+        "type":"items",
+        "items" : [
+        {
+            "label":"Bluetooth Adapter",
+            "name": "adapter",
+            "type":"combobox",
+            "provider" : "plugin",
+            "providerName" : "PhoneBluetooth",
+            "providerProperty" : "adapters",
+            "defaultValue": 0,
+            "autosave": true
+        },
+        {
+            "label":"Adapter Name",
+            "name": "adapterName",
+            "type":"textfield",
+            "textType" : "string",
+            "defaultValue" : "HUD"
+        }
+        ]
+    }
+}

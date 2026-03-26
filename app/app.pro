@@ -1,7 +1,7 @@
 TEMPLATE = app
 TARGET = headunit-app
 QT += gui widgets qml quick
-CONFIG += c++11 link_pkgconfig welleio
+CONFIG += c++17 link_pkgconfig welleio
 QMAKE_CXXFLAGS += -Wno-unused-parameter
 INCLUDEPATH += $${PWD}/includes
 LIBS += -lsystemd
@@ -57,5 +57,5 @@ RESOURCES += \
     main.qrc
 
 DISTFILES += \
-    boot-logo-800x480.png
+    boot-logo-1024x600.png
 

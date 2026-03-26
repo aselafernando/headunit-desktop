@@ -1,5 +1,0 @@
-<RCC>
-    <qresource prefix="/ReversingCamera">
-        <file>camera.qml</file>
-    </qresource>
-</RCC>

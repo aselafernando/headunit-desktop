@@ -1,4 +1,9 @@
+#include <QtDebug>
+#include <QLoggingCategory>
+
 #include "pluginlistmodel.h"
+
+Q_LOGGING_CATEGORY(LOG_APP_PLUGINLIST_MODEL, "app.pluginlist.model")
 
 PluginListProxyModel::PluginListProxyModel(QObject *parent) : QSortFilterProxyModel(parent), m_listModel(this)
 {
@@ -9,19 +14,26 @@ bool PluginListProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex &so
     QModelIndex index0 = sourceModel()->index(sourceRow, 0, sourceParent);
 
     switch (m_type) {
-    case PluginsList:
-        return true;
-    case MenuItemsList:
-        return !sourceModel()->data(index0,PluginListModel::QmlSourceRole).toString().isEmpty();
-    case SettingMenuList:
-        return sourceModel()->data(index0,PluginListModel::SettingsMenuRole).toMap().size() > 0;
-    case BottomBarItemsList:
-        return sourceModel()->data(index0,PluginListModel::BottomBarItemsRole).toList().size() > 0;
+        case PluginsList:
+            return true;
+        case MenuItemsList:
+            return !sourceModel()->data(index0,PluginListModel::QmlSourceRole).toString().isEmpty();
+        case SettingMenuList:
+            return sourceModel()->data(index0,PluginListModel::SettingsMenuRole).toMap().size() > 0;
+        case BottomBarItemsList:
+            return sourceModel()->data(index0,PluginListModel::BottomBarItemsRole).toList().size() > 0;
     }
+    return false;
 }
+
 void PluginListProxyModel::setPlugins(PluginList *plugins) {
     m_listModel.setPlugins(plugins);
 }
+
+PluginList* PluginListProxyModel::getPlugins() {
+    return m_listModel.getPlugins();
+}
+
 void PluginListProxyModel::setType(QString type) {
     if(type == "") {
         m_type = PluginsList;
@@ -37,6 +49,20 @@ void PluginListProxyModel::setType(QString type) {
         m_type = BottomBarItemsList;
     }
     invalidateFilter();
+}
+
+QString PluginListProxyModel::getType() {
+    if(m_type == PluginsList) {
+        return "plugin";
+    } else if(m_type == MenuItemsList) {
+        return "mainmenu";
+    } else if(m_type == SettingMenuList) {
+        return "settingsmenu";
+    } else if(m_type == BottomBarItemsList) {
+        return "bottombar";
+    } else {
+        return "";
+    }
 }
 
 PluginListModel::PluginListModel(QObject *parent) : QAbstractListModel(parent)
@@ -69,7 +95,7 @@ int PluginListModel::rowCount(const QModelIndex &parent) const {
 QVariant PluginListModel::data(const QModelIndex &index, int role) const {
 
     if(!m_plugins) {
-        qDebug() << "Invalid plugin";
+        qCDebug(LOG_APP_PLUGINLIST_MODEL) << "Invalid plugin";
         return QVariant::Invalid;
     }
 
@@ -96,7 +122,7 @@ QVariant PluginListModel::data(const QModelIndex &index, int role) const {
 
         QVariantList bottomBarItems;
 
-        for (const PanelItem &panelItem : qAsConst(panelItems)) {
+        for (const PanelItem &panelItem : std::as_const(panelItems)) {
             QVariantMap item;
             item.insert("name", panelItem.name);
             item.insert("label", panelItem.label);
@@ -104,6 +130,7 @@ QVariant PluginListModel::data(const QModelIndex &index, int role) const {
         }
         return bottomBarItems;
     }
+    return plugin->getName();
 }
 
 void PluginListModel::onDataChanged() {
@@ -126,9 +153,13 @@ void PluginListModel::setPlugins(PluginList *plugins) {
             connect(plugin,&PluginObject::loadedChanged, this, &PluginListModel::onDataChanged);
             connect(plugin,&PluginObject::sourceChanged, this, &PluginListModel::onDataChanged);
         }
-        connect(m_plugins,&PluginList::pluginAdded, [=](const int pluginIndex) {
+        connect(m_plugins,&PluginList::pluginAdded, [=, this](const int pluginIndex) {
             beginInsertRows(QModelIndex(), pluginIndex, pluginIndex);
             endInsertRows();
         });
     }
+}
+
+PluginList* PluginListModel::getPlugins() {
+    return m_plugins;
 }

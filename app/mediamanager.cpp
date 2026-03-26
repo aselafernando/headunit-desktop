@@ -1,4 +1,9 @@
+#include <QtDebug>
+#include <QLoggingCategory>
+
 #include "mediamanager.h"
+
+Q_LOGGING_CATEGORY(LOG_APP_MEDIAMANAGER, "app.mediamanager")
 
 MediaManager::MediaManager(QObject *parent) : QObject(parent), m_mediaVolumes(new QQmlPropertyMap()), m_voiceVolumes(new QQmlPropertyMap())
 {

@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/plugins/car2pc">
+      <file>settings.qml</file>
+      <file>icons/icons8-radio-100.png</file>
+    </qresource>
+</RCC>

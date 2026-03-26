@@ -31,6 +31,9 @@ public:
 
     void setPlugins(PluginList *plugins);
     void setType(QString type);
+    PluginList* getPlugins();
+    QString getType();
+
 private slots:
     void onDataChanged();
 private:
@@ -40,8 +43,8 @@ private:
 class PluginListProxyModel : public QSortFilterProxyModel
 {
     Q_OBJECT
-    Q_PROPERTY(PluginList * plugins WRITE setPlugins REQUIRED)
-    Q_PROPERTY(QString listType WRITE setType)
+    Q_PROPERTY(PluginList * plugins READ getPlugins WRITE setPlugins REQUIRED)
+    Q_PROPERTY(QString listType READ getType WRITE setType)
 public:
 
     enum PluginListType {
@@ -56,7 +59,8 @@ public:
 
     void setPlugins(PluginList *plugins);
     void setType(QString type);
-
+    PluginList* getPlugins();
+    QString getType();
 private:
     PluginListType m_type;
     PluginListModel m_listModel;

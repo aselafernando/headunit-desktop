@@ -1,0 +1,22 @@
+{
+    "name":"rpi",
+    "label":"Raspberry Pi",
+    "icon":"qrc:/plugins/rpi/Raspberry_Pi_Logo.svg",
+    "config":{
+        "type":"items",
+        "autoSave": true,
+        "items":[
+            {
+                "label":"Brightness",
+                "name": "brightness",
+                "type":"slider",
+                "defaultValue":100,
+                "minimum": 0,
+                "maximum": 100,
+                "suffix": "%",
+                "autosave": true,
+                "stepSize": 5
+            }
+        ]
+    }
+}

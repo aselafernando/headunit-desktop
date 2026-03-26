@@ -8,14 +8,13 @@
 #include <QPluginLoader>
 #include <QDir>
 #include <QJsonObject>
-#include <QDebug>
 #include <QVariant>
 #include <QThread>
 #include <QHash>
 #include <QQmlPropertyMap>
 #include <QTextStream>
 #include <QJsonParseError>
-#include <QLoggingCategory>
+
 #include "../includes/plugininterface.h"
 #include "settingsloader.h"
 #include "../includes/hvac-common.h"

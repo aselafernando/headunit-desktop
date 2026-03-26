@@ -3,12 +3,10 @@
 
 #include <QColor>
 #include <QCoreApplication>
-#include <QDebug>
 #include <QDir>
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
-#include <QLoggingCategory>
 #include <QObject>
 #include <QPluginLoader>
 #include <QQmlApplicationEngine>
