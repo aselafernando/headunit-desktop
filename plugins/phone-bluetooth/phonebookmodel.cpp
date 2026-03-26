@@ -1,4 +1,9 @@
+#include <QtDebug>
+#include <QLoggingCategory>
+
 #include "phonebookmodel.h"
+
+Q_LOGGING_CATEGORY(LOG_PLUGINS_PHONEBLUETOOTH_PHONEBOOKMODEL, "plugins.phone-bluetooth.phonebookmodel")
 
 PhonebookModel::PhonebookModel(QObject *parent) : QAbstractListModel(parent)
 {
@@ -106,7 +111,7 @@ void PhonebookModel::importContacts(const QUrl& url, bool sort)
         }
     }
     if(importError > 0)
-        qDebug() << "Import error " << importError << url;
+        qCDebug(LOG_PLUGINS_PHONEBLUETOOTH_PHONEBOOKMODEL) << "Import error " << importError << url;
 }
 
 bool sortAsc(const QtVersit::QVersitDocument &a, const QtVersit::QVersitDocument &b)

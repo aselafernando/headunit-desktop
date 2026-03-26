@@ -1,4 +1,9 @@
+#include <QtDebug>
+#include <QLoggingCategory>
+
 #include "bluezagent.h"
+
+Q_LOGGING_CATEGORY(LOG_PLUGINS_PHONEBLUETOOTH_BLUEZAGENT, "app.plugins.phone-bluetooth.bluezagent")
 
 BluezAgent::BluezAgent(QObject *parent)
     : Agent(parent)
@@ -17,7 +22,7 @@ QDBusObjectPath BluezAgent::objectPath() const
 
 void BluezAgent::requestPinCode(BluezQt::DevicePtr device, const BluezQt::Request<QString> &request)
 {
-    qDebug() << "requestPinCode";
+    qCDebug(LOG_PLUGINS_PHONEBLUETOOTH_BLUEZAGENT) << "requestPinCode";
     m_device = device;
     m_pinRequested = true;
 
@@ -27,14 +32,14 @@ void BluezAgent::requestPinCode(BluezQt::DevicePtr device, const BluezQt::Reques
 
 void BluezAgent::displayPinCode(BluezQt::DevicePtr device, const QString &pinCode)
 {
-    qDebug() << "displayPinCode: " << pinCode;
+    qCDebug(LOG_PLUGINS_PHONEBLUETOOTH_BLUEZAGENT) << "displayPinCode: " << pinCode;
     m_device = device;
     m_displayedPinCode = pinCode;
 }
 
 void BluezAgent::requestPasskey(BluezQt::DevicePtr device, const BluezQt::Request<quint32> &request)
 {
-    qDebug() << "requestPasskey";
+    qCDebug(LOG_PLUGINS_PHONEBLUETOOTH_BLUEZAGENT) << "requestPasskey";
     m_device = device;
     m_passkeyRequested = true;
 
@@ -43,7 +48,7 @@ void BluezAgent::requestPasskey(BluezQt::DevicePtr device, const BluezQt::Reques
 
 void BluezAgent::displayPasskey(BluezQt::DevicePtr device, const QString &passkey, const QString &entered)
 {
-    qDebug() << "displayPasskey passkey : " << passkey << " entered: " << entered;
+    qCDebug(LOG_PLUGINS_PHONEBLUETOOTH_BLUEZAGENT) << "displayPasskey passkey : " << passkey << " entered: " << entered;
     m_device = device;
     m_displayedPasskey = passkey;
     m_enteredPasskey = entered;
@@ -51,7 +56,7 @@ void BluezAgent::displayPasskey(BluezQt::DevicePtr device, const QString &passke
 
 void BluezAgent::requestConfirmation(BluezQt::DevicePtr device, const QString &passkey, const BluezQt::Request<> &request)
 {
-    qDebug() << "requestConfirmation: " << device << " : " << passkey;
+    qCDebug(LOG_PLUGINS_PHONEBLUETOOTH_BLUEZAGENT) << "requestConfirmation: " << device << " : " << passkey;
     m_device = device;
     m_requestedPasskey = passkey;
 
@@ -60,7 +65,7 @@ void BluezAgent::requestConfirmation(BluezQt::DevicePtr device, const QString &p
 
 void BluezAgent::requestAuthorization(BluezQt::DevicePtr device, const BluezQt::Request<> &request)
 {
-    qDebug() << "requestAuthorization";
+    qCDebug(LOG_PLUGINS_PHONEBLUETOOTH_BLUEZAGENT) << "requestAuthorization";
     m_device = device;
     m_authorizationRequested = true;
 
@@ -69,7 +74,7 @@ void BluezAgent::requestAuthorization(BluezQt::DevicePtr device, const BluezQt::
 
 void BluezAgent::authorizeService(BluezQt::DevicePtr device, const QString &uuid, const BluezQt::Request<> &request)
 {
-  qDebug() << "authorizeService " << uuid;
+  qCDebug(LOG_PLUGINS_PHONEBLUETOOTH_BLUEZAGENT) << "authorizeService " << uuid;
     m_device = device;
     m_authorizedUuid = uuid;
 
@@ -80,13 +85,13 @@ void BluezAgent::authorizeService(BluezQt::DevicePtr device, const QString &uuid
 
 void BluezAgent::cancel()
 {
-    qDebug() << "cancel";
+    qCDebug(LOG_PLUGINS_PHONEBLUETOOTH_BLUEZAGENT) << "cancel";
     m_cancelCalled = true;
 }
 
 void BluezAgent::release()
 {
-    qDebug() << "release";
+    qCDebug(LOG_PLUGINS_PHONEBLUETOOTH_BLUEZAGENT) << "release";
     m_releaseCalled = true;
 }
 

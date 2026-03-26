@@ -1,4 +1,10 @@
+#include <QtDebug>
+#include <QLoggingCategory>
+
 #include "usbconnectionlistener.h"
+
+Q_LOGGING_CATEGORY(LOG_PLUGINS_USBCONNECTIONLISTENER, "plugins.usbconnectionlistener")
+
 
 UsbConnectionListener::UsbConnectionListener(QObject *parent) : QThread(parent){
 
@@ -16,7 +22,7 @@ int LIBUSB_CALL UsbConnectionListener::hotplugCallback(libusb_context */* unused
 
     rc = libusb_get_device_descriptor(dev, &desc);
     if (LIBUSB_SUCCESS != rc) {
-        qWarning("Error getting device descriptor");
+        qCWarning(LOG_PLUGINS_USBCONNECTIONLISTENER, "Error getting device descriptor");
         return -1;
     }
 
@@ -61,7 +67,7 @@ void UsbConnectionListener::run() {
 
     if (libusb_init(&hotplug_context) < 0)
     {
-        qDebug ("Error libusb_init usb_err failed");
+        qCDebug (LOG_PLUGINS_USBCONNECTIONLISTENER, "Error libusb_init usb_err failed");
         return;
     }
     libusb_set_option(hotplug_context, LIBUSB_OPTION_LOG_LEVEL, LIBUSB_LOG_LEVEL_INFO);
@@ -71,7 +77,7 @@ void UsbConnectionListener::run() {
                                           , LIBUSB_HOTPLUG_NO_FLAGS , LIBUSB_HOTPLUG_MATCH_ANY,
                                           LIBUSB_HOTPLUG_MATCH_ANY, LIBUSB_HOTPLUG_MATCH_ANY, hotplugCallback, this, NULL);
     if (rc != LIBUSB_SUCCESS) {
-        qDebug("libusb_hotplug_register_callback() failed: Error registering callback 0");
+        qCDebug(LOG_PLUGINS_USBCONNECTIONLISTENER, "libusb_hotplug_register_callback() failed: Error registering callback 0");
         return;
     }
 
@@ -79,7 +85,7 @@ void UsbConnectionListener::run() {
         newDevices.clear();
         rc = libusb_handle_events_completed(hotplug_context, nullptr);
         if (rc < 0) {
-            qDebug("libusb_handle_events() failed: %s", libusb_error_name(rc));
+            qCDebug(LOG_PLUGINS_USBCONNECTIONLISTENER, "libusb_handle_events() failed: %s", libusb_error_name(rc));
             break;
         }
 
@@ -113,15 +119,15 @@ void UsbConnectionListener::run() {
                     unsigned char product[256];
                     unsigned char serialNumber[256];
                     if (!desc.iManufacturer || libusb_get_string_descriptor_ascii(handle, desc.iManufacturer, manufacturer,256) < 0){
-                        qWarning("Error getting manufacturer string from device: 0x%04x:0x%04x | Manufacturer string set as Unknown", desc.idVendor, desc.idProduct);
+                        qCWarning(LOG_PLUGINS_USBCONNECTIONLISTENER, "Error getting manufacturer string from device: 0x%04x:0x%04x | Manufacturer string set as Unknown", desc.idVendor, desc.idProduct);
                     }
 
                     if (!desc.iProduct || libusb_get_string_descriptor_ascii(handle, desc.iProduct, product,256) < 0){
-                        qWarning("Error getting product string from device: 0x%04x:0x%04x | Product string set as Unknown", desc.idVendor, desc.idProduct);
+                        qCWarning(LOG_PLUGINS_USBCONNECTIONLISTENER, "Error getting product string from device: 0x%04x:0x%04x | Product string set as Unknown", desc.idVendor, desc.idProduct);
                     }
 
                     if (!desc.iSerialNumber || libusb_get_string_descriptor_ascii(handle, desc.iSerialNumber, serialNumber,256) < 0){
-                        qWarning("Error getting serial number from device: 0x%04x:0x%04x | Serial number string set as Unknown", desc.idVendor, desc.idProduct);
+                        qCWarning(LOG_PLUGINS_USBCONNECTIONLISTENER, "Error getting serial number from device: 0x%04x:0x%04x | Serial number string set as Unknown", desc.idVendor, desc.idProduct);
                     }
 
                     libusb_close(handle);
@@ -139,7 +145,7 @@ void UsbConnectionListener::run() {
             libusb_free_device_list(devices, 1);
         }
     }
-    qDebug() << "Exiting UsbConnectionListener";
+    qCDebug(LOG_PLUGINS_USBCONNECTIONLISTENER) << "Exiting UsbConnectionListener";
 
     libusb_hotplug_deregister_callback(hotplug_context, callback_handle);
 

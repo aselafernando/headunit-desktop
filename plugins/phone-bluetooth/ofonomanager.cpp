@@ -1,6 +1,9 @@
+#include <QtDebug>
+#include <QLoggingCategory>
+
 #include "ofonomanager.h"
 
-Q_LOGGING_CATEGORY(OFONO2, "telephony [OfonoManager]")
+Q_LOGGING_CATEGORY(LOG_PLUGINS_PHONEBLUETOOTH_OFONO_MANAGER, "plugins.phone-bluetooth.ofono.manager")
 
 OfonoManager::OfonoManager(QObject *parent) : QObject(parent),
       m_dbusConnection(QDBusConnection::connectToBus(QDBusConnection::SystemBus, "hud_ofono")),
@@ -24,7 +27,7 @@ QStringList OfonoManager::getModems() {
 
     QStringList ret;
     if(dbusCall.isError()){
-        qCWarning(OFONO2)  << "Error OfonoManager::getModems :"<< dbusCall.error().message();
+        qCWarning(LOG_PLUGINS_PHONEBLUETOOTH_OFONO_MANAGER)  << "Error OfonoManager::getModems :"<< dbusCall.error().message();
         return ret;
     }
 
@@ -71,7 +74,7 @@ void OfonoManager::loadProperties() {
 }
 int OfonoManager::setModem(QString path) {
     if(!getModems().contains(path)){
-        qCWarning(OFONO2)  << ": No modem found";
+        qCWarning(LOG_PLUGINS_PHONEBLUETOOTH_OFONO_MANAGER)  << ": No modem found";
         return 0;
     }
     m_activeDevicePath = path;
@@ -93,7 +96,7 @@ int OfonoManager::setModem(QString path) {
 int OfonoManager::setDefaultModem(QString path) {
     m_deviceDefaultPath = path;
     if(!getModems().contains(m_deviceDefaultPath)){
-        qCWarning(OFONO2)  << ": No modem found";
+        qCWarning(LOG_PLUGINS_PHONEBLUETOOTH_OFONO_MANAGER)  << ": No modem found";
         return 0;
     }
     setModem(m_deviceDefaultPath);
@@ -111,7 +114,7 @@ void OfonoManager::CallAdded(const QDBusObjectPath &path, const QVariantMap &pro
         startCallTimer(properties["StartTime"].toString());
     }
 
-    qCWarning(OFONO2)  << ": Call Added";
+    qCWarning(LOG_PLUGINS_PHONEBLUETOOTH_OFONO_MANAGER)  << ": Call Added";
 
     emit callStateChanged();
     emit callerChanged();
@@ -119,7 +122,7 @@ void OfonoManager::CallAdded(const QDBusObjectPath &path, const QVariantMap &pro
 }
 
 void OfonoManager::CallRemoved(__attribute__((unused)) const QDBusObjectPath &path) {
-    qCWarning(OFONO2)  << ": Call Removed";
+    qCWarning(LOG_PLUGINS_PHONEBLUETOOTH_OFONO_MANAGER)  << ": Call Removed";
     emit hideOverlay();
     emit callFinished();
     stopCallTimer();

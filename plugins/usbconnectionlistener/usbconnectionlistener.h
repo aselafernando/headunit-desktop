@@ -7,7 +7,6 @@
 #include <QJsonDocument>
 #include <QThread>
 #include <QDirIterator>
-#include <QDebug>
 #include <libusb.h>
 #include <sys/time.h>
 

@@ -4,12 +4,6 @@
 #include <plugininterface.h>
 #include <mediainterface.h>
 
-//#include <qofonomanager.h>
-//#include <qofonophonebook.h>
-//#include <qofonovoicecallmanager.h>
-//#include <qofonovoicecall.h>
-//#include <qofonomodem.h>
-//#include <qofonohandsfree.h>
 #include <BluezQt/Manager>
 #include <BluezQt/Agent>
 #include <BluezQt/Adapter>
@@ -25,7 +19,6 @@
 #include <BluezQt/ObexFileTransferEntry>
 #include "phonebookaccess1_interface.h"
 #include <QStandardPaths>
-#include <QLoggingCategory>
 #include <QFileSystemWatcher>
 
 #include <QTimer>

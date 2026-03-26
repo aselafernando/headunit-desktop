@@ -1,4 +1,9 @@
+#include <QtDebug>
+#include <QLoggingCategory>
+
 #include "welleio.h"
+
+Q_LOGGING_CATEGORY(LOG_PLUGINS_WELLEIO, "plugins.welle-io")
 
 WelleIoPlugin::WelleIoPlugin(QObject *parent) : QObject (parent), m_translator(this)
 {
@@ -60,7 +65,7 @@ void WelleIoPlugin::settingsChanged(const QString &key, const QVariant &value){
 }
 
 void WelleIoPlugin::onSettingsPageDestroyed() {
-    qDebug() << "WelleIoPlugin onSettingsPageDestroyed";
+    qCDebug(LOG_PLUGINS_WELLEIO) << "WelleIoPlugin onSettingsPageDestroyed";
     if(m_adapterChanged){
         if(m_settings["auto_receiver"].toBool()){
             m_guiHelper->openAutoDevice();
@@ -112,7 +117,7 @@ void WelleIoPlugin::playLastStation() {
 }
 
 WelleIoPlugin::~WelleIoPlugin() {
-    qDebug() << "Deleting WelleIoPlugin";
+    qCDebug(LOG_PLUGINS_WELLEIO) << "Deleting WelleIoPlugin";
 
     if(m_guiHelper){
         delete m_guiHelper;

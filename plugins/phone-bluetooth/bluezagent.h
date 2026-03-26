@@ -7,7 +7,6 @@
 #include <BluezQt/PendingCall>
 #include <BluezQt/Manager>
 #include <QDBusObjectPath>
-#include <QDebug>
 
 class BluezAgent : public BluezQt::Agent
 {

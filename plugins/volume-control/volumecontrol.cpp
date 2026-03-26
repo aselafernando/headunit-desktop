@@ -1,7 +1,12 @@
 #include <PulseAudioQt/Models>
 #include <PulseAudioQt/Sink>
 
+#include <QtDebug>
+#include <QLoggingCategory>
+
 #include "volumecontrol.h"
+
+Q_LOGGING_CATEGORY(LOG_PLUGINS_VOLUMECONTROL, "plugins.volume-control")
 
 VolumeControl::VolumeControl(QObject *parent) : QObject (parent)
 {
@@ -44,7 +49,7 @@ void VolumeControl::defaultSinkChanged() {
     PulseAudioQt::Sink * defaultSink = server->defaultSink();
     if(defaultSink != nullptr) {
         defaultSink->setVolume(m_settings["volume"].toInt());
-        qDebug () << "Setting volume to : " << m_settings["volume"].toInt();
+        qCDebug (LOG_PLUGINS_VOLUMECONTROL) << "Setting volume to : " << m_settings["volume"].toInt();
     }
 }
 
