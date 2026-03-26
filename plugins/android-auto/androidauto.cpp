@@ -52,7 +52,7 @@ void AndroidAutoPlugin::eventMessage(QString id, QVariant message){
 }
 
 void AndroidAutoPlugin::init(){
-    QQuickWindow::setGraphicsApi(QSGRendererInterface::OpenGL);
+    //QQuickWindow::setGraphicsApi(QSGRendererInterface::OpenGL);
     m_headunit.init();
     m_headunit.startHU();
 

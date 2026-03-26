@@ -158,7 +158,7 @@ void ReversingCamera::init() {
         gst_init(NULL, NULL);
     }
 
-    QQuickWindow::setGraphicsApi(QSGRendererInterface::OpenGL);
+    //QQuickWindow::setGraphicsApi(QSGRendererInterface::OpenGL);
     setupPipeline();
 }
 
