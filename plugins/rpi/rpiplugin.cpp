@@ -1,7 +1,12 @@
-#include "rpiplugin.h"
 #include <QFileInfo>
 #include <QFile>
 #include <QJsonValue>
+#include <QDebug>
+#include <QLoggingCategory>
+
+#include "rpiplugin.h"
+
+Q_LOGGING_CATEGORY(LOG_PLUGINS_RPI, "plugins.rpi")
 
 RPiPlugin::RPiPlugin(QObject *parent) : QObject (parent)
 {
@@ -37,7 +42,7 @@ void RPiPlugin::applyBrightness(int v) {
 
 void RPiPlugin::settingsChanged(const QString &key, const QVariant &value){
     if (key == "brightness") {
-        qDebug() << "settingChanged : " << value;
+        qCDebug(LOG_PLUGINS_RPI) << "settingChanged : " << value;
         applyBrightness(value.toInt());
     }
 }

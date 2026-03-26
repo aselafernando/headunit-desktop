@@ -2,7 +2,6 @@
 #define RPIPLUGIN_H
 
 #include <plugininterface.h>
-#include <QDebug>
 
 class RPiPlugin : public QObject, PluginInterface
 {

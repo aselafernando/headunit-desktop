@@ -1,8 +1,5 @@
 TEMPLATE = subdirs
 
-QCXXFLAGS += -DRPI
-QCFLAGS += -DRPI
-
 SUBDIRS = \
           app \
           plugins/volume-control \
@@ -20,7 +17,7 @@ SUBDIRS = \
 #          plugins/fm-radio \
 #          plugins/hvac \
 #          plugins/sample \
-#          plugins/rpi \
+          plugins/rpi \
 #          plugins/hud-serial \
           themes/default-theme
 

@@ -22,5 +22,5 @@ DISTFILES += \
     config.json
 
 RESOURCES += \
-    RPI.qrc
+    rpi.qrc
 

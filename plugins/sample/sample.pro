@@ -1,7 +1,7 @@
 TEMPLATE = lib
 CONFIG += c++17 plugin link_pkgconfig
 QT += quick
-TARGET = $$qtLibraryTarget(sample-plugin)
+TARGET = $$qtLibraryTarget(sample)
 DEFINES += QT_DEPRECATED_WARNINGS
 INCLUDEPATH += $${PWD}/../../includes
 DESTDIR = $${OUT_PWD}/../../plugins
@@ -21,3 +21,5 @@ HEADERS += \
 DISTFILES += \
     config.json
 
+RESOURCES += \
+    sample.qrc

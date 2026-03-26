@@ -1,5 +1,5 @@
 <RCC>
-    <qresource prefix="/RPI">
+    <qresource prefix="/plugins/rpi">
         <file>Raspberry_Pi_Logo.svg</file>
     </qresource>
 </RCC>

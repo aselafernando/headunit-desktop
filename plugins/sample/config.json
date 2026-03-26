@@ -1,6 +1,8 @@
 {
-    "name":"SamplePlugin",
+    "name":"sample",
     "label":"Sample Plugin",
+    "source": "qrc:/plugins/sample/sample.qml",
+    "icon": "qrc:/plugins/sample/icons8-help-96.png",
     "config":{
         "type":"items",
         "description":"Settings Menu Test",

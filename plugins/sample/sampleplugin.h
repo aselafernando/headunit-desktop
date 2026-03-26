@@ -7,17 +7,24 @@
 class SamplePlugin : public QObject, PluginInterface
 {
     Q_OBJECT
-    Q_PLUGIN_METADATA(IID "org.viktorgino.headunit.sample" FILE "config.json")
+    Q_PLUGIN_METADATA(IID "org.aselafernando.headunit.sample" FILE "config.json")
     Q_INTERFACES(PluginInterface)
+
 public:
     explicit SamplePlugin(QObject *parent = nullptr);
+    QObject *getContextProperty() override;
 
     void init() override;
-
     Q_INVOKABLE void testNotification();
     Q_INVOKABLE void onSettingsPageDestroyed() override;
+
 signals:
     void message(QString id, QVariant message);
+    void action(QString id, QVariant message);
+
+public slots:
+    void eventMessage(QString id, QVariant message) override;
+    void actionMessage(QString id, QVariant message);
 };
 
 #endif // SAMPLEPLUGIN_H
