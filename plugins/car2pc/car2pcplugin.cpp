@@ -4,7 +4,7 @@
 
 #include "car2pcplugin.h"
 
-Q_LOGGING_CATEGORY(LOG_PLUGIN_CAR2PC, "plugins.car2pc")
+Q_LOGGING_CATEGORY(LOG_PLUGINS_CAR2PC, "plugins.car2pc")
 
 //Car2PC device only supports 9600 baud 8N1
 #define CAR2PC_BAUD 9600
@@ -85,7 +85,7 @@ void Car2PCPlugin::serialConnect(){
     m_serial.setBaudRate(CAR2PC_BAUD);
 
     if (m_serial.open(QIODevice::ReadWrite)) {
-        qCDebug(LOG_PLUGIN_CAR2PC) << "Connected to Serial : " << m_serial.portName() << m_serial.baudRate();
+        qCDebug(LOG_PLUGINS_CAR2PC) << "Connected to Serial : " << m_serial.portName() << m_serial.baudRate();
         m_connected = true;
         emit connectedUpdated();
     }
@@ -94,7 +94,7 @@ void Car2PCPlugin::serialConnect(){
 void Car2PCPlugin::serialDisconnect(){
     if(m_serial.isOpen()){
         m_serial.close();
-        qCDebug(LOG_PLUGIN_CAR2PC) << "Disconnected from serial : " << m_serial.portName();
+        qCDebug(LOG_PLUGINS_CAR2PC) << "Disconnected from serial : " << m_serial.portName();
     }
     m_connected = false;
     emit connectedUpdated();
@@ -114,7 +114,7 @@ void Car2PCPlugin::handleSerialError(QSerialPort::SerialPortError error){
         case QSerialPort::DeviceNotFoundError:
         case QSerialPort::PermissionError:
         case QSerialPort::TimeoutError:
-            qCDebug(LOG_PLUGIN_CAR2PC) << "Error : " << m_settings.value("port").toString() << " - " << m_serial.errorString();
+            qCDebug(LOG_PLUGINS_CAR2PC) << "Error : " << m_settings.value("port").toString() << " - " << m_serial.errorString();
             if(m_serial.isOpen()){
                 m_serial.close();
             }
@@ -229,10 +229,10 @@ void Car2PCPlugin::ButtonInputCommandCallback(Button btn) {
 
     if (cmd != "") {
         emit action(cmd, 0);
-        qCDebug(LOG_PLUGIN_CAR2PC) << "Car2PC Calling Action: " << cmd;
+        qCDebug(LOG_PLUGINS_CAR2PC) << "Car2PC Calling Action: " << cmd;
     }
 }
 
 void Car2PCPlugin::PrintString(const char* message, int length) {
-    qCDebug(LOG_PLUGIN_CAR2PC) << "" << QString::fromUtf8(message, length);
+    qCDebug(LOG_PLUGINS_CAR2PC) << "" << QString::fromUtf8(message, length);
 }

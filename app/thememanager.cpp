@@ -1,6 +1,9 @@
+#include <QtDebug>
+#include <QLoggingCategory>
+
 #include "thememanager.h"
 
-Q_LOGGING_CATEGORY(THEMEMANAGER, "Theme Manager")
+Q_LOGGING_CATEGORY(LOG_APP_THEMEMANAGER, "app.thememanager")
 
 
 ThemeManager::ThemeManager(QQmlApplicationEngine *engine, PluginList *pluginList, QObject *parent) : QObject(parent),
@@ -25,13 +28,13 @@ void ThemeManager::initFinished() {
     }
     emit themeSourceChanged();
 
-    qCDebug(THEMEMANAGER) << "Theme init finished";
+    qCDebug(LOG_APP_THEMEMANAGER) << "Theme init finished";
 }
 void ThemeManager::initTheme(QString themeName) {
     QDir themeDir(QCoreApplication::applicationDirPath()+"/themes");
 
     if(!themeDir.cd(themeName)){
-        qCDebug(THEMEMANAGER) << "Error loading plugin, plugin doesn't exists" << themeDir.absolutePath();
+        qCDebug(LOG_APP_THEMEMANAGER) << "Error loading plugin, plugin doesn't exists" << themeDir.absolutePath();
         return;
     }
     themeDir.setNameFilters(QStringList() << "*-theme.so");
@@ -39,7 +42,7 @@ void ThemeManager::initTheme(QString themeName) {
     QFileInfoList themeLibraryFiles = themeDir.entryInfoList();
 
     if(themeLibraryFiles.size() == 0){
-        qCDebug(THEMEMANAGER) << "No library in theme folder" << themeDir.absolutePath();
+        qCDebug(LOG_APP_THEMEMANAGER) << "No library in theme folder" << themeDir.absolutePath();
         return;
     }
 
@@ -53,7 +56,7 @@ void ThemeManager::initTheme(QString themeName) {
     m_themePlugin->setParent(this);
 
     if(!m_themePlugin){
-        qCDebug(THEMEMANAGER) << "Error loading theme : " << m_themeLoader.metaData().value("name") << ", root component is not a valid instance of QQmlExtensionPlugin";
+        qCDebug(LOG_APP_THEMEMANAGER) << "Error loading theme : " << m_themeLoader.metaData().value("name") << ", root component is not a valid instance of QQmlExtensionPlugin";
         return;
     }
 
@@ -75,7 +78,7 @@ void ThemeManager::initTheme(QString themeName) {
     m_pluginList->addPlugin(m_settingsMenu);
     m_pluginList->addPlugin(m_themeSettings);
 
-    qCDebug(THEMEMANAGER) << "Theme loaded : " << fileName;
+    qCDebug(LOG_APP_THEMEMANAGER) << "Theme loaded : " << fileName;
     emit themeLoaded();
 }
 
@@ -99,11 +102,11 @@ void ThemeManager::onEvent(QString sender, QString event, QVariant eventData) {
 
 void ThemeManager::processThemeSettings(QJsonObject json){
     if(!json.keys().contains("name") || !json.keys().contains("label") || !json.keys().contains("colors") || !json.keys().contains("sizes")){
-        qCDebug(THEMEMANAGER) << "Error processing theme settings, missing required field(s)";
+        qCDebug(LOG_APP_THEMEMANAGER) << "Error processing theme settings, missing required field(s)";
         return;
     }
     if(!json.value("colors").isArray() || !json.value("sizes").isArray()){
-        qCDebug(THEMEMANAGER) << "Error processing theme settings, \"colors\" or \"sizes\" field is not an array";
+        qCDebug(LOG_APP_THEMEMANAGER) << "Error processing theme settings, \"colors\" or \"sizes\" field is not an array";
         return;
     }
 
@@ -155,12 +158,12 @@ QVariantList ThemeManager::themeSettingsToSettingsItems(QVariantList items, QStr
     QVariantList settingsList;
     for(const QVariant &itemVariant : items){
         if(itemVariant.metaType() != QMetaType(QMetaType::QVariantMap)){
-            qCDebug(THEMEMANAGER) << " : Invalid settings type, skipping";
+            qCDebug(LOG_APP_THEMEMANAGER) << " : Invalid settings type, skipping";
             continue;
         }
         QVariantMap itemMap = itemVariant.toMap();
         if(!itemMap.keys().contains("name") || !itemMap.keys().contains("label") || !itemMap.keys().contains("defaultValue")){
-            qCDebug(THEMEMANAGER) << "Error processing color, missing required field(s), skipping";
+            qCDebug(LOG_APP_THEMEMANAGER) << "Error processing color, missing required field(s), skipping";
             continue;
         }
         QVariantMap item({

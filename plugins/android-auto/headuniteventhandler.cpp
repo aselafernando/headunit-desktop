@@ -32,7 +32,7 @@ void HeadunitEventHandler::setMediaDataHandler(HeadunitMediaDataHandlerInterface
 
 void HeadunitEventHandler::handleMicrophoneData(uint64_t timestamp, const unsigned char* bufferData, int bufferSize) {
     if (m_huThreadInterface == nullptr) {
-        qCWarning(LOG_PLUGIN_ANDROIDAUTO) << "Headunit thread interface not set!";
+        qCWarning(LOG_PLUGINS_ANDROIDAUTO) << "Headunit thread interface not set!";
         return;
     }
 
@@ -40,7 +40,7 @@ void HeadunitEventHandler::handleMicrophoneData(uint64_t timestamp, const unsign
         int ret = s.sendEncodedMediaPacket(1, AndroidAuto::MicrophoneChannel, AndroidAuto::PROTOCOL_MESSAGE::MediaDataWithTimestamp, timestamp,
                                            bufferData, bufferSize);
         if (ret < 0) {
-            qCDebug(LOG_PLUGIN_ANDROIDAUTO, "read_mic_data(): hu_aap_enc_send() failed with (%d)", ret);
+            qCDebug(LOG_PLUGINS_ANDROIDAUTO, "read_mic_data(): hu_aap_enc_send() failed with (%d)", ret);
         }
     });
 }
@@ -48,7 +48,7 @@ void HeadunitEventHandler::handleMicrophoneData(uint64_t timestamp, const unsign
 int HeadunitEventHandler::MediaPacket(AndroidAuto::ServiceChannels chan, uint64_t timestamp, const byte* buf, int len) {
     Headunit::Pipeline pipeline = Headunit::mediaChannelToPipeline(chan);
     if (pipeline == Headunit::InvalidPipeline) {
-        qCDebug(LOG_PLUGIN_ANDROIDAUTO) << "Unknown channel : " << chan;
+        qCDebug(LOG_PLUGINS_ANDROIDAUTO) << "Unknown channel : " << chan;
         return -1;
     }
     m_mediaDataHandler->handleMediaData(pipeline, timestamp, buf, len);
@@ -57,7 +57,7 @@ int HeadunitEventHandler::MediaPacket(AndroidAuto::ServiceChannels chan, uint64_
 int HeadunitEventHandler::MediaStart(AndroidAuto::ServiceChannels chan) {
     Headunit::Pipeline pipeline = Headunit::mediaChannelToPipeline(chan);
     if (pipeline == Headunit::InvalidPipeline) {
-        qCDebug(LOG_PLUGIN_ANDROIDAUTO) << "Unknown channel : " << chan;
+        qCDebug(LOG_PLUGINS_ANDROIDAUTO) << "Unknown channel : " << chan;
         return -1;
     }
     m_mediaDataHandler->mediaStart(pipeline);
@@ -67,7 +67,7 @@ int HeadunitEventHandler::MediaStart(AndroidAuto::ServiceChannels chan) {
 int HeadunitEventHandler::MediaStop(AndroidAuto::ServiceChannels chan) {
     Headunit::Pipeline pipeline = Headunit::mediaChannelToPipeline(chan);
     if (pipeline == Headunit::InvalidPipeline) {
-        qCDebug(LOG_PLUGIN_ANDROIDAUTO) << "Unknown channel : " << chan;
+        qCDebug(LOG_PLUGINS_ANDROIDAUTO) << "Unknown channel : " << chan;
         return -1;
     }
     m_mediaDataHandler->mediaStop(pipeline);
@@ -75,12 +75,12 @@ int HeadunitEventHandler::MediaStop(AndroidAuto::ServiceChannels chan) {
 }
 
 void HeadunitEventHandler::Connected() {
-    qCDebug(LOG_PLUGIN_ANDROIDAUTO) << "Android Device connected, starting gstreamer";
+    qCDebug(LOG_PLUGINS_ANDROIDAUTO) << "Android Device connected, starting gstreamer";
     emit phoneConnected();
 }
 
 void HeadunitEventHandler::DisconnectionOrError() {
-    qCDebug(LOG_PLUGIN_ANDROIDAUTO) << "Android Device disconnected, pausing gstreamer";
+    qCDebug(LOG_PLUGINS_ANDROIDAUTO) << "Android Device disconnected, pausing gstreamer";
     emit phoneDisconnected();
 }
 
@@ -135,7 +135,7 @@ void HeadunitEventHandler::onAudioFocusRequest(AndroidAuto::ServiceChannels chan
     }
 
     if (m_huThreadInterface == nullptr) {
-        qCWarning(LOG_PLUGIN_ANDROIDAUTO) << "Headunit thread interface not set!";
+        qCWarning(LOG_PLUGINS_ANDROIDAUTO) << "Headunit thread interface not set!";
         return;
     }
 
@@ -146,7 +146,7 @@ void HeadunitEventHandler::onAudioFocusRequest(AndroidAuto::ServiceChannels chan
 
 void HeadunitEventHandler::onVideoFocusHappened(bool hasFocus, bool unrequested) {
     if (m_huThreadInterface == nullptr) {
-        qCWarning(LOG_PLUGIN_ANDROIDAUTO) << "Headunit thread interface not set!";
+        qCWarning(LOG_PLUGINS_ANDROIDAUTO) << "Headunit thread interface not set!";
         return;
     }
 
@@ -167,7 +167,7 @@ void HeadunitEventHandler::onVideoFocusHappened(bool hasFocus, bool unrequested)
 
 void HeadunitEventHandler::startMedia() {
     if (m_huThreadInterface == nullptr) {
-        qCWarning(LOG_PLUGIN_ANDROIDAUTO) << "Headunit thread interface not set!";
+        qCWarning(LOG_PLUGINS_ANDROIDAUTO) << "Headunit thread interface not set!";
         return;
     }
 
@@ -188,7 +188,7 @@ void HeadunitEventHandler::startMedia() {
 
 void HeadunitEventHandler::stopMedia() {
     if (m_huThreadInterface == nullptr) {
-        qCWarning(LOG_PLUGIN_ANDROIDAUTO) << "Headunit thread interface not set!";
+        qCWarning(LOG_PLUGINS_ANDROIDAUTO) << "Headunit thread interface not set!";
         return;
     }
 
@@ -209,7 +209,7 @@ void HeadunitEventHandler::stopMedia() {
 
 void HeadunitEventHandler::prevTrack() {
     if (m_huThreadInterface == nullptr) {
-        qCWarning(LOG_PLUGIN_ANDROIDAUTO) << "Headunit thread interface not set!";
+        qCWarning(LOG_PLUGINS_ANDROIDAUTO) << "Headunit thread interface not set!";
         return;
     }
 
@@ -230,7 +230,7 @@ void HeadunitEventHandler::prevTrack() {
 
 void HeadunitEventHandler::nextTrack() {
     if (m_huThreadInterface == nullptr) {
-        qCWarning(LOG_PLUGIN_ANDROIDAUTO) << "Headunit thread interface not set!";
+        qCWarning(LOG_PLUGINS_ANDROIDAUTO) << "Headunit thread interface not set!";
         return;
     }
 
@@ -251,7 +251,7 @@ void HeadunitEventHandler::nextTrack() {
 
 void HeadunitEventHandler::touchEvent(HU::TouchInfo::TOUCH_ACTION action, const QPoint& point) {
     if (m_huThreadInterface == nullptr) {
-        qCWarning(LOG_PLUGIN_ANDROIDAUTO) << "Headunit thread interface not set!";
+        qCWarning(LOG_PLUGINS_ANDROIDAUTO) << "Headunit thread interface not set!";
         return;
     }
 
@@ -269,14 +269,14 @@ void HeadunitEventHandler::touchEvent(HU::TouchInfo::TOUCH_ACTION action, const 
 
         int ret = s.sendEncodedMessage(0, AndroidAuto::TouchChannel, AndroidAuto::INPUT_CHANNEL_MESSAGE::InputEvent, inputEvent);
         if (ret < 0) {
-            qCDebug(LOG_PLUGIN_ANDROIDAUTO, "aa_touch_event(): hu_aap_enc_send() failed with (%d)", ret);
+            qCDebug(LOG_PLUGINS_ANDROIDAUTO, "aa_touch_event(): hu_aap_enc_send() failed with (%d)", ret);
         }
     });
 }
 
 void HeadunitEventHandler::setNightMode(bool night) {
     if (m_huThreadInterface == nullptr) {
-        qCWarning(LOG_PLUGIN_ANDROIDAUTO) << "Headunit thread interface not set!";
+        qCWarning(LOG_PLUGINS_ANDROIDAUTO) << "Headunit thread interface not set!";
         return;
     }
 
@@ -289,7 +289,7 @@ void HeadunitEventHandler::setNightMode(bool night) {
 
 void HeadunitEventHandler::setVSS(double speedms) {
     if (m_huThreadInterface == nullptr) {
-        qCWarning(LOG_PLUGIN_ANDROIDAUTO) << "Headunit thread interface not set!";
+        qCWarning(LOG_PLUGINS_ANDROIDAUTO) << "Headunit thread interface not set!";
         return;
     }
 
@@ -317,7 +317,7 @@ void HeadunitEventHandler::setVSS(double speedms) {
 
 void HeadunitEventHandler::setGear(int gear) {
     if (m_huThreadInterface == nullptr) {
-        qCWarning(LOG_PLUGIN_ANDROIDAUTO) << "Headunit thread interface not set!";
+        qCWarning(LOG_PLUGINS_ANDROIDAUTO) << "Headunit thread interface not set!";
         return;
     }
 
@@ -363,7 +363,7 @@ void HeadunitEventHandler::setGear(int gear) {
 
 void HeadunitEventHandler::setLocation(double latitude, double longitude, double track, double speed, double altitude, double eph) {
     if (m_huThreadInterface == nullptr) {
-        qCWarning(LOG_PLUGIN_ANDROIDAUTO) << "Headunit thread interface not set!";
+        qCWarning(LOG_PLUGINS_ANDROIDAUTO) << "Headunit thread interface not set!";
         return;
     }
 

@@ -5,7 +5,7 @@
 
 #include "gpsdplugin.h"
 
-Q_LOGGING_CATEGORY(LOG_PLUGIN_GPSD, "plugins.gpsd")
+Q_LOGGING_CATEGORY(LOG_PLUGINS_GPSD, "plugins.gpsd")
 
 const int m_fence = 0; //only one fence
 double fences[1][4][2]; // 1 Fence, 4 Points = 2 Measurements (Lat/Lon)
@@ -141,7 +141,7 @@ void GPSDPlugin::startWorker() {
     connect(worker, &GPSDWorker::herr, this, &GPSDPlugin::handleHERR);
     workerThread.start();
     operate(m_host, m_port, m_fence);
-    qCDebug(LOG_PLUGIN_GPSD) << "Started worker thread: " << workerThread.isRunning();
+    qCDebug(LOG_PLUGINS_GPSD) << "Started worker thread: " << workerThread.isRunning();
 }
 
 void GPSDPlugin::settingsChanged(const QString &key, const QVariant &){
@@ -154,7 +154,7 @@ void GPSDPlugin::settingsChanged(const QString &key, const QVariant &){
 }
 
 void GPSDPlugin::PrintString(const char *message) {
-    qCDebug(LOG_PLUGIN_GPSD) << message;
+    qCDebug(LOG_PLUGINS_GPSD) << message;
 }
 
 bool GPSDWorker::pointInPolygon(double lat, double lon) {
@@ -215,7 +215,7 @@ void GPSDWorker::getData(std::string host, uint32_t port) {
     }
 
     if (gps_rec.stream(WATCH_ENABLE|WATCH_JSON) == NULL) {
-        qCDebug(LOG_PLUGIN_GPSD) << "No GPSD running.\n";
+        qCDebug(LOG_PLUGINS_GPSD) << "No GPSD running.\n";
         return;
     }
 
@@ -226,7 +226,7 @@ void GPSDWorker::getData(std::string host, uint32_t port) {
             continue;
 
         if ((newdata = gps_rec.read()) == NULL) {
-            qCDebug(LOG_PLUGIN_GPSD) << "Read error\n";
+            qCDebug(LOG_PLUGINS_GPSD) << "Read error\n";
             QThread::sleep(1);
         } else {
             procData(newdata);

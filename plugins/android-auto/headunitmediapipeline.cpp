@@ -67,16 +67,16 @@ void HeadunitMediaPipeline::setMicrophoneDataHandler(HeadunitMicrophoneDataHandl
 
 void HeadunitMediaPipeline::videoItemLoaded(QQuickItem *vi) {
     videoItem = vi;
-    qCDebug(LOG_PLUGIN_ANDROIDAUTO) << "videoItemLoaded";
+    qCDebug(LOG_PLUGINS_ANDROIDAUTO) << "videoItemLoaded";
 
     if(videoItem) {
-        qCDebug(LOG_PLUGIN_ANDROIDAUTO) << "videoItem";
+        qCDebug(LOG_PLUGINS_ANDROIDAUTO) << "videoItem";
         GstElement* sink = gst_bin_get_by_name(GST_BIN(vid_pipeline), "vid_sink");
         g_object_set(sink, "widget", videoItem, NULL);
         rootObject = videoItem->window();
         gst_object_unref(sink);
         if(rootObject) {
-            qCDebug(LOG_PLUGIN_ANDROIDAUTO) << "Root Object Found";
+            qCDebug(LOG_PLUGINS_ANDROIDAUTO) << "Root Object Found";
             rootObject->scheduleRenderJob (new SetPlaying (vid_pipeline),
                 QQuickWindow::BeforeSynchronizingStage);
         }
@@ -115,7 +115,7 @@ int HeadunitMediaPipeline::init() {
     g_signal_connect(vid_sink, "new-sample", G_CALLBACK(&HeadunitMediaPipeline::newVideoSample), this);
     */
     if (error != NULL) {
-        qCDebug(LOG_PLUGIN_ANDROIDAUTO, "Could not construct video pipeline: %s", error->message);
+        qCDebug(LOG_PLUGINS_ANDROIDAUTO, "Could not construct video pipeline: %s", error->message);
         g_clear_error(&error);
         return -1;
     }
@@ -131,7 +131,7 @@ int HeadunitMediaPipeline::init() {
                                     ,
                                     &error);
     if (error != NULL) {
-        qCDebug(LOG_PLUGIN_ANDROIDAUTO, "Could not construct audio pipeline: %s", error->message);
+        qCDebug(LOG_PLUGINS_ANDROIDAUTO, "Could not construct audio pipeline: %s", error->message);
         g_clear_error(&error);
         return -1;
     }
@@ -149,7 +149,7 @@ int HeadunitMediaPipeline::init() {
                                     &error);
 
     if (error != NULL) {
-        qCDebug(LOG_PLUGIN_ANDROIDAUTO, "Could not construct voice pipeline: %s", error->message);
+        qCDebug(LOG_PLUGINS_ANDROIDAUTO, "Could not construct voice pipeline: %s", error->message);
         g_clear_error(&error);
         return -1;
     }
@@ -166,7 +166,7 @@ int HeadunitMediaPipeline::init() {
         &error);
 
     if (error != NULL) {
-        qCDebug(LOG_PLUGIN_ANDROIDAUTO, "Could not construct mic pipeline: %s", error->message);
+        qCDebug(LOG_PLUGINS_ANDROIDAUTO, "Could not construct mic pipeline: %s", error->message);
         g_clear_error(&error);
         return -1;
     }
@@ -218,7 +218,7 @@ GstFlowReturn HeadunitMediaPipeline::newVideoSample(GstElement* appsink, Headuni
 
 void HeadunitMediaPipeline::handleMicrophoneData(const uint64_t timestamp, const unsigned char* bufferData, const int bufferSize) {
     if (m_microphoneDataHandler == nullptr) {
-        qCWarning(LOG_PLUGIN_ANDROIDAUTO) << "microphone data handler not set!";
+        qCWarning(LOG_PLUGINS_ANDROIDAUTO) << "microphone data handler not set!";
     }
 
     m_microphoneDataHandler->handleMicrophoneData(timestamp, bufferData, bufferSize);
@@ -271,7 +271,7 @@ gboolean HeadunitMediaPipeline::bus_callback(GstBus* /* unused*/, GstMessage* me
     switch (GST_MESSAGE_TYPE(message)) {
         case GST_MESSAGE_ERROR:
             gst_message_parse_error(message, &err, &debug);
-            qCDebug(LOG_PLUGIN_ANDROIDAUTO, "Error %s", err->message);
+            qCDebug(LOG_PLUGINS_ANDROIDAUTO, "Error %s", err->message);
             g_error_free(err);
             g_free(debug);
             hu->stopPipelines();
@@ -279,11 +279,11 @@ gboolean HeadunitMediaPipeline::bus_callback(GstBus* /* unused*/, GstMessage* me
 
         case GST_MESSAGE_WARNING:
             gst_message_parse_warning(message, &err, &debug);
-            qCDebug(LOG_PLUGIN_ANDROIDAUTO, "Warning %s | Debug %s", err->message, debug);
+            qCDebug(LOG_PLUGINS_ANDROIDAUTO, "Warning %s | Debug %s", err->message, debug);
 
             name = (gchar*)GST_MESSAGE_SRC_NAME(message);
 
-            qCDebug(LOG_PLUGIN_ANDROIDAUTO, "Name of src %s ", name ? name : "nil");
+            qCDebug(LOG_PLUGINS_ANDROIDAUTO, "Name of src %s ", name ? name : "nil");
             g_error_free(err);
             g_free(debug);
 
@@ -319,7 +319,7 @@ void HeadunitMediaPipeline::mediaStart(const Headunit::Pipeline pipeline) {
             gst_element_set_state(mic_pipeline, GST_STATE_PLAYING);
             break;
         default:
-            qCDebug(LOG_PLUGIN_ANDROIDAUTO) << "Pipeline Start Unknown chan : " << pipeline;
+            qCDebug(LOG_PLUGINS_ANDROIDAUTO) << "Pipeline Start Unknown chan : " << pipeline;
     }
 
     emit pipelineStatusChanged(pipeline, Headunit::PipelinePlaying);
@@ -340,7 +340,7 @@ void HeadunitMediaPipeline::mediaStop(const Headunit::Pipeline pipeline) {
             gst_element_set_state(mic_pipeline, GST_STATE_PAUSED);
             break;
         default:
-            qCDebug(LOG_PLUGIN_ANDROIDAUTO) << "Pipeline Stop Unknown chan : " << pipeline;
+            qCDebug(LOG_PLUGINS_ANDROIDAUTO) << "Pipeline Stop Unknown chan : " << pipeline;
     }
 
     emit pipelineStatusChanged(pipeline, Headunit::PipelineStopped);
@@ -360,7 +360,7 @@ void HeadunitMediaPipeline::handleMediaData(const Headunit::Pipeline pipeline, u
             gst_src = m_au1_src;
             break;
         default:
-            qCWarning(LOG_PLUGIN_ANDROIDAUTO) << "Pipeline channel : " << pipeline;
+            qCWarning(LOG_PLUGINS_ANDROIDAUTO) << "Pipeline channel : " << pipeline;
             return;
     }
 
@@ -374,7 +374,7 @@ void HeadunitMediaPipeline::handleMediaData(const Headunit::Pipeline pipeline, u
         int ret = gst_app_src_push_buffer((GstAppSrc*)gst_src, buffer);
         if (ret != GST_FLOW_OK) {
             int len = gst_buffer_get_size(buffer);
-            qCWarning(LOG_PLUGIN_ANDROIDAUTO, "Error when pushing buffer %d for %d bytes ", ret, len);
+            qCWarning(LOG_PLUGINS_ANDROIDAUTO, "Error when pushing buffer %d for %d bytes ", ret, len);
         }
     }
 }

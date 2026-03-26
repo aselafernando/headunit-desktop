@@ -1,6 +1,9 @@
+#include <QtDebug>
+#include <QLoggingCategory>
+
 #include "pluginmanager.h"
 
-Q_LOGGING_CATEGORY(PLUGINMANAGER, "Plugin Manager")
+Q_LOGGING_CATEGORY(LOG_APP_PLUGINMANAGER, "app.pluginmanager")
 
 PluginManager::PluginManager(QQmlApplicationEngine *engine, PluginList *pluginList, MediaManager *mediaManager, QObject *parent) :
       QObject(parent), m_mediaManager(mediaManager), m_pluginList(pluginList), m_engine(engine)
@@ -26,14 +29,14 @@ bool PluginManager::loadPlugins(QStringList filterList)
 
         QString fileBaseName=fileName.section(".",0,0);
         if (filterList.size() > 0 && !filterList.contains(fileBaseName,Qt::CaseInsensitive)) {
-            qDebug() << "Plugin not whitelisted (disabled): " << fileBaseName;
+            qCDebug(LOG_APP_PLUGINMANAGER) << "Plugin not whitelisted (disabled): " << fileBaseName;
             continue;
         }
 
         PluginObject * plugin = m_pluginList->addPlugin(pluginsDir.absoluteFilePath(fileName));
 
         if(plugin->getMediaInterface()){
-            qDebug() << "Adding interface" << plugin->getName();
+            qCDebug(LOG_APP_PLUGINMANAGER) << "Adding interface" << plugin->getName();
             m_mediaManager->addInterface(plugin->getName(), plugin->getPlugin());
         }
 
@@ -52,7 +55,7 @@ bool PluginManager::loadPlugins(QStringList filterList)
     //Load QML plugins
     if(pluginsDir.cd("qml")){
         for (const QString &fileName : pluginsDir.entryList(QDir::Files)) {
-            qDebug() << "Loading qml plugin: " << fileName;
+            qCDebug(LOG_APP_PLUGINMANAGER) << "Loading qml plugin: " << fileName;
             QPluginLoader pluginLoader(pluginsDir.absoluteFilePath(fileName));
             QJsonValue uri = pluginLoader.metaData().value("MetaData").toObject().value("uri");
             QList<QQmlError> errors;
@@ -114,5 +117,5 @@ void PluginManager::actionHandler(QString sender, QString id, QVariant message){
 }
 
 PluginManager::~PluginManager(){
-    qCDebug(PLUGINMANAGER) << "Plugin manager died";
+    qCDebug(LOG_APP_PLUGINMANAGER) << "Plugin manager died";
 }

@@ -1,6 +1,9 @@
+#include <QtDebug>
+#include <QLoggingCategory>
+
 #include "panelitemsmodel.h"
 
-Q_LOGGING_CATEGORY(PANELITEMSMODEL, "PanelItemsModel")
+Q_LOGGING_CATEGORY(LOG_APP_PANELITEMS_MODEL, "app.panelitems.model")
 
 PanelItemsModel::PanelItemsModel(QObject *parent) : QAbstractListModel(parent), m_pluginList(nullptr)
 {
@@ -50,7 +53,7 @@ QVariant PanelItemsModel::data(const QModelIndex &index, int role) const {
 
 void PanelItemsModel::setPluginList(PluginList *pluginList) {
     if(!pluginList){
-        qCDebug(PANELITEMSMODEL) << "Plugin list uninitialised";
+        qCDebug(LOG_APP_PANELITEMS_MODEL) << "Plugin list uninitialised";
         return;
     }
     m_pluginList = pluginList;
@@ -76,7 +79,7 @@ void PanelItemsModel::loadList() {
 
 void PanelItemsModel::removeUnusedItems(){
     if(!m_pluginList){
-        qCDebug(PANELITEMSMODEL) << "Plugin list uninitialised";
+        qCDebug(LOG_APP_PANELITEMS_MODEL) << "Plugin list uninitialised";
         return;
     }
 
@@ -134,20 +137,20 @@ void PanelItemsModel::saveList() {
 
 void PanelItemsModel::insertPluginItem(int position, QString name) {
     if(!m_pluginList){
-        qCDebug(PANELITEMSMODEL) << "Plugin list uninitialised";
+        qCDebug(LOG_APP_PANELITEMS_MODEL) << "Plugin list uninitialised";
         return;
     }
 
     QStringList nameList = name.split("::");
     if (nameList.size() != 2) {
-        qCDebug(PANELITEMSMODEL) << "Invalid panel item name : " + name;
+        qCDebug(LOG_APP_PANELITEMS_MODEL) << "Invalid panel item name : " + name;
         return;
     }
     QString pluginName = nameList[0];
 
     PluginObject *plugin = m_pluginList->getPlugin(pluginName);
     if(!plugin) {
-        qCDebug(PANELITEMSMODEL) << "Invalid plugin name : " + pluginName;
+        qCDebug(LOG_APP_PANELITEMS_MODEL) << "Invalid plugin name : " + pluginName;
         return;
     }
 

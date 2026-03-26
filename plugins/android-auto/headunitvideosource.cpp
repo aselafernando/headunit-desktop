@@ -33,12 +33,12 @@ HeadunitVideoSource::HeadunitVideoSource(QObject* parent) : QObject(parent), m_e
 }
 
 HeadunitVideoSource::~HeadunitVideoSource() {
-    qCDebug(LOG_PLUGIN_ANDROIDAUTO) << "HeadunitVideoSource::~HeadunitVideoSource()";
+    qCDebug(LOG_PLUGINS_ANDROIDAUTO) << "HeadunitVideoSource::~HeadunitVideoSource()";
     if (headunit) {
-        qCDebug(LOG_PLUGIN_ANDROIDAUTO) <<"HeadunitVideoSurfaceItem::~Headunit() called HUServer::shutdown()";
+        qCDebug(LOG_PLUGINS_ANDROIDAUTO) <<"HeadunitVideoSurfaceItem::~Headunit() called HUServer::shutdown()";
         headunit->shutdown();
         delete (headunit);
-        qCDebug(LOG_PLUGIN_ANDROIDAUTO) <<"HeadunitVideoSurfaceItem::~Headunit() called hu_aap_shutdown()";
+        qCDebug(LOG_PLUGINS_ANDROIDAUTO) <<"HeadunitVideoSurfaceItem::~Headunit() called hu_aap_shutdown()";
     }
 }
 
@@ -54,7 +54,7 @@ void HeadunitVideoSource::startHU() {
     QSettings settings;
     std::map<std::string, std::string> aa_settings;
 
-    qCDebug(LOG_PLUGIN_ANDROIDAUTO) << "Starting headunit";
+    qCDebug(LOG_PLUGINS_ANDROIDAUTO) << "Starting headunit";
     if (settings.childGroups().contains("AndroidAuto")) {
         settings.beginGroup("AndroidAuto");
         QStringList keys = settings.childKeys();

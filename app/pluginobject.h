@@ -3,8 +3,6 @@
 
 #include <QObject>
 #include <QJsonObject>
-#include <QDebug>
-#include <QLoggingCategory>
 
 #include <QPluginLoader>
 

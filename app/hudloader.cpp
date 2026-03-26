@@ -1,6 +1,6 @@
 #include "hudloader.h"
 
-Q_LOGGING_CATEGORY(HUDLOADER, "HUDLoader")
+Q_LOGGING_CATEGORY(LOG_APP_HUDLOADER, "app.hudloader")
 
 InitThread::InitThread(HUDLoader *hudLoader)
     : QThread(hudLoader)
@@ -20,36 +20,36 @@ HUDLoader::HUDLoader(QQmlApplicationEngine *engine, bool lazyLoading, QStringLis
     , m_pluginWhitelist(pluginWhitelist)
     , m_lazyLoading(lazyLoading)
 {
-    qCDebug(HUDLOADER) << "Registering HUDLoader";
+    qCDebug(LOG_APP_HUDLOADER) << "Registering HUDLoader";
     qmlRegisterUncreatableType<HUDLoader>("HUDLoader", 1, 0, "HUDLoader", "Error PluginList is uncreatable");
 }
 
 void HUDLoader::load()
 {
-    qCDebug(HUDLOADER) << "Registering types";
+    qCDebug(LOG_APP_HUDLOADER) << "Registering types";
     qmlRegisterType<PluginListProxyModel>("HUDPlugins", 1, 0, "PluginListModel");
     qmlRegisterAnonymousType<PluginObject>("HUDPlugins", 1);
 
     QCoreApplication::processEvents();
 
-    qCDebug(HUDLOADER) << "Loading Plugin List";
+    qCDebug(LOG_APP_HUDLOADER) << "Loading Plugin List";
     m_pluginList = new PluginList(this);
 
-    qCDebug(HUDLOADER) << "Loading Media Manager";
+    qCDebug(LOG_APP_HUDLOADER) << "Loading Media Manager";
     m_mediaManager = new MediaManager(this);
 
-    qCDebug(HUDLOADER) << "Loading Bottom Bar Model";
+    qCDebug(LOG_APP_HUDLOADER) << "Loading Bottom Bar Model";
     m_bottomBarModel = new PanelItemsModel(this);
 
-    qCDebug(HUDLOADER) << "Registering singletons";
+    qCDebug(LOG_APP_HUDLOADER) << "Registering singletons";
     qmlRegisterSingletonInstance("HUDPlugins", 1, 0, "PluginList", m_pluginList);
     qmlRegisterSingletonInstance("HUDPlugins", 1, 0, "BottomBarModel", m_bottomBarModel);
     qmlRegisterSingletonInstance("HUDPlugins", 1, 0, "MediaManager", m_mediaManager);
 
-    qCDebug(HUDLOADER) << "Loading Theme";
+    qCDebug(LOG_APP_HUDLOADER) << "Loading Theme";
     m_themeManager = new ThemeManager(m_engine, m_pluginList, this);
 
-    qCDebug(HUDLOADER) << "Loading plugins";
+    qCDebug(LOG_APP_HUDLOADER) << "Loading plugins";
     m_pluginManager = new PluginManager(m_engine, m_pluginList, m_mediaManager, this);
 
     connect(m_pluginManager, &PluginManager::themeEvent, m_themeManager, &ThemeManager::onEvent);
@@ -60,10 +60,10 @@ void HUDLoader::load()
 
     QCoreApplication::processEvents();
     if (m_lazyLoading) {
-        qCDebug(HUDLOADER) << "Loading in a thread";
+        qCDebug(LOG_APP_HUDLOADER) << "Loading in a thread";
         m_initThread.start();
     } else {
-        qCDebug(HUDLOADER) << "Loading on main thread";
+        qCDebug(LOG_APP_HUDLOADER) << "Loading on main thread";
         init();
         initFinished();
     }
@@ -71,9 +71,9 @@ void HUDLoader::load()
 
 void HUDLoader::init()
 {
-    qCDebug(HUDLOADER) << "Init theme";
+    qCDebug(LOG_APP_HUDLOADER) << "Init theme";
     m_themeManager->initTheme("default-theme");
-    qCDebug(HUDLOADER) << "Init plugins";
+    qCDebug(LOG_APP_HUDLOADER) << "Init plugins";
     m_pluginList->initPlugins();
     m_mediaManager->init();
 }
@@ -85,7 +85,7 @@ void HUDLoader::onThemeLoaded()
 
 void HUDLoader::initFinished()
 {
-    qCDebug(HUDLOADER) << "Setting bottom bar plugin list";
+    qCDebug(LOG_APP_HUDLOADER) << "Setting bottom bar plugin list";
     m_bottomBarModel->setPluginList(m_pluginList);
     m_bottomBarModel->removeUnusedItems();
 }

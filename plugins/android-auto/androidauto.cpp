@@ -75,10 +75,10 @@ void AndroidAutoPlugin::init(){
         this->m_settings["network_address"].toString()
     };
 
-    qCDebug(LOG_PLUGIN_ANDROIDAUTO) << "AA Transport Type " << this->m_settings["transport_type"].toString();
+    qCDebug(LOG_PLUGINS_ANDROIDAUTO) << "AA Transport Type " << this->m_settings["transport_type"].toString();
 
     if (this->m_settings["transport_type"].toString().compare("network") == 0) {
-        qCDebug(LOG_PLUGIN_ANDROIDAUTO) << "Startng BT RFCOMM server";
+        qCDebug(LOG_PLUGINS_ANDROIDAUTO) << "Startng BT RFCOMM server";
         m_bluetoothServer.start(serverConfig);
     }
 }

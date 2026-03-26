@@ -1,4 +1,9 @@
+#include <QtDebug>
+#include <QLoggingCategory>
+
 #include "pluginlistmodel.h"
+
+Q_LOGGING_CATEGORY(LOG_APP_PLUGINLIST_MODEL, "app.pluginlist.model")
 
 PluginListProxyModel::PluginListProxyModel(QObject *parent) : QSortFilterProxyModel(parent), m_listModel(this)
 {
@@ -90,7 +95,7 @@ int PluginListModel::rowCount(const QModelIndex &parent) const {
 QVariant PluginListModel::data(const QModelIndex &index, int role) const {
 
     if(!m_plugins) {
-        qDebug() << "Invalid plugin";
+        qCDebug(LOG_APP_PLUGINLIST_MODEL) << "Invalid plugin";
         return QVariant::Invalid;
     }
 

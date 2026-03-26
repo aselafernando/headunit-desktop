@@ -8,7 +8,7 @@ Window {
 
     id: window
     visible: true
-    title: qsTr("viktorgino's HeadUnit")
+    title: qsTr("HeadUnit Desktop")
     width: 1024
     height: 600
 
@@ -29,6 +29,7 @@ Window {
         id: themeLoader
         anchors.fill: parent
     }
+
     Connections {
         target: appLoader
         onThemeSourceChanged: {

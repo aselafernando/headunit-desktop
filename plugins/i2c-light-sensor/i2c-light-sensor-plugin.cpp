@@ -3,7 +3,7 @@
 
 #include "i2c-light-sensor-plugin.h"
 
-Q_LOGGING_CATEGORY(LOG_PLUGIN_I2CLIGHTSENSOR, "plugins.i2c-light-sensor")
+Q_LOGGING_CATEGORY(LOG_PLUGINS_I2CLIGHTSENSOR, "plugins.i2c-light-sensor")
 
 I2CLightSensorPlugin::I2CLightSensorPlugin(QObject *parent) : QObject(parent), m_refreshTimer(this)
 {
@@ -46,7 +46,7 @@ void I2CLightSensorPlugin::updatePorts() {
 
 void I2CLightSensorPlugin::updateSensorModels() {
     m_sensorModels.clear();
-    qCDebug(LOG_PLUGIN_I2CLIGHTSENSOR) << "I2CLightSensor Looking for Models in : " << QCoreApplication::applicationDirPath() << "/modules/i2c-light-sensor/sensors";
+    qCDebug(LOG_PLUGINS_I2CLIGHTSENSOR) << "I2CLightSensor Looking for Models in : " << QCoreApplication::applicationDirPath() << "/modules/i2c-light-sensor/sensors";
 
     QDir dir(QCoreApplication::applicationDirPath());
     dir.cd("modules/i2c-light-sensor/sensors");
@@ -93,7 +93,7 @@ void I2CLightSensorPlugin::loadSensorSettings(QString fileName) {
     QJsonParseError error;
     QJsonDocument doc = QJsonDocument::fromJson(configFile.toUtf8(), &error);
     if (doc.isNull()) {
-        qCDebug(LOG_PLUGIN_I2CLIGHTSENSOR) << "JSON Parse error : " << error.errorString();
+        qCDebug(LOG_PLUGINS_I2CLIGHTSENSOR) << "JSON Parse error : " << error.errorString();
     }
 
     QJsonObject json = doc.object();
@@ -105,12 +105,12 @@ void I2CLightSensorPlugin::loadSensorSettings(QString fileName) {
     }
 
     emit sensorSettingsUpdated();
-    qCDebug(LOG_PLUGIN_I2CLIGHTSENSOR) << "Loaded sensor settings : " << fileName;
+    qCDebug(LOG_PLUGINS_I2CLIGHTSENSOR) << "Loaded sensor settings : " << fileName;
 }
 
 void I2CLightSensorPlugin::startTimer() {
     int refreshInterval = m_settings.value("refresh_interval").toInt();
-    qCDebug(LOG_PLUGIN_I2CLIGHTSENSOR) << "Timer refresh interval:" << refreshInterval;
+    qCDebug(LOG_PLUGINS_I2CLIGHTSENSOR) << "Timer refresh interval:" << refreshInterval;
 
     if (refreshInterval > 0) {
         m_refreshTimer.start(refreshInterval * 1000); // Will restart timer if called again
@@ -154,7 +154,7 @@ void I2CLightSensorPlugin::settingsChanged(const QString &key, const QVariant &)
 }
 
 void I2CLightSensorPlugin::onSettingsPageDestroyed() {
-    qCDebug(LOG_PLUGIN_I2CLIGHTSENSOR) << "settingsPageDestroyed()";
+    qCDebug(LOG_PLUGINS_I2CLIGHTSENSOR) << "settingsPageDestroyed()";
 
     dayThreshold = m_settings.value("day_threshold").toInt();
     nightThreshold = m_settings.value("night_threshold").toInt();
@@ -172,12 +172,12 @@ void I2CLightSensorPlugin::readI2C() {
 
     file = open(qPrintable(m_settings["i2c_port"].toString()), O_RDWR);
     if (file < 0) {
-        qCDebug(LOG_PLUGIN_I2CLIGHTSENSOR) << "Failed opening " << m_settings["i2c_port"].toString();
+        qCDebug(LOG_PLUGINS_I2CLIGHTSENSOR) << "Failed opening " << m_settings["i2c_port"].toString();
     }
     else {
 
         if (ioctl(file, I2C_SLAVE, deviceAddr) < 0) {
-            qCDebug(LOG_PLUGIN_I2CLIGHTSENSOR) << "Failed setting slave address " << deviceAddr;
+            qCDebug(LOG_PLUGINS_I2CLIGHTSENSOR) << "Failed setting slave address " << deviceAddr;
         }
         else {
             //turn on device writing to the config addr
@@ -187,8 +187,8 @@ void I2CLightSensorPlugin::readI2C() {
                 result = i2c_smbus_write_byte_data(file, configReg, configOnValue);
 
             if (result < 0) {
-                qCDebug(LOG_PLUGIN_I2CLIGHTSENSOR) << "Failed writing " << configOnValue <<  " to address " << configReg;
-                qCDebug(LOG_PLUGIN_I2CLIGHTSENSOR) << "result " << result;
+                qCDebug(LOG_PLUGINS_I2CLIGHTSENSOR) << "Failed writing " << configOnValue <<  " to address " << configReg;
+                qCDebug(LOG_PLUGINS_I2CLIGHTSENSOR) << "result " << result;
                 close(file);
                 return;
             }
@@ -216,8 +216,8 @@ void I2CLightSensorPlugin::readI2C() {
                     analyseResults();
             }
             else {
-                qCDebug(LOG_PLUGIN_I2CLIGHTSENSOR) << "Error getting light value from register " << alsReg;
-                qCDebug(LOG_PLUGIN_I2CLIGHTSENSOR) << "result " << result;
+                qCDebug(LOG_PLUGINS_I2CLIGHTSENSOR) << "Error getting light value from register " << alsReg;
+                qCDebug(LOG_PLUGINS_I2CLIGHTSENSOR) << "result " << result;
             }
         }
         close(file);

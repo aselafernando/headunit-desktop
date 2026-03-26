@@ -1,6 +1,9 @@
+#include <QtDebug>
+#include <QLoggingCategory>
+
 #include "settingsloader.h"
 
-Q_LOGGING_CATEGORY(SETTINGSLOADER, "SettingsLoader")
+Q_LOGGING_CATEGORY(LOG_APP_SETTINGSLOADER, "app.settingsloader")
 
 SettingsLoader::SettingsLoader(QJsonObject obj, QString name, QQmlPropertyMap* settingsMap, QObject *parent) : QObject(parent), m_settings(settingsMap), m_name(name)
 {
@@ -8,7 +11,7 @@ SettingsLoader::SettingsLoader(QJsonObject obj, QString name, QQmlPropertyMap* s
     loadJson(obj);
 }
 SettingsLoader::~SettingsLoader(){
-    qCDebug(SETTINGSLOADER) << "Settings loader died" << m_name;
+    qCDebug(LOG_APP_SETTINGSLOADER) << "Settings loader died" << m_name;
 }
 
 void SettingsLoader::settingsChanged(QString key, QVariant value){
@@ -71,7 +74,7 @@ void SettingsLoader::saveSettings(QString group, QQmlPropertyMap *settingsMap){
             QQmlPropertyMap * propMap = settingsMap->value(item).value<QQmlPropertyMap*>();
 
             if(!propMap){
-                qCDebug(SETTINGSLOADER) << "Invalid property map";
+                qCDebug(LOG_APP_SETTINGSLOADER) << "Invalid property map";
                 continue;
             }
             saveSettings(item, propMap);
@@ -95,7 +98,7 @@ void SettingsLoader::saveSettings(QString group, QQmlPropertyMap *settingsMap){
 
 void SettingsLoader::loadJson(QJsonObject json){
     if(json.value("type").toString() != "items"){
-        qCDebug(SETTINGSLOADER)  << settings.group() << " : Error loading settings JSON, root type should be of \"items\" type";
+        qCDebug(LOG_APP_SETTINGSLOADER)  << settings.group() << " : Error loading settings JSON, root type should be of \"items\" type";
         return;
     }
 
@@ -104,7 +107,7 @@ void SettingsLoader::loadJson(QJsonObject json){
     settings.endGroup();
 
     if(root.metaType() != QMetaType(QMetaType::QVariantMap)){
-        qCDebug(SETTINGSLOADER) << "Invalid root object";
+        qCDebug(LOG_APP_SETTINGSLOADER) << "Invalid root object";
         return;
     }
 
@@ -118,7 +121,7 @@ void SettingsLoader::loadJson(QString path){
     QFile file(path);
 
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)){
-        qCDebug(SETTINGSLOADER) << "Error opening settings theme file " << path;
+        qCDebug(LOG_APP_SETTINGSLOADER) << "Error opening settings theme file " << path;
         return;
     }
 
@@ -127,7 +130,7 @@ void SettingsLoader::loadJson(QString path){
     QJsonDocument jsonDoc = QJsonDocument::fromJson(jsonString.toUtf8(), &error);
 
     if(jsonDoc.isNull()){
-        qCDebug(SETTINGSLOADER) << "Error parsing json file " << path << " " << error.errorString();
+        qCDebug(LOG_APP_SETTINGSLOADER) << "Error parsing json file " << path << " " << error.errorString();
         return;
     }
     loadJson(jsonDoc.object());
@@ -135,13 +138,13 @@ void SettingsLoader::loadJson(QString path){
 
 QVariant SettingsLoader::processItem(QJsonObject json){
     if(json.value("label") == "" || json.value("name") == "" || json.value("type") == "" ){
-        qCDebug(SETTINGSLOADER) << settings.group() << " : Missing required property(s). All item should include \"label\", \"name\" and \"type\" properties";
+        qCDebug(LOG_APP_SETTINGSLOADER) << settings.group() << " : Missing required property(s). All item should include \"label\", \"name\" and \"type\" properties";
         return QVariant();
     }
 
     if(json.value("type").toString() == "items"){
         if(!json.value("items").isArray()){
-            qCDebug(SETTINGSLOADER) << settings.group() << " : Missing \"items\" array for \"items\" type";
+            qCDebug(LOG_APP_SETTINGSLOADER) << settings.group() << " : Missing \"items\" array for \"items\" type";
             return QVariant();
         }
 
@@ -154,14 +157,14 @@ QVariant SettingsLoader::processItem(QJsonObject json){
         QVariantList items = json.value("items").toArray().toVariantList();
         for(QVariant item : items){
             if(item.metaType() != QMetaType(QMetaType::QVariantMap)){
-                qCDebug(SETTINGSLOADER) << settings.group() << " : Invalid items type, skipping.";
+                qCDebug(LOG_APP_SETTINGSLOADER) << settings.group() << " : Invalid items type, skipping.";
                 continue;
             }
             QJsonObject obj = QJsonObject::fromVariantMap(item.toMap());
             QString itemName = obj.value("name").toString();
             if(itemsMap.keys().contains(itemName)){
                 if(!itemName.isEmpty()){
-                    qCDebug(SETTINGSLOADER) << "Duplicate name ( " << settings.group() << itemName << " ) skipping.";
+                    qCDebug(LOG_APP_SETTINGSLOADER) << "Duplicate name ( " << settings.group() << itemName << " ) skipping.";
                 }
                 continue;
             }
