@@ -2,6 +2,7 @@
 #define REVERSECAMERAPLUGIN_H
 
 #include <QObject>
+#include <QQuickWindow>
 #include <QQuickItem>
 #include <gst/gst.h>
 
@@ -35,23 +36,11 @@ private slots :
     void settingsChanged(const QString &key, const QVariant &);
 
 private:
-    //GstElement *rtph264depay = nullptr;
-    //GstElement *h264parse = nullptr;
-    //GstElement *capssetter = nullptr;
-    //GstElement *h264dec = nullptr;
-    //GstElement *capsfilter = nullptr;
+    //Pipeline
+    GstElement *totalPipeline = nullptr;
 
-    GstElement *pipeline = nullptr;
-
-    GstElement *src = nullptr;
-    GstElement *processPipeline = nullptr;
-
-    GstElement *glupload = nullptr;
-    GstElement *glcolorconvert = nullptr;
-    GstElement *sink = nullptr;
-
+    //QML Output
     QQuickItem *videoItem = nullptr;
-    QQuickWindow *rootObject = nullptr;
 
     void setupPipeline();
     void destroyPipeline();

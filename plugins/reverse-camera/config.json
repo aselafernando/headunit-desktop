@@ -14,14 +14,6 @@
                 "values": {"auto":"Automatic", "rpi":"RPi Unicam", "custom":"Custom"}
             },
             {
-                "label":"GStreamer src",
-                "name": "gs_src",
-                "type": "textfield",
-                "conditional":true,
-                "conditionTarget": "camera",
-                "conditionValue":  "custom"
-            },
-            {
                 "label":"GStreamer pipeline",
                 "name": "gs_pipeline",
                 "type": "textfield",

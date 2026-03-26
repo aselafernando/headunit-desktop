@@ -242,7 +242,7 @@ gboolean HeadunitMediaPipeline::bus_callback(GstBus* /* unused*/, GstMessage* me
     switch (GST_MESSAGE_TYPE(message)) {
         case GST_MESSAGE_ERROR:
             gst_message_parse_error(message, &err, &debug);
-            qCDebug(LOG_PLUGINS_ANDROIDAUTO, "Error %s", err->message);
+            qCDebug(LOG_PLUGINS_ANDROIDAUTO, "GST Error %s", err->message);
             g_error_free(err);
             g_free(debug);
             hu->stopPipelines();
@@ -250,11 +250,11 @@ gboolean HeadunitMediaPipeline::bus_callback(GstBus* /* unused*/, GstMessage* me
 
         case GST_MESSAGE_WARNING:
             gst_message_parse_warning(message, &err, &debug);
-            qCDebug(LOG_PLUGINS_ANDROIDAUTO, "Warning %s | Debug %s", err->message, debug);
+            qCWarning(LOG_PLUGINS_ANDROIDAUTO, "GST Warning %s | Debug %s", err->message, debug);
 
             name = (gchar*)GST_MESSAGE_SRC_NAME(message);
 
-            qCDebug(LOG_PLUGINS_ANDROIDAUTO, "Name of src %s ", name ? name : "nil");
+            qCWarning(LOG_PLUGINS_ANDROIDAUTO, "GST Name of src %s ", name ? name : "nil");
             g_error_free(err);
             g_free(debug);
 
