@@ -26,6 +26,8 @@ public:
     QObject *getContextProperty() override;
 
     Q_INVOKABLE void setDefaultVolume(int volume);
+    Q_INVOKABLE void onSettingsPageDestroyed();
+
 public slots:
     void actionMessage(QString id, QVariant message) override;
 private slots:

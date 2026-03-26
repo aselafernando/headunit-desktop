@@ -30,6 +30,9 @@ QObject *Car2PCPlugin::getContextProperty(){
     return this;
 }
 
+void Car2PCPlugin::onSettingsPageDestroyed() {
+}
+
 void Car2PCPlugin::eventMessage(QString id, QVariant message) {
     //Track Name: NMTest Name
     //Track Time: TMHHMMSS

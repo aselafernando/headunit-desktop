@@ -38,11 +38,11 @@ public:
 
     void init() override;
     QObject *getContextProperty() override;
+    Q_INVOKABLE void onSettingsPageDestroyed() override;
 
 public slots:
     void eventMessage(QString id, QVariant message) override;
     void actionMessage(QString id, QVariant message) override;
-    void onSettingsPageDestroyed();
 
 signals:
     void message(QString id, QVariant message);

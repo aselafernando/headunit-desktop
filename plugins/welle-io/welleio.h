@@ -30,12 +30,13 @@ public:
     void init() override;
     CGUIHelper *guiHelper();
     CRadioController *radioController();
+    Q_INVOKABLE void onSettingsPageDestroyed() override;
+
 signals:
     void radioControllerChanged();
     void guiHelperChanged();
     void motChanged();
 public slots:
-    void onSettingsPageDestroyed();
     void play(QString channel, QString title, quint32 service);
     void playLastStation();
 private slots:

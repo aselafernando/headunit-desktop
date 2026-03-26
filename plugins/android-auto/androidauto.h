@@ -28,6 +28,7 @@ public:
     void nextTrack() override;
     void setMediaVolume(uint8_t volume) override;
     void setVoiceVolume(uint8_t volume) override;
+    Q_INVOKABLE void onSettingsPageDestroyed() override;
 
 signals:
     void playbackStarted() override;
@@ -35,6 +36,7 @@ signals:
 
 public slots:
     void eventMessage(QString id, QVariant message) override;
+
 private slots:
     void huStatusChanged();
     void btDeviceConnected();

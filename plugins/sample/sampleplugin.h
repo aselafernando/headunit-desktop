@@ -15,7 +15,7 @@ public:
     void init() override;
 
     Q_INVOKABLE void testNotification();
-    Q_INVOKABLE void onSettingsPageDestroyed();
+    Q_INVOKABLE void onSettingsPageDestroyed() override;
 signals:
     void message(QString id, QVariant message);
 };

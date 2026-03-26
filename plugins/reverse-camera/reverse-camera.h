@@ -19,14 +19,13 @@ public:
     QObject *getContextProperty() override;
 
     void init() override;
+    Q_INVOKABLE void onSettingsPageDestroyed() override;
 
 signals:
     void message(QString id, QVariant message);
     void action(QString id, QVariant message);
 
 public slots:
-    void onSettingsPageDestroyed();
-
     void eventMessage(QString id, QVariant message) override;
     void actionMessage(QString id, QVariant message);
 

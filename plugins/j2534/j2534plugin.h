@@ -40,6 +40,7 @@ public:
     void deinit();
     QObject *getContextProperty() override;
     void PrintString(char * message);
+    Q_INVOKABLE void onSettingsPageDestroyed() override;
 
 public slots:
     void eventMessage(QString id, QVariant message) override;

@@ -46,6 +46,7 @@ public:
 
     QObject *getContextProperty() override;
     void init() override;
+    Q_INVOKABLE void onSettingsPageDestroyed() override;
 
     QString getActiveDevice() {
       if(m_activeDevice) {

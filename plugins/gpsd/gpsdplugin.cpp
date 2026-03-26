@@ -15,6 +15,9 @@ GPSDPlugin::GPSDPlugin(QObject *parent) : QObject (parent)
     //m_pluginSettings.events = QStringList() << "MediaInput::position";
 }
 
+void GPSDPlugin::onSettingsPageDestroyed() {
+}
+
 void GPSDPlugin::init() {
     startWorker();
 }

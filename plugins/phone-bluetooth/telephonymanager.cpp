@@ -33,6 +33,9 @@ TelephonyManager::~TelephonyManager(){
     m_mediaTrackTimer.stop();
 }
 
+void TelephonyManager::onSettingsPageDestroyed() {
+}
+
 QObject *TelephonyManager::getContextProperty(){
     return this;
 }

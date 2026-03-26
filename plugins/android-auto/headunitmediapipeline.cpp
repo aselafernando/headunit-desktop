@@ -70,13 +70,13 @@ void HeadunitMediaPipeline::videoItemLoaded(QQuickItem *vi) {
     qCDebug(LOG_PLUGINS_ANDROIDAUTO) << "videoItemLoaded";
 
     if(videoItem) {
-        qCDebug(LOG_PLUGINS_ANDROIDAUTO) << "videoItem";
+        qCDebug(LOG_PLUGINS_ANDROIDAUTO) << "videoItem found";
         GstElement* sink = gst_bin_get_by_name(GST_BIN(vid_pipeline), "vid_sink");
         g_object_set(sink, "widget", videoItem, NULL);
         rootObject = videoItem->window();
         gst_object_unref(sink);
         if(rootObject) {
-            qCDebug(LOG_PLUGINS_ANDROIDAUTO) << "Root Object Found";
+            qCDebug(LOG_PLUGINS_ANDROIDAUTO) << "root object found";
             rootObject->scheduleRenderJob (new SetPlaying (vid_pipeline),
                 QQuickWindow::BeforeSynchronizingStage);
         }
@@ -186,35 +186,6 @@ int HeadunitMediaPipeline::init() {
 
     return 0;
 }
-/*
-GstFlowReturn HeadunitMediaPipeline::newVideoSample(GstElement* appsink, HeadunitMediaPipeline* _this) {
-    GstSample* gstsample = gst_app_sink_pull_sample(GST_APP_SINK(appsink));
-    if (!gstsample) {
-        return GST_FLOW_ERROR;
-    }
-
-    GstBuffer* gstbuf = gst_sample_get_buffer(gstsample);
-    if (!gstbuf) {
-        gst_sample_unref(gstsample);
-        return GST_FLOW_ERROR;
-    }
-
-    GstMapInfo mapInfo;
-    gst_buffer_map(gstbuf, &mapInfo, GST_MAP_READ);
-
-    GstCaps* caps = gst_sample_get_caps(gstsample);
-    GstVideoInfo info;
-    gst_video_info_from_caps(&info, caps);
-
-    QGstVideoBuffer* qgstBuf = new QGstVideoBuffer(gstbuf, info);
-    QVideoFrame frame(static_cast<QAbstractVideoBuffer*>(qgstBuf), QSize(info.width, info.height), QVideoFrame::Format_YUV420P);
-
-    emit _this->receivedVideoFrame(frame);
-
-    gst_buffer_unmap(gstbuf, const_cast<GstMapInfo*>(&mapInfo));
-    gst_sample_unref(gstsample);
-    return GST_FLOW_OK;
-}*/
 
 void HeadunitMediaPipeline::handleMicrophoneData(const uint64_t timestamp, const unsigned char* bufferData, const int bufferSize) {
     if (m_microphoneDataHandler == nullptr) {

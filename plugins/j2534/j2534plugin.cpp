@@ -32,6 +32,9 @@ J2534Plugin::J2534Plugin(QObject* parent) : QObject(parent) {
     //m_text = m_settings.value("text").toString() == "true";
 }
 
+void J2534Plugin::onSettingsPageDestroyed() {
+}
+
 void J2534Plugin::init() {
     handle = dlopen("/opt/hud/libJ2534.so", RTLD_LAZY);
     char* error = NULL;

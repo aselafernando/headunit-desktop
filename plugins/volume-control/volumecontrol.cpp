@@ -25,6 +25,9 @@ VolumeControl::~VolumeControl() {
     }
 }
 
+void VolumeControl::onSettingsPageDestroyed() {
+}
+
 void VolumeControl::init(){
     defaultSinkChanged();
     m_pluginSettings.actions = QStringList() << "VolumeUp" << "VolumeDown";

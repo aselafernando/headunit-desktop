@@ -39,6 +39,7 @@ ThemeRoot {
 
     GstGLQt6VideoItem {
         id: aaVideo
+        objectName: "aaVideoItem"
         visible: pluginContext.status === 2 /*AndroidAuto.RUNNING*/
         anchors.verticalCenter: parent.verticalCenter
         anchors.horizontalCenter: parent.horizontalCenter

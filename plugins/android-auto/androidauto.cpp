@@ -28,6 +28,9 @@ QObject *AndroidAutoPlugin::getContextProperty(){
     return qobject_cast<QObject*>(&m_headunit);
 }
 
+void AndroidAutoPlugin::onSettingsPageDestroyed() {
+}
+
 void AndroidAutoPlugin::eventMessage(QString id, QVariant message){
     if(id == "UsbConnectionListenerPlugin::UsbDeviceAdded"){
         if (m_headunit.status() != HeadunitVideoSource::RUNNING) {
@@ -47,6 +50,7 @@ void AndroidAutoPlugin::eventMessage(QString id, QVariant message){
             map["track"].toDouble(),map["speed"].toDouble(),map["altitude"].toDouble(),map["eph"].toDouble());
     }
 }
+
 void AndroidAutoPlugin::init(){
     QQuickWindow::setGraphicsApi(QSGRendererInterface::OpenGL);
     m_headunit.init();

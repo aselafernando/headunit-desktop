@@ -38,6 +38,7 @@ public:
     void init() override;
     QObject *getContextProperty() override;
     void PrintString(const char * message);
+    Q_INVOKABLE void onSettingsPageDestroyed() override;
 
 public slots:
     void eventMessage(QString id, QVariant message) override;

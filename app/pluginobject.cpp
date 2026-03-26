@@ -293,3 +293,4 @@ void PluginObject::loadBottomBarItems(QVariantList bottomBarItems) {
     }
     emit bottomBarItemsUpdated();
 }
+

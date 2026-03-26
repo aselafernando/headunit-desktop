@@ -56,6 +56,7 @@ public:
     Q_INVOKABLE void callSlot(QString slot) override;
 
     void init() override;
+
 public slots:
     void handleMessage(QString id, QVariant message);
     void callAction(QString id, QVariant message);
@@ -68,9 +69,11 @@ signals:
     void message(QString sender, QString message, QVariant parameter);
     void action(QString sender, QString action, QVariant parameter);
     void bottomBarItemsUpdated();
+
 private slots:
     void messageHandler(QString messageId, QVariant parameter);
     void actionHandler(QString actionId, QVariant parameter);
+
 private:
     void loadBottomBarItems(QVariantList bottomBarItems);
     bool m_loaded;

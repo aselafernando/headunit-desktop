@@ -32,9 +32,12 @@ public:
     PluginSettings *getPluginSettings() {
         return &m_pluginSettings;
     }
+    Q_INVOKABLE virtual void onSettingsPageDestroyed() {}
+
 public slots:
     virtual void eventMessage(__attribute__((unused)) QString id, __attribute__((unused)) QVariant message) {};
     virtual void actionMessage(__attribute__((unused)) QString id, __attribute__((unused)) QVariant message) {};
+
 protected:
     PluginSettings m_pluginSettings;
     QQmlPropertyMap m_settings;
