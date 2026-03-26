@@ -33,6 +33,9 @@ int main(int argc, char *argv[])
     //Always enabled in Qt6
     //QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 
+    //For using Gstreamer glupload && qml6glsink
+    QQuickWindow::setGraphicsApi(QSGRendererInterface::OpenGL);
+
     QApplication app(argc, argv);
     QLoggingCategory::setFilterRules("");
     QLoggingCategory::setFilterRules("qt.qml.connections.warning=false");
