@@ -55,10 +55,10 @@ libkf6bluezqt-dev qt6-5compat-dev
 libkf6pulseaudioqt-dev`
 
 ## Audio packages
-`apt-get -y install pipewire wireplumber pipewire-audio libspa-0.2-bluetooth gstreamer1.0-pipewire`
+`apt-get -y install pipewire wireplumber pipewire-audio gstreamer1.0-pipewire`
 
 ## Bluetooth codecs
-`apt-get -y install libfreeaptx0 libsbc1 libaacs0 libvo-aacenc0 libldacbt-abr2 libldacbt-enc2 liblc3-1 libopus0 fdkaac`
+`apt-get -y install libfreeaptx0 libsbc1 libaacs0 libvo-aacenc0 libspa-0.2-bluetooth libldacbt-abr2 libldacbt-enc2 liblc3-1 libopus0 fdkaac`
 
 ## Volume control plugin
 `apt-get -y install libpulse-dev`
