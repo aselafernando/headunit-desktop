@@ -1,24 +1,41 @@
 # HeadUnit Desktop
 
-THis is a fork of the original [headunit-desktop](https://github.com/viktorgino/headunit-desktop)
+This is a fork of the original [headunit-desktop](https://github.com/viktorgino/headunit-desktop) which appears abandoned.
 
 HeadUnit Desktop is a Qt6 based free and open source software that is intended to be run on computers built into cars. HUD is designed to be highly modular and easy to extend even for beginners.
 
 This software is currently under active development and lot of the features are experimental. The main features are currently:
 
- - Media player with a media library and media scanner
  - Android Auto™ client (wired & wireless)
  - DAB radio
- - Car2PC device support
- - GPSD support
- - J2534 support
  - Reverse camera support
+ - I2C light sensor support (can trigger night mode in Android Auto™)
+ - Car2PC device support
+ - GPSD support (with geofences for triggers)
+ - J2534 support
 
 Reverse camera and android auto leverage a gstreamer pipeline with OpenGL rendering to maximise hardware decoding. This is especially required for smooth performance on low power systems like a Rapsberry Pi.
 
 It is currently optimised for a 1024x600 screen.
 
+# Known Limitations
+ - When --lazy-loading is enabled, the volume control plugin fails to work
+ - Restarting the gstreamer pipeline for the reverse-camera plugin is not supported. If the pipeline is modifed in the configuration file, the application must be restarted.
+ - With wireless Android Auto™, if the phone disconnects unintentionally, occasionally this can cause the application to lock up. Reccommended work around is to configure the systemd watchdog to restart the application if this occurs.
+ - Media player with a media library and media scanner plugin has not been ported to Qt6 yet
+ - Requires OpenGL(ES) rendering to allow the Qt6 gstreamer sink qml6glsink for accelerated video decoding. Vulkan currently is unsupported (gstreamer lists vulkan as a "bad plugin")
+
+# Options
+## Command line
+| Option | Description |
+| ------ | ----------- |
+| --lazy-loading | Loading plugins in a separate thread (volume-control plugin seems to struggle with this) |
+
+## Configuration file
+Located at `"~/.config/HeadUnit Desktop/HeadUnit Desktop.conf"` where ~ is the home directory of the user the application is running under
+
 # Compiling on Debian 13
+Tested on x86_64 and arm64 (RPi 4 - using in-built Bluetooth & Wi-Fi)
 
 ## Build tools
 `apt-get -y install build-essential automake git cmake`
