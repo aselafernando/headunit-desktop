@@ -38,7 +38,7 @@ Located at `"~/.config/HeadUnit Desktop/HeadUnit Desktop.conf"` where ~ is the h
 Tested on x86_64 and arm64 (RPi 4 - using in-built Bluetooth & Wi-Fi)
 
 ## Build tools
-`apt-get -y install build-essential automake git cmake`
+`apt-get -y install build-essential automake git cmake protobuf-compiler`
 
 ## Qt6 packages
 
@@ -82,9 +82,6 @@ libkf6pulseaudioqt-dev`
 ```
 git clone --recursive https://github.com/aselafernando/headunit-desktop.git
 cd headunit-desktop
-protoc --proto_path=./plugins/android-auto/headunit --cpp_out=./plugins/android-auto/headunit/src/protocol AndroidAuto.proto
-protoc --proto_path=./plugins/android-auto/headunit --cpp_out=./plugins/android-auto/headunit/src/protocol Bluetooth.proto
-mv ./plugins/android-auto/headunit/src/protocol/*.h ./plugins/android-auto/headunit/includes/protocol/
 mkdir build
 cd build
 qmake PREFIX=***DESTINATION DIR*** ../headunit-desktop.pro

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-apt-get -y install build-essential automake git cmake \
+apt-get -y install build-essential automake git cmake protobuf-compiler \
 qt6-base-dev qtchooser qmake6 qt6-base-dev-tools qt6-declarative-dev qt6-multimedia-dev \
 libqt6bluetooth6 qt6-connectivity-dev qt6-charts-dev qt6-serialport-dev \
 qml6-module-qtquick qml6-module-qtquick-layouts qml6-module-qtquick-dialogs qml6-module-qtquick-controls \
