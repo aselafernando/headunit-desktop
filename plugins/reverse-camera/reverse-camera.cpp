@@ -271,7 +271,9 @@ void ReversingCamera::setupPipeline() {
 
 void ReversingCamera::onSettingsPageDestroyed(){
     qCDebug(LOG_PLUGINS_REVERSECAMERA) << "Settings Destroyed";
+    /* TODO: Ability to restart new GStreamer pipeline
     destroyPipeline();
     setupPipeline();
     videoItemLoaded(this->videoItem);
+    */
 }
