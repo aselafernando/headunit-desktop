@@ -11,7 +11,7 @@
                 "name":  "camera",
                 "type":  "combobox",
                 "defaultValue":"custom",
-                "values": {"auto":"Automatic", "rpi":"RPi Unicam", "custom":"Custom"}
+                "values": {"custom":"Custom"}
             },
             {
                 "label":"GStreamer pipeline",
@@ -19,7 +19,8 @@
                 "type": "textfield",
                 "conditional":true,
                 "conditionTarget": "camera",
-                "conditionValue":  "custom"
+                "conditionValue":  "custom",
+                "defaultValue": "videotestsrc ! capsfilter caps=\"video/x-raw,format=YV12\""
             }
         ]
     }
