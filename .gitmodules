@@ -5,7 +5,7 @@
 [submodule "themes/default-theme"]
 	path = themes/default-theme
 	url = https://github.com/aselafernando/headunit-gui.git
-	branch = qt6
+	branch = master
 [submodule "welle.io"]
 	path = plugins/welle-io/welle.io
 	url = https://github.com/aselafernando/welle.io
