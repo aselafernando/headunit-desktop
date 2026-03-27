@@ -1,12 +1,15 @@
 #!/bin/bash
 
 DESTDIR=/opt/hud
-NUMTHREADS=4
+NUMTHREADS=$(grep -c ^processor /proc/cpuinfo)
+KARCH=$(uname -m)
 
-git clone --recursive https://github.com/aselafernando/headunit-desktop.git
-cd headunit-desktop
 mkdir build
 cd build
-qmake PREFIX=${DESTDIR} ../headunit-desktop.pro
+if [ "$KARCH" = "aarch64" ]; then
+    qmake PREFIX=${DESTDIR} CONFIG+=rpi ../../headunit-desktop.pro
+else
+    qmake PREFIX=${DESTDIR} ../../headunit-desktop.pro
+fi
 make -j${NUMTHREADS}
 make install

@@ -77,14 +77,17 @@ libkf6pulseaudioqt-dev`
 
 ## Compile Instructions
 
-1. Install the dependencies above
-2. Run the following
+1. Clone the repository
+`git clone --recursive https://github.com/aselafernando/headunit-desktop.git`
+
+2. Install the dependencies above
 ```
-git clone --recursive https://github.com/aselafernando/headunit-desktop.git
-cd headunit-desktop
-mkdir build
-cd build
-qmake PREFIX=***DESTINATION DIR*** ../headunit-desktop.pro
-make
-make install
+cd headunit-desktop/scripts
+sudo ./builddep.sh
+```
+
+3. Run the following, if your CPU is aarch64 it will auto add `CONFIG+=rpi`
+```
+cd headunit-desktop/scripts
+./build.sh
 ```
