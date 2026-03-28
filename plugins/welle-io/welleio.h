@@ -5,6 +5,7 @@
 #include <QTranslator>
 #include <QSettings>
 #include <plugininterface.h>
+#include <QQuickItem>
 
 #include <unistd.h>
 #include "version.h"
@@ -35,12 +36,18 @@ public:
 signals:
     void radioControllerChanged();
     void guiHelperChanged();
-    void motChanged();
+    //void motChanged();
+
 public slots:
     void play(QString channel, QString title, quint32 service);
     void playLastStation();
+    void handleMotChanged(QString pictureName, QString categoryTitle, int categoryId, int slideId);
+    void handleMotReseted();
+    void imageItemLoaded(QQuickItem *img);
+
 private slots:
     void settingsChanged(const QString &key, const QVariant &value);
+
 private:
     void loadWelleIo(QQmlApplicationEngine *engine);
     bool welleioError;
@@ -50,6 +57,8 @@ private:
     QTranslator m_translator;
     bool m_settingsChanged;
     bool m_adapterChanged;
+
+    QQuickItem* motImg = nullptr;
 };
 
 #endif // ODBCAR_H

@@ -82,6 +82,7 @@ ThemeRoot {
                         Accessible.ignored: true
                     }
                 }
+
                 ThemeText {
                     id: dabMode
                     text: (pluginContext.RadioController.isDAB ? "DAB" : "DAB+")
@@ -114,57 +115,77 @@ ThemeRoot {
                     font.hintingPreference: Font.PreferVerticalHinting
                 }
 
-
                 ThemeHeaderText {
                     id: title
                     level: 3
                     text : pluginContext.RadioController.title.trim()
-                    anchors.verticalCenter: parent.verticalCenter
+                    
                     verticalAlignment: Text.AlignVCenter
                     horizontalAlignment: Text.AlignHCenter
                     wrapMode: Text.WrapAtWordBoundaryOrAnywhere
+                    anchors.topMargin: 16
                     anchors.right: parent.right
+                    anchors.top: ensemble.bottom
                     anchors.rightMargin: 0
                     anchors.left: parent.left
                     anchors.leftMargin: 0
                     renderType: Text.NativeRendering;
                     font.hintingPreference: Font.PreferVerticalHinting
                 }
+            }
 
+            RowLayout {
+                id: rowStationContent
+                anchors.top: title.bottom
+                anchors.bottom: buttons.top
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.topMargin: 8
+                anchors.leftMargin: 8
+                anchors.rightMargin: 8
+
+                Image {
+                    id: motImage
+                    //Collapse if no image is available, give the space for the radioText instead
+                    visible: (status === Image.Ready) && (source.toString() !== "") && (source.toString().toLowerCase() !== "image://sls/empty")
+
+                    // Set target dimensions based on visibility
+                    property real targetWidth: visible ? 320 : 0
+                    property real targetHeight: visible ? 240 : 0
+
+                    // Bind Layout properties to the target dimensions
+                    Layout.preferredWidth: targetWidth
+                    Layout.preferredHeight: targetHeight
+                    Layout.minimumWidth: targetWidth
+                    Layout.minimumHeight: targetHeight
+                    Layout.maximumWidth: 320
+
+                    fillMode: Image.PreserveAspectFit
+                    Component.onCompleted:  pluginContext.imageItemLoaded(this)
+
+                    // Add smooth animation for the collapse/expand effect
+                    Behavior on targetWidth { NumberAnimation { duration: 1000; easing.type: Easing.InOutQuad } }
+                    Behavior on targetHeight { NumberAnimation { duration: 1000; easing.type: Easing.InOutQuad } }
+
+                   // Clip ensures the image doesn't "bleed" outside the shrinking bounds during animation
+                   clip: true
+                }
 
                 ThemeHeaderText {
                     id: radioText
                     level: 1
-                    text:pluginContext.RadioController.text.trim()
-                    verticalAlignment: Text.AlignVCenter
+                    text: pluginContext.RadioController.text.trim()
                     wrapMode: Text.WordWrap
-                    anchors.bottomMargin: 8
                     horizontalAlignment: Text.AlignHCenter
-                    anchors.right: parent.right
-                    anchors.top: title.bottom
-                    anchors.bottom: stationType.top
-                    anchors.rightMargin: 0
-                    anchors.left: parent.left
-                    anchors.leftMargin: 0
-                    renderType: Text.NativeRendering;
-                    font.hintingPreference: Font.PreferVerticalHinting
-                }
-
-
-                ThemeText {
-                    id: stationType
-                    text: pluginContext.RadioController.stationType
-                    anchors.bottom: parent.bottom
-                    horizontalAlignment: Text.AlignHCenter
-                    verticalAlignment: Text.AlignTop
-                    wrapMode: Text.WrapAtWordBoundaryOrAnywhere
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    renderType: Text.NativeRendering
-                    font.hintingPreference: Font.PreferVerticalHinting
-                }
-
-
-            }
+                    verticalAlignment: Text.AlignVCenter
+                    Layout.fillWidth: true
+                    Layout.minimumWidth: 100
+                    Layout.preferredWidth: 200
+                    Layout.preferredHeight: 100
+               }
+           }
 
             RowLayout {
                 id: buttons

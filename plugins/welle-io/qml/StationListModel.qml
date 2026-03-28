@@ -22,7 +22,7 @@
  *    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
-
+ 
 import QtQuick
 
 ListModel {
@@ -32,13 +32,17 @@ ListModel {
     function addStation(station, sId, channel, favorit) {
         // Check if station already exists
         for (var i=0; i<count; i++) {
-            if (get(i).stationSId === sId && get(i).channelName === channel) {
-                get(i).stationName = station;
+            if (get(i).stationSId === sId) {
+                var availableChannelNames = get(i).availableChannelNames
+                if(!availableChannelNames.includes(channel)) {
+                    get(i).availableChannelNames = availableChannelNames + "," + channel
+                    serialize()
+                }
                 return;
             }
         }
 
-        append({"stationName": station, "stationSId": sId, "channelName": channel, "favorit": favorit})
+        append({"stationName": station, "stationSId": sId, "channelName": channel, "availableChannelNames": channel, "favorit": favorit})
         sort()
         serialize()
     }
@@ -61,6 +65,15 @@ ListModel {
         for(var i=0; i<count; i++)
             if(get(i).stationSId === sId && get(i).channelName === channel) {
                 get(i).favorit = favorit
+                serialize()
+                return
+            }
+    }
+
+    function setDefaultChannel(sId, newDefaultChannel) {
+        for(var i=0; i<count; i++)
+            if(get(i).stationSId === sId) {
+                get(i).channelName = newDefaultChannel
                 serialize()
                 return
             }
@@ -138,14 +151,18 @@ ListModel {
         for (var i = 0; i < count; ++i)
             tmp.push(get(i))
         serialized = JSON.stringify(tmp)
+        guiHelper.updateMprisStationList(serialized, type, stationListBox.currentIndex)
     }
 
     function deSerialize() {
         clear()
         if(serialized != "") {
             var tmp = JSON.parse(serialized)
-            for (var i = 0; i < tmp.length; ++i)
+            for (var i = 0; i < tmp.length; ++i) {
+                if(!("availableChannelNames" in tmp[i])) // Migration for welle.io 2.6 and below
+                    tmp[i].availableChannelNames = tmp[i].channelName
                 append(tmp[i])
+            }
         }
     }
 
