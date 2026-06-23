@@ -1,5 +1,5 @@
 {
-  "name":  "gpsd",
+  "name":  "GPSD",
   "label": "GPSD",
   "icon": "qrc:/plugins/gpsd/icons/icons8-satellite-100.png",
   "config": {

@@ -1,0 +1,96 @@
+{
+  "name":  "AKP03",
+  "label": "AKP03",
+  "icon":  "qrc:/plugins/akp03/icons/icons8-radio-100.png",
+  "config": {
+    "type": "loader",
+    "source": "qrc:/plugins/akp03/settings.qml",
+    "settings": [
+      {
+        "name": "brightness",
+        "type": "integer",
+        "defaultValue": 80
+      },
+      {
+        "name": "BUTTON_0_DOWN",
+        "type": "string",
+        "defaultValue": "PhoneBluetooth::Answer"
+      },
+      {
+        "name": "BUTTON_1_DOWN",
+        "type": "string",
+        "defaultValue": "PhoneBluetooth::Hangup"
+      },
+      {
+        "name": "BUTTON_2_DOWN",
+        "type": "string",
+        "defaultValue": ""
+      },
+      {
+        "name": "BUTTON_3_DOWN",
+        "type": "string",
+        "defaultValue": ""
+      },
+      {
+        "name": "BUTTON_4_DOWN",
+        "type": "string",
+        "defaultValue": ""
+      },
+      {
+        "name": "BUTTON_5_DOWN",
+        "type": "string",
+        "defaultValue": ""
+      },
+      {
+        "name": "BUTTON_6_DOWN",
+        "type": "string",
+        "defaultValue": ""
+      },
+      {
+        "name": "ENC_0_DOWN",
+        "type": "string",
+        "defaultValue": ""
+      },
+      {
+        "name": "ENC_0_CW",
+        "type": "string",
+        "defaultValue": "GUI::ChangePageNext"
+      },
+      {
+        "name": "ENC_0_CCW",
+        "type": "string",
+        "defaultValue": "GUI::ChangePagePrev"
+      },
+      {
+        "name": "ENC_1_DOWN",
+        "type": "string",
+        "defaultValue": ""
+      },
+      {
+        "name": "ENC_1_CW",
+        "type": "string",
+        "defaultValue": ""
+      },
+      {
+        "name": "ENC_1_CCW",
+        "type": "string",
+        "defaultValue": ""
+      },
+      {
+        "name": "ENC_2_DOWN",
+        "type": "string",
+        "defaultValue": ""
+      },
+      {
+        "name": "ENC_2_CW",
+        "type": "string",
+        "defaultValue": ""
+      },
+      {
+        "name": "ENC_2_CCW",
+        "type": "string",
+        "defaultValue": ""
+      }
+    ]
+  }
+}

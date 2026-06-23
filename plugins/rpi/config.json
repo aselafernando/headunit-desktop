@@ -1,5 +1,5 @@
 {
-    "name":"rpi",
+    "name":"RPI",
     "label":"Raspberry Pi",
     "icon":"qrc:/plugins/rpi/Raspberry_Pi_Logo.svg",
     "config":{

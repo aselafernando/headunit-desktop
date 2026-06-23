@@ -1,5 +1,5 @@
 {
-    "name": "welle-io",
+    "name": "WelleIO",
     "imageProvider": "motslideshow",
     "source": "qrc:/plugins/welle-io/DABLayout.qml",
     "icon": "qrc:/plugins/welle-io/radio-waves.svg",

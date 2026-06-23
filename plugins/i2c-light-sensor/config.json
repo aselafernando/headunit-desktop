@@ -1,5 +1,5 @@
 {
-  "name": "i2c-light-sensor",
+  "name": "I2CLightSensor",
   "label": "I2C Light Sensor",
   "icon": "qrc:/plugins/i2c-light-sensor/icons/icons8-sun-96.png",
   "config": {

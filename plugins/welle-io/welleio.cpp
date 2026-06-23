@@ -28,10 +28,44 @@ void WelleIoPlugin::handleMotReseted() {
     }
 }
 
+void WelleIoPlugin::handleIsPlayingChanged(bool isPlaying) {
+    qCDebug(LOG_PLUGINS_WELLEIO) << "handleIsPlayingChanged()" << isPlaying;
+    this->antennaCheck(isPlaying);
+    this->wasPlaying = isPlaying;
+}
+
+void WelleIoPlugin::handleChannelScanChanged(bool isChannelScan) {
+    qCDebug(LOG_PLUGINS_WELLEIO) << "handleChannelScanChanged()" << isChannelScan;
+    this->antennaCheck(isChannelScan);
+    this->wasChannelScan = isChannelScan;
+}
+
+void WelleIoPlugin::antennaCheck(bool isActive) {
+    if(isActive) {
+        //Raise antenna
+         qCDebug(LOG_PLUGINS_WELLEIO) << "Raise Antenna";
+         emit action("SYSTEM::RaiseAntenna", true);
+    } else {
+        if(wasChannelScan) {
+            //We just finished a channel scan, wait 1 minute before lowering
+            qCDebug(LOG_PLUGINS_WELLEIO) << "Lower Antenna - Delay 60s";
+        } else if(wasPlaying) {
+            //We just stopped playing, wait 10 seconds before lowering antenna
+            qCDebug(LOG_PLUGINS_WELLEIO) << "Lower Antenna - Delay 10s";
+        } else {
+            //Lower antenna
+            qCDebug(LOG_PLUGINS_WELLEIO) << "Lower Antenna";
+        }
+    }
+}
+
 void WelleIoPlugin::init(){
     m_guiHelper->setTranslator(&m_translator);
     connect(m_guiHelper, &CGUIHelper::motChanged, this, &WelleIoPlugin::handleMotChanged);
     connect(m_guiHelper, &CGUIHelper::motReseted, this, &WelleIoPlugin::handleMotReseted);
+
+    connect(m_radioController, &CRadioController::isPlayingChanged, this, &WelleIoPlugin::handleIsPlayingChanged);
+    connect(m_radioController, &CRadioController::isChannelScanChanged, this, &WelleIoPlugin::handleChannelScanChanged);
 
     connect(&m_settings, &QQmlPropertyMap::valueChanged, this, &WelleIoPlugin::settingsChanged);
 
@@ -172,6 +206,8 @@ WelleIoPlugin::~WelleIoPlugin() {
     }
 
     if(m_radioController){
+        disconnect(m_radioController, &CRadioController::isPlayingChanged, this, &WelleIoPlugin::handleIsPlayingChanged);
+        disconnect(m_radioController, &CRadioController::isChannelScanChanged, this, &WelleIoPlugin::handleChannelScanChanged);
         delete m_radioController;
     }
 

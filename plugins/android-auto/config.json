@@ -1,5 +1,5 @@
 {
-    "name":"android-auto",
+    "name":"AndroidAuto",
     "label":"Android Auto",
     "source" : "qrc:/plugins/android-auto/nativeAA.qml",
     "icon": "qrc:/plugins/android-auto/social-android.svg",

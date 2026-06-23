@@ -23,6 +23,7 @@ class WelleIoPlugin : public QObject, PluginInterface
 
     Q_PROPERTY(CGUIHelper* GUIHelper READ guiHelper NOTIFY guiHelperChanged)
     Q_PROPERTY(CRadioController* RadioController READ radioController NOTIFY radioControllerChanged)
+
 public:
     explicit WelleIoPlugin(QObject *parent = nullptr);
     ~WelleIoPlugin() override;
@@ -37,6 +38,7 @@ signals:
     void radioControllerChanged();
     void guiHelperChanged();
     //void motChanged();
+    void action(QString id, QVariant message);
 
 public slots:
     void play(QString channel, QString title, quint32 service);
@@ -44,12 +46,15 @@ public slots:
     void handleMotChanged(QString pictureName, QString categoryTitle, int categoryId, int slideId);
     void handleMotReseted();
     void imageItemLoaded(QQuickItem *img);
+    void handleIsPlayingChanged(bool isPlaying);
+    void handleChannelScanChanged(bool isChannelScan);
 
 private slots:
     void settingsChanged(const QString &key, const QVariant &value);
 
 private:
     void loadWelleIo(QQmlApplicationEngine *engine);
+    void antennaCheck(bool isActive);
     bool welleioError;
 
     CRadioController* m_radioController = nullptr;
@@ -57,7 +62,8 @@ private:
     QTranslator m_translator;
     bool m_settingsChanged;
     bool m_adapterChanged;
-
+    bool wasPlaying = false;
+    bool wasChannelScan = false;
     QQuickItem* motImg = nullptr;
 };
 

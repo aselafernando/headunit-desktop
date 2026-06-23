@@ -1,5 +1,5 @@
 {
-    "name":"volume-control",
+    "name":"VolumeControl",
     "label":"Volume",
     "icon": "qrc:/plugins/volume-control/volume.png",
     "config":{

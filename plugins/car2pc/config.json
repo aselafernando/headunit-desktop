@@ -1,5 +1,5 @@
 {
-  "name":  "car2pc",
+  "name":  "Car2PC",
   "label": "Car2PC",
   "icon":  "qrc:/plugins/car2pc/icons/icons8-radio-100.png",
   "config": {

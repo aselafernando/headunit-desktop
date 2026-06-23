@@ -1,10 +1,11 @@
 import QtQuick
 import Qt5Compat.GraphicalEffects
 import HUDTheme 1.0
+
 Item {
     id: __root
     height: 50
-    width: parent.width
+    width: parent ? parent.width : 0
 
     property int currentPlaying : 0
 

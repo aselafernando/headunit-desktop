@@ -1,5 +1,5 @@
 {
-  "name": "j2534",
+  "name": "J2534",
   "label": "J2534",
   "source": "qrc:/plugins/j2534/qml/Gauges.qml",
   "icon": "qrc:/plugins/j2534/icons/icons8-rs-232-male-100.png",

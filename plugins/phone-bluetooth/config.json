@@ -1,5 +1,5 @@
 {
-    "name":"phone-bluetooth",
+    "name":"PhoneBluetooth",
     "label" : "Phone",
     "source":"qrc:/plugins/phone-bluetooth/Phone.qml",
     "icon": "qrc:/plugins/phone-bluetooth/bluetooth.png",

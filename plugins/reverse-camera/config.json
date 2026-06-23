@@ -1,5 +1,5 @@
 {
-    "name":   "reverse-camera",
+    "name":   "ReverseCamera",
     "label":  "Reverse Camera",
     "source": "qrc:/plugins/reverse-camera/reverse-camera.qml",
     "icon":   "qrc:/qml/icons/android-camera.png",
