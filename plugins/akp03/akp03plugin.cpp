@@ -17,33 +17,78 @@ AKP03Plugin::AKP03Plugin(QObject *parent) : QObject (parent)
     m_pluginSettings.eventListeners = QStringList() << "MediaInput::position" << "MediaInput::track";
 }
 
+AKP03Plugin::~AKP03Plugin() {
+    qCDebug(LOG_PLUGINS_AKP03) << "Closing";
+    dev.setBrightness(0);
+    dev.clearAll();
+    dev.close();
+}
+
 void AKP03Plugin::handleButtonPressed(int k) {
-    qCDebug(LOG_PLUGINS_AKP03) << "Button" << k << "PRESSED";
+    //qCDebug(LOG_PLUGINS_AKP03) << "Button" << k << "PRESSED";
     switch(k) {
         case 6:
             emit message("MediaInput", "Previous");
             break;
+        case 7:
+            break;
         case 8:
             emit message("MediaInput", "Next");
+            break;
+        default:
+            if(pluginName.length() > 0) {
+                emit action(QString("%1::Button_Pressed").arg(pluginName), k);
+            }
             break;
     }
 
 }
 
 void AKP03Plugin::handleButtonReleased(int k) {
-    qCDebug(LOG_PLUGINS_AKP03) << "Button" << k << "Released";
+    //qCDebug(LOG_PLUGINS_AKP03) << "Button" << k << "Released";
+    switch(k) {
+        case 6:
+        case 7:
+        case 8:
+            break;
+        default:
+            if(pluginName.length() > 0) {
+                emit action(QString("%1::Button_Released").arg(pluginName), k);
+            }
+            break;
+    }
 }
 
 void AKP03Plugin::handleEncoderPressed(int e) {
-    qCDebug(LOG_PLUGINS_AKP03) << "Encoder" << e << "PRESSED";
+    //qCDebug(LOG_PLUGINS_AKP03) << "Encoder" << e << "PRESSED";
+    switch(e) {
+        case 0:
+        case 1:
+            break;
+        case 2:
+            if(pluginName.length() > 0) {
+                emit action(QString("%1::Encoder_Pressed").arg(pluginName), e);
+            }
+            break;
+    }
 }
 
 void AKP03Plugin::handleEncoderReleased(int e) {
-    qCDebug(LOG_PLUGINS_AKP03) << "Encoder" << e << "Released";
+    //qCDebug(LOG_PLUGINS_AKP03) << "Encoder" << e << "Released";
+    switch(e) {
+        case 0:
+        case 1:
+            break;
+        case 2:
+            if(pluginName.length() > 0) {
+                emit action(QString("%1::Encoder_Released").arg(pluginName), e);
+            }
+            break;
+    }
 }
 
 void AKP03Plugin::handleEncoderTurned(int e, int d) {
-    qCDebug(LOG_PLUGINS_AKP03) << "Encoder" << e << "turned" << (d > 0 ? "CW" : "CCW") << "(" << d << ")";
+    //qCDebug(LOG_PLUGINS_AKP03) << "Encoder" << e << "turned" << (d > 0 ? "CW" : "CCW") << "(" << d << ")";
     switch(e) {
         case 0:
             if(d > 0) {
@@ -57,6 +102,11 @@ void AKP03Plugin::handleEncoderTurned(int e, int d) {
                 emit action("VolumeControl::VolumeUp", 0);
             } else {
                 emit action("VolumeControl::VolumeDown", 0);
+            }
+            break;
+        case 2:
+            if(pluginName.length() > 0) {
+                emit action(QString("%1::Encoder_Turned").arg(pluginName), d);
             }
             break;
     }
@@ -79,17 +129,20 @@ void AKP03Plugin::init() {
     QObject::connect(&dev, &Akp03Device::deviceDisconnected, [&]() {
         qCWarning(LOG_PLUGINS_AKP03) << "Device disconnected.";
     });
-    QObject::connect(&dev, &Akp03Device::errorOccurred,
+/*    QObject::connect(&dev, &Akp03Device::errorOccurred,
                      [](const QString& m) { qWarning().noquote() << "Error:" << m; });
     static const QColor palette[Akp03Device::LcdKeyCount] = {
         QColor(220, 40, 40),  QColor(220, 140, 30), QColor(210, 200, 40),
         QColor(40, 200, 90),  QColor(40, 130, 220), QColor(160, 70, 220),
     };
+
     for (int k = 0; k < Akp03Device::LcdKeyCount; k++) {
         QImage tile(60, 60, QImage::Format_RGB888);
         tile.fill(palette[k]);
         dev.sendImage(k, tile);
     }
+*/
+    dev.setBrightness(0);
     dev.startListening();
     qCDebug(LOG_PLUGINS_AKP03) << "Listening. Press buttons / turn encoders. Ctrl-C to quit.";
 }
@@ -101,7 +154,47 @@ QObject *AKP03Plugin::getContextProperty(){
 void AKP03Plugin::onSettingsPageDestroyed() {
 }
 
-void AKP03Plugin::eventMessage(QString id, QVariant message) {
+void AKP03Plugin::actionMessage(QString id, QVariant message) {
+    //qCDebug(LOG_PLUGINS_AKP03) << "Action:"<<id;
+
+    if(id.startsWith("setKeyImage")) {
+        //qCDebug(LOG_PLUGINS_AKP03) << "Action:"<<id;
+        QImage img = message.value<QImage>();
+        int key = 0;
+        if(id == "setKeyImage0") {
+            key = 0;
+        } else if(id == "setKeyImage1") {
+            key = 1;
+        } else if(id == "setKeyImage2") {
+            key = 2;
+        } else if(id == "setKeyImage3") {
+            key = 3;
+        } else if(id == "setKeyImage4") {
+            key = 4;
+        } else if(id == "setKeyImage5") {
+            key = 5;
+        }
+        if(img.isNull()) {
+            dev.clearKey(key);
+        } else {
+            dev.sendImage(key, img);
+        }
+    } else if(id == "setBrightness") {
+        dev.setBrightness(message.toInt());
+    } else if(id == "clearAllKeys") {
+        dev.clearAll();
+    } else if(id == "clearKey") {
+        dev.clearKey(message.toInt());
+    }
+}
+
+void AKP03Plugin::eventMessage(__attribute__((unused)) QString id, __attribute__((unused)) QVariant message) {
+    //qCDebug(LOG_PLUGINS_AKP03) << "Message:"<<id;
+    if(id == "SYSTEM::DisplayChanged") {
+        dev.clearAll();
+        dev.setBrightness(0);
+        this->pluginName = message.toString();
+    }
     //Track Name: NMTest Name
     //Track Time: TMHHMMSS
     //Track Num : TR000
@@ -124,7 +217,7 @@ void AKP03Plugin::eventMessage(QString id, QVariant message) {
     }*/
 }
 
-void AKP03Plugin::settingsChanged(const QString &key, const QVariant &){
+void AKP03Plugin::settingsChanged(__attribute__((unused)) const QString &key, __attribute__((unused)) const QVariant &){
     /*if(key == "serial_port"){
         serialDisconnect();
         serialConnect();

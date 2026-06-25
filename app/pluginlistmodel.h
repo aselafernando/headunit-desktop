@@ -22,7 +22,7 @@ public:
         ContextPropertyRole,
         SettingsRole,
         SettingsMenuRole,
-        BottomBarItemsRole
+        BottomBarItemsRole,
     };
 
     Q_INVOKABLE QHash<int, QByteArray> roleNames() const override;
@@ -53,10 +53,9 @@ public:
         SettingMenuList,
         BottomBarItemsList
     };
+    Q_INVOKABLE void onDisplay(QString pluginName);
     explicit PluginListProxyModel(QObject *parent = nullptr);
-
     bool filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const override;
-
     void setPlugins(PluginList *plugins);
     void setType(QString type);
     PluginList* getPlugins();

@@ -1,6 +1,9 @@
 #include <QtDebug>
 #include <QLoggingCategory>
-
+/*#include <utility>
+#include <QAbstractListModel>
+#include <QObject>
+*/
 #include "pluginlistmodel.h"
 
 Q_LOGGING_CATEGORY(LOG_APP_PLUGINLIST_MODEL, "app.pluginlist.model")
@@ -63,6 +66,26 @@ QString PluginListProxyModel::getType() {
     } else {
         return "";
     }
+}
+
+void PluginListProxyModel::onDisplay(QString pluginName) {
+    PluginList* plugins = this->getPlugins();
+    QVariant on = QVariant::fromValue(true);
+    QVariant off = QVariant::fromValue(false);
+    QVariant qvPluginName = QVariant::fromValue(pluginName);
+    plugins->handleMessage("SYSTEM::DisplayChanged", qvPluginName);
+
+    for(int i = 0; i < plugins->size(); ++i) {
+        PluginObject* plugin = plugins->at(i);
+        //plugin->handleMessage("SYSTEM::DisplayChanged", qvPluginName);
+
+        if(plugin->getName() == pluginName) {
+            plugin->callAction("DisplayChanged", on);
+        } else {
+            plugin->callAction("DisplayChanged", false);
+        }
+    }
+
 }
 
 PluginListModel::PluginListModel(QObject *parent) : QAbstractListModel(parent)

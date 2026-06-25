@@ -21,9 +21,11 @@ class AKP03Plugin : public QObject, PluginInterface
 
 public:
     explicit AKP03Plugin(QObject *parent = nullptr);
+    ~AKP03Plugin();
 
     void init() override;
     QObject *getContextProperty() override;
+    void actionMessage(QString id, QVariant message) override;
 
     Q_INVOKABLE void onSettingsPageDestroyed() override;
 
@@ -43,6 +45,7 @@ private slots:
     void handleEncoderTurned(int e, int d);
 private:
     Akp03Device dev;
+    QString pluginName;
 };
 
 #endif // AKP03PLUGIN_H

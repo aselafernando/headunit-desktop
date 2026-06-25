@@ -13,7 +13,8 @@ HEADERS += \
     welleio.h
 
 RESOURCES += \
-    $$PWD/qml/dab_gui.qrc
+    $$PWD/qml/dab_gui.qrc \
+    welle-io.qrc
 
 include("../../config.pri")
 

@@ -35,7 +35,6 @@ public:
     ~PluginObject();
 
     // void setSource(QString source) override;
-
     bool getLoaded() override;
     QString getSource() override;
     QString getName() override;

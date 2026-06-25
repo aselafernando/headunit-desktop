@@ -468,7 +468,7 @@ void TelephonyManager::eventMessage(QString id, QVariant message) {
 
 //Allow control from external plugins
 void TelephonyManager::actionMessage(QString id, __attribute__((unused)) QVariant message) {
-    qCDebug(LOG_PLUGINS_PHONEBLUETOOTH_BLUEZQT) << "Action Message: " << id;
+    //qCDebug(LOG_PLUGINS_PHONEBLUETOOTH_BLUEZQT) << "Action Message: " << id;
 
     if (id == "Answer") {
         m_ofonoManagerClass.answerCall();
@@ -478,6 +478,10 @@ void TelephonyManager::actionMessage(QString id, __attribute__((unused)) QVarian
     }
     else if (id == "VoiceControl") {
         m_ofonoManagerClass.activateVoiceControl();
+    } else if(id == "DisplayChanged") {
+        if(message.toBool()) {
+            qCDebug(LOG_PLUGINS_PHONEBLUETOOTH_BLUEZQT) << "On Screen";
+        }
     }
 }
 

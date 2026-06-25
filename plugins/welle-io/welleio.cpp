@@ -14,6 +14,43 @@ WelleIoPlugin::WelleIoPlugin(QObject *parent) : QObject (parent), m_translator(t
     m_guiHelper = new CGUIHelper (m_radioController, this);
 }
 
+void WelleIoPlugin::actionMessage(QString id, QVariant message) {
+    //qCDebug(LOG_PLUGINS_WELLEIO) << "Action"<<id;
+    if(id == "DisplayChanged") {
+        if(message.toBool()) {
+            qCDebug(LOG_PLUGINS_WELLEIO) << "On Screen";
+            emit action("AKP03::setKeyImage0", QVariant::fromValue(QImage(":/plugins/WelleIO/images/button0.jpg")));
+            emit action("AKP03::setKeyImage1", QVariant::fromValue(QImage(":/plugins/WelleIO/images/button1.jpg")));
+            emit action("AKP03::setKeyImage2", QVariant::fromValue(QImage(":/plugins/WelleIO/images/button2.jpg")));
+            emit action("AKP03::setKeyImage3", QVariant::fromValue(QImage(":/plugins/WelleIO/images/button3.jpg")));
+            emit action("AKP03::setKeyImage4", QVariant::fromValue(QImage(":/plugins/WelleIO/images/button4.jpg")));
+            emit action("AKP03::setBrightness", 50);
+        }
+    } else if(id == "Button_Pressed") {
+        switch(message.toInt()) {
+            case 0:
+                this->play("9A", "Smooth 91.5", 4379);
+                break;
+            case 1:
+                this->play("9B", "GOLD 104.3", 4338);
+                break;
+            case 2:
+                this->play("9A", "Nova 100", 4378);
+                break;
+            case 3:
+                this->play("9B", "OLDSKOOL 90 HITS", 4328);
+                break;
+            case 4:
+                this->play("9B", "OLDSKOOL 80 HITS", 4325);
+                break;
+        }
+    } else if(id == "Encoder_Pressed") {
+        qCDebug(LOG_PLUGINS_WELLEIO) << "Encoder Pressed" << message.toInt();
+    } else if(id == "Encoder_Turned") {
+        qCDebug(LOG_PLUGINS_WELLEIO) << "Encoder Turned" << message.toInt();
+    }
+}
+
 void WelleIoPlugin::handleMotChanged(QString pictureName, QString categoryTitle, int categoryId, int slideId) {
     if(this->motImg) {
         qCDebug(LOG_PLUGINS_WELLEIO) << "MOT Image Changed -"<< "PictureName:" << pictureName << "Category Title:" << categoryTitle << "Category ID:"<< categoryId << "Slide ID:" << slideId;
@@ -174,7 +211,6 @@ void WelleIoPlugin::play(QString channel, QString title, quint32 service) {
     settings.setValue("lastChannel", channel);
     settings.setValue("lastChannelTitle", title);
     settings.setValue("lastService", service);
-
     m_radioController->play(channel,title,service);
 }
 

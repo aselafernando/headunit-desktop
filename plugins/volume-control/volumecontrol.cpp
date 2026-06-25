@@ -66,11 +66,15 @@ void VolumeControl::actionMessage(QString id, __attribute__((unused)) QVariant m
     PulseAudioQt::Sink * defaultSink = server->defaultSink();
     if(defaultSink != nullptr) {
         int volume = 0;
+
         if(id == "VolumeUp"){
             volume = defaultSink->volume() + (655 * 4);
         } else if(id == "VolumeDown") {
             volume = defaultSink->volume() - (655 * 4);
+        } else {
+            return;
         }
+
         if(volume > PulseAudioQt::normalVolume()){
             volume = PulseAudioQt::normalVolume();
         } else if (volume < PulseAudioQt::minimumVolume()) {

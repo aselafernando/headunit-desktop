@@ -48,6 +48,7 @@ public slots:
     void imageItemLoaded(QQuickItem *img);
     void handleIsPlayingChanged(bool isPlaying);
     void handleChannelScanChanged(bool isChannelScan);
+    void actionMessage(QString id, QVariant message) override;
 
 private slots:
     void settingsChanged(const QString &key, const QVariant &value);

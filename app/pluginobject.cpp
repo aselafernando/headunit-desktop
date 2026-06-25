@@ -190,6 +190,7 @@ void PluginObject::handleMessage(QString id, QVariant message) {
         m_pluginInterface->eventMessage(id,message);
 }
 void PluginObject::callAction(QString id, QVariant message){
+    //qCDebug(LOG_APP_PLUGINOBJECT) << "callAction:"<<id;
     if(m_pluginInterface)
         m_pluginInterface->actionMessage(id,message);
 }
