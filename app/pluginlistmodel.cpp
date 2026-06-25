@@ -71,19 +71,19 @@ QString PluginListProxyModel::getType() {
 void PluginListProxyModel::onDisplay(QString pluginName) {
     PluginList* plugins = this->getPlugins();
     QVariant on = QVariant::fromValue(true);
-    QVariant off = QVariant::fromValue(false);
-    QVariant qvPluginName = QVariant::fromValue(pluginName);
-    plugins->handleMessage("SYSTEM::DisplayChanged", qvPluginName);
+    //QVariant off = QVariant::fromValue(false);
+    plugins->handleMessage("SYSTEM::DisplayChanged", QVariant::fromValue(pluginName));
 
     for(int i = 0; i < plugins->size(); ++i) {
         PluginObject* plugin = plugins->at(i);
-        //plugin->handleMessage("SYSTEM::DisplayChanged", qvPluginName);
 
         if(plugin->getName() == pluginName) {
             plugin->callAction("DisplayChanged", on);
-        } else {
-            plugin->callAction("DisplayChanged", false);
+            return;
         }
+        //else {
+        //    plugin->callAction("DisplayChanged", false);
+        //}
     }
 
 }

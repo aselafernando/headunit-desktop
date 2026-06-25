@@ -15,6 +15,26 @@ Q_LOGGING_CATEGORY(LOG_PLUGINS_AKP03, "plugins.akp03")
 AKP03Plugin::AKP03Plugin(QObject *parent) : QObject (parent)
 {
     m_pluginSettings.eventListeners = QStringList() << "MediaInput::position" << "MediaInput::track";
+
+    QString err;
+    if (!dev.initialize(&err)) {
+        qCritical().noquote() << err;
+        return;
+    }
+
+    qCDebug(LOG_PLUGINS_AKP03) << "Device ready.";
+
+    QObject::connect(&dev, &Akp03Device::buttonPressed, this, &AKP03Plugin::handleButtonPressed);
+    QObject::connect(&dev, &Akp03Device::buttonReleased, this, &AKP03Plugin::handleButtonReleased);
+    QObject::connect(&dev, &Akp03Device::encoderPressed, this, &AKP03Plugin::handleEncoderPressed);
+    QObject::connect(&dev, &Akp03Device::encoderReleased, this, &AKP03Plugin::handleEncoderReleased);
+    QObject::connect(&dev, &Akp03Device::encoderTurned, this, &AKP03Plugin::handleEncoderTurned);
+
+    QObject::connect(&dev, &Akp03Device::deviceDisconnected, [&]() {
+        qCWarning(LOG_PLUGINS_AKP03) << "Device disconnected.";
+    });
+
+    dev.setBrightness(0);
 }
 
 AKP03Plugin::~AKP03Plugin() {
@@ -113,22 +133,10 @@ void AKP03Plugin::handleEncoderTurned(int e, int d) {
 }
 
 void AKP03Plugin::init() {
-    QString err;
-    if (!dev.initialize(&err)) {
-        qCritical().noquote() << err;
-        return;
-    }
-    qCDebug(LOG_PLUGINS_AKP03) << "Device ready.";
+    dev.startListening();
 
-    QObject::connect(&dev, &Akp03Device::buttonPressed, this, &AKP03Plugin::handleButtonPressed);
-    QObject::connect(&dev, &Akp03Device::buttonReleased, this, &AKP03Plugin::handleButtonReleased);
-    QObject::connect(&dev, &Akp03Device::encoderPressed, this, &AKP03Plugin::handleEncoderPressed);
-    QObject::connect(&dev, &Akp03Device::encoderReleased, this, &AKP03Plugin::handleEncoderReleased);
-    QObject::connect(&dev, &Akp03Device::encoderTurned, this, &AKP03Plugin::handleEncoderTurned);
+    qCDebug(LOG_PLUGINS_AKP03) << "Listening. Press buttons / turn encoders. Ctrl-C to quit.";
 
-    QObject::connect(&dev, &Akp03Device::deviceDisconnected, [&]() {
-        qCWarning(LOG_PLUGINS_AKP03) << "Device disconnected.";
-    });
 /*    QObject::connect(&dev, &Akp03Device::errorOccurred,
                      [](const QString& m) { qWarning().noquote() << "Error:" << m; });
     static const QColor palette[Akp03Device::LcdKeyCount] = {
@@ -142,9 +150,6 @@ void AKP03Plugin::init() {
         dev.sendImage(k, tile);
     }
 */
-    dev.setBrightness(0);
-    dev.startListening();
-    qCDebug(LOG_PLUGINS_AKP03) << "Listening. Press buttons / turn encoders. Ctrl-C to quit.";
 }
 
 QObject *AKP03Plugin::getContextProperty(){
